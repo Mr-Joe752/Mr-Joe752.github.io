@@ -244,6 +244,21 @@
   .row3 b { font-size: 18px; font-weight: 600; }
   .row3 .in { color: var(--in); } .row3 .out { color: var(--out); }
   label.ghost { display: block; }
+  .filters { display: flex; gap: 6px; margin-top: 8px; }
+  .note .big span, .note .row b, .row3 b { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .note .row b { display: block; text-align: start; }
+  .viewer { position: fixed; inset: 0; z-index: 60; background: #000; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .viewer.on { opacity: 1; pointer-events: auto; }
+  .viewer .stage { flex: 1; min-height: 0; overflow: hidden; position: relative; z-index: 1; touch-action: none; display: grid; place-items: center; }
+  .viewer img { max-width: 100%; max-height: 100%; transform-origin: center; will-change: transform; user-select: none; -webkit-user-drag: none; }
+  .viewer .vbar, .viewer .cap { position: relative; z-index: 2; background: rgba(0,0,0,.65); }
+  .viewer .vbar { display: flex; gap: 8px; padding: calc(10px + env(safe-area-inset-top)) 12px 10px; }
+  .viewer .vbar button, .viewer .vbar a { border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.08); color: #fff; border-radius: 12px; padding: 9px 12px; font-size: 14px; text-decoration: none; }
+  .viewer .vbar .grow { flex: 1; }
+  .viewer .cap { color: #fff; opacity: .8; font-size: 13px; text-align: center; padding: 8px 12px calc(14px + env(safe-area-inset-bottom)); }
+  .photo-thumb { width: 100%; margin-top: 12px; border-radius: 12px; border: 1px solid var(--line); cursor: zoom-in; }
+  .gone { margin-top: 12px; color: var(--muted); font-size: 13px; }
+  .pclean { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
   input[type=date].field { min-height: 46px; }
 </style>
 
@@ -350,13 +365,14 @@
     <div class="panel" id="donutBox" style="margin-top:12px"></div>
     <h2>العمليات</h2>
     <input class="field" id="search" placeholder="🔎 دوّر على بند أو ملاحظة" oninput="renderRecent()" autocomplete="off">
+    <div class="filters"><button class="chip" type="button" id="photoFilter" aria-pressed="false" onclick="togglePhotoFilter()">📎 بالصور بس</button></div>
     <ul class="list" id="recent" style="margin-top:6px"></ul>
   </main>
 
   <!-- الفلوس -->
   <main class="view" id="v-money">
     <h2>السلف</h2>
-    <div class="panel"><ul class="list" id="debts"></ul></div>
+    <div class="panel"><ul class="list" id="debts"></ul><p class="hint" style="margin-top:6px" id="debtsHint" hidden>دوس على أي حد عشان تشوف كل حركاته وصورها.</p></div>
 
     <h2>الميزانية</h2>
     <div class="panel">
@@ -464,6 +480,19 @@
       <button class="ghost" style="width:100%;margin-top:10px" onclick="mergeItems()">ادمج</button>
     </div>
 
+    <h2>تفريغ مساحة</h2>
+    <div class="panel">
+      <p class="hint" id="spaceNow">بيحسب المساحة…</p>
+      <label class="f">امسح صور العمليات والسلف اللي عدّى عليها أكتر من</label>
+      <div class="pclean">
+        <input class="field" id="cleanN" inputmode="numeric" value="3" oninput="cleanAmount(this); previewClean()" aria-label="العدد">
+        <select class="field" id="cleanUnit" onchange="previewClean()" aria-label="الوحدة"><option value="m">شهور</option><option value="w">أسابيع</option></select>
+      </div>
+      <p class="hint" style="margin-top:8px" id="cleanPreview"></p>
+      <button class="ghost danger" style="width:100%;margin-top:6px" id="cleanBtn" onclick="cleanPhotos()">امسح الصور دي</button>
+      <p class="hint" style="margin-top:8px">العمليات نفسها مش بتتمسح، الصور بس. والصور اللي بتتمسح من هنا مش بترجع، فلو عاوز تحتفظ بيها نزّل نسخة ملف الأول.</p>
+    </div>
+
     <h2>الشكل</h2>
     <div class="panel">
       <div class="seg" id="themeSeg" style="--n:3;--i:0" role="group" aria-label="الشكل">
@@ -503,12 +532,32 @@
     <div><label class="f" for="eWallet">المحفظة</label><select class="field" id="eWallet"></select></div>
   </div>
   <label class="f" for="eNote">ملاحظة</label><input class="field" id="eNote" autocomplete="off">
-  <img id="ePhoto" alt="صورة العملية" hidden style="width:100%;margin-top:12px;border-radius:12px;border:1px solid var(--line)">
+  <img id="ePhoto" class="photo-thumb" alt="صورة العملية، دوس عليها عشان تكبّرها" hidden onclick="openViewer(this.src, $('eItem').value)">
+  <p class="gone" id="eGone" hidden>🗑️ الصورة اتمسحت لتفريغ المساحة.</p>
   <div class="err" id="eErr"></div>
   <div class="acts">
     <button class="ghost danger" id="eDel" onclick="deleteTx()">امسح</button>
     <button class="primary" onclick="saveEdit()">احفظ التعديل</button>
   </div>
+</div>
+
+<div class="sheet" id="pSheet" role="dialog" aria-modal="true" aria-labelledby="pTitle">
+  <div class="grab"></div>
+  <h3 id="pTitle"></h3>
+  <p class="hint" id="pSub"></p>
+  <ul class="list" id="pList"></ul>
+  <div class="acts"><button class="primary" onclick="closeSheets()">تمام</button></div>
+</div>
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="الصورة">
+  <div class="vbar">
+    <button onclick="closeViewer()">✕ اقفل</button>
+    <span class="grow"></span>
+    <button id="vShare" onclick="sharePhoto()">مشاركة</button>
+    <a id="vSave" download="hesabaty-photo.jpg">حفظ</a>
+  </div>
+  <div class="stage" id="vStage"><img id="vImg" alt=""></div>
+  <div class="cap" id="vCap">قرّب بصباعين، أو دوس مرتين</div>
 </div>
 
 <div class="sheet" id="rSheet" role="dialog" aria-modal="true" aria-labelledby="rTitle">
@@ -552,7 +601,7 @@
 var GOOGLE_CLIENT_ID = '247280462624-08ukk2snqmf3f7j34csme9noafosapgi.apps.googleusercontent.com';
 // =======================================================================================
 
-var APP_VERSION = '1.0.1';
+var APP_VERSION = '1.1.0';
 var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
 var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
 var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
@@ -818,11 +867,12 @@ function go(v) {
   window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
   if (v === 'v-list') renderList();
   if (v === 'v-money') renderBars();
+  if (v === 'v-set') renderSpace();
 }
 $('tabs').querySelectorAll('button').forEach(function (b) { b.onclick = function () { go(b.dataset.v); }; });
 
 // ---------- الرسم ----------
-var mode = 'صرف', debtKind = 'سلّفت', cur = 'ج', exDir = 'sell', repeat = 'شهري';
+var mode = 'صرف', debtKind = 'سلّفت', cur = 'ج', exDir = 'sell', repeat = 'شهري', photoOnly = false;
 var pickedWallet = null, walletTouched = false, photo = null, editing = null, remEditing = null;
 
 function render() {
@@ -924,13 +974,16 @@ function renderDonut(st) {
   }); });
 }
 function renderRecent() {
-  var mk = monthKey(viewYM.y, viewYM.m), q = key($('search').value);
-  var list = S.tx.filter(function (t) { return q ? (key(t.item).indexOf(q) >= 0 || key(t.note).indexOf(q) >= 0) : t.date.slice(0, 7) === mk; })
+  var mk = monthKey(viewYM.y, viewYM.m), q = key($('search').value), wide = q || photoOnly;
+  var list = S.tx.filter(function (t) {
+    if (photoOnly && !t.photo) return false;
+    return q ? (key(t.item).indexOf(q) >= 0 || key(t.note).indexOf(q) >= 0) : (photoOnly || t.date.slice(0, 7) === mk);
+  })
     .sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.id - a.id; }).slice(0, 300);
-  if (!list.length) { $('recent').innerHTML = '<li class="empty">' + (q ? 'مالقيتش حاجة.' : 'مافيش عمليات في الشهر ده.') + '</li>'; return; }
+  if (!list.length) { $('recent').innerHTML = '<li class="empty">' + (photoOnly ? 'مافيش عمليات ليها صور.' : q ? 'مالقيتش حاجة.' : 'مافيش عمليات في الشهر ده.') + '</li>'; return; }
   var html = '', last = null;
   list.forEach(function (t) {
-    if (t.date !== last) { html += '<li class="day" aria-hidden="true">' + dShort(t.date) + (q ? '/' + t.date.slice(0, 4) : '') + '</li>'; last = t.date; }
+    if (t.date !== last) { html += '<li class="day" aria-hidden="true">' + dShort(t.date) + (wide ? '/' + t.date.slice(0, 4) : '') + '</li>'; last = t.date; }
     html += '<li><button class="rowbtn" data-id="' + t.id + '"><span class="what"><b>' + esc(t.item) + (t.photo ? ' 📎' : '') + '</b><small>' + esc(t.wallet) +
       (t.note ? '، ' + esc(t.note) : '') + (t.usd ? '، ≈ ' + fmt(t.amount) + ' ج' : '') + '</small></span><span class="amt ' + (t.type === 'دخل' ? 'in">+' : 'out">−') +
       (t.usd ? fmtU(t.usd) + '$' : fmt(t.amount)) + '</span></button></li>';
@@ -942,9 +995,13 @@ function renderRecent() {
 // ----- الفلوس -----
 function renderMoney() {
   var db = debtBalances(), ps = Object.keys(db).filter(function (p) { return db[p] !== 0; });
-  $('debts').innerHTML = ps.length ? ps.map(function (p) {
-    return '<li><span class="what"><b>' + esc(p) + '</b><small>' + (db[p] > 0 ? 'عليه ليك' : 'إنت عليك ليه') + '</small></span><span class="amt ' + (db[p] > 0 ? 'in' : 'out') + '">' + fmt(Math.abs(db[p])) + '</span></li>';
-  }).join('') : '<li class="empty">مافيش سلف مفتوحة. سجّل سلفة من «تسجيل» ← سلفة.</li>';
+  var allP = people();
+  $('debts').innerHTML = allP.length ? allP.map(function (p) {
+    var n = db[p] || 0, hasPh = S.debts.some(function (d) { return d.person === p && d.photo; });
+    return '<li><button class="rowbtn" data-p="' + esc(p) + '"><span class="what"><b>' + esc(p) + (hasPh ? ' 📎' : '') + '</b><small>' + (n > 0 ? 'عليه ليك' : n < 0 ? 'إنت عليك ليه' : 'خالصين ✓') + '</small></span><span class="amt ' + (n > 0 ? 'in' : n < 0 ? 'out' : '') + '">' + fmt(Math.abs(n)) + '</span></button></li>';
+  }).join('') : '<li class="empty">مافيش سلف. سجّل سلفة من «تسجيل» ← سلفة.</li>';
+  $('debtsHint').hidden = !allP.length;
+  $('debts').querySelectorAll('.rowbtn').forEach(function (b) { b.onclick = function () { openPerson(b.dataset.p); }; });
   var st = monthStats(curYM()), names = Object.keys(S.budgets);
   $('budgets').innerHTML = names.length ? names.map(function (n) {
     var s = spentOn(n, st), b = S.budgets[n], p = Math.round(s * 100 / b);
@@ -1110,11 +1167,11 @@ function openSheet(id) {
   $('eAmountLbl').textContent = t.usd ? 'المبلغ بالدولار' : 'المبلغ';
   $('eAmount').value = t.usd || t.amount; $('eItem').value = t.item; $('eDate').value = t.date; $('eNote').value = t.note || '';
   $('eWallet').innerHTML = walletOpts(t.wallet); $('eErr').textContent = '';
-  $('ePhoto').hidden = true;
+  $('ePhoto').hidden = true; $('eGone').hidden = !t.photoGone;
   if (t.photo) dbGet('photos', t.photo).then(function (p) { if (p && editing === t) { $('ePhoto').src = p; $('ePhoto').hidden = false; } });
   $('scrim').classList.add('on'); $('sheet').classList.add('on');
 }
-function closeSheets() { $('scrim').classList.remove('on'); $('sheet').classList.remove('on'); $('rSheet').classList.remove('on'); editing = null; remEditing = null; }
+function closeSheets() { $('scrim').classList.remove('on'); ['sheet', 'rSheet', 'pSheet'].forEach(function (id) { $(id).classList.remove('on'); }); editing = null; remEditing = null; }
 function saveEdit() {
   var t = editing; if (!t) return;
   var a = num($('eAmount'));
@@ -1133,7 +1190,143 @@ function deleteTx() {
   closeSheets();
   commit('اتمسحت', function () { S.tx.push(copy); commit('رجعت ✓'); });
 }
-document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSheets(); });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if ($('viewer').classList.contains('on')) closeViewer(); else closeSheets(); } });
+
+// ---------- فلتر الصور ----------
+function togglePhotoFilter() {
+  photoOnly = !photoOnly;
+  $('photoFilter').setAttribute('aria-pressed', photoOnly);
+  renderRecent();
+}
+
+// ---------- سجل شخص في السلف ----------
+function openPerson(p) {
+  var rows = S.debts.filter(function (d) { return d.person === p; }).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.id - a.id; });
+  var n = debtBalances()[p] || 0;
+  $('pTitle').textContent = '🤝 ' + p;
+  $('pSub').textContent = n > 0 ? 'عليه ليك ' + fmt(n) : n < 0 ? 'إنت عليك ليه ' + fmt(-n) : 'خالصين ✓';
+  $('pList').innerHTML = rows.map(function (d) {
+    return '<li><span class="what"><b>' + esc(d.kind) + '</b><small>' + dShort(d.date) + '/' + d.date.slice(0, 4) + '، ' + esc(d.wallet || '') + (d.photoGone ? '، الصورة اتمسحت' : '') + '</small></span>' +
+      '<span class="amt">' + fmt(d.amount) + '</span>' +
+      (d.photo ? '<button class="ghost" style="padding:6px 10px;font-size:13px" data-ph="' + d.id + '">📎 الصورة</button>' : '') +
+      '<button class="ghost danger" style="padding:6px 10px;font-size:13px" data-del="' + d.id + '" aria-label="امسح">✕</button></li>';
+  }).join('');
+  $('pList').querySelectorAll('[data-ph]').forEach(function (b) {
+    b.onclick = function () { var d = S.debts.filter(function (x) { return x.id === +b.dataset.ph; })[0]; dbGet('photos', d.photo).then(function (src) { if (src) openViewer(src, d.kind + ' ' + p + ' ' + fmt(d.amount)); else toast('الصورة مش موجودة'); }); };
+  });
+  $('pList').querySelectorAll('[data-del]').forEach(function (b) {
+    b.onclick = function () {
+      if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'متأكد؟'; setTimeout(function () { b.dataset.sure = ''; b.textContent = '✕'; }, 3000); return; }
+      var id = +b.dataset.del, d = S.debts.filter(function (x) { return x.id === id; })[0];
+      S.debts = S.debts.filter(function (x) { return x.id !== id; });
+      if (d.photo) dbDel('photos', d.photo);
+      commit('اتمسحت الحركة').then(function () { if (people().indexOf(p) >= 0) openPerson(p); else closeSheets(); });
+    };
+  });
+  $('scrim').classList.add('on'); $('pSheet').classList.add('on');
+}
+
+// ---------- عرض الصورة شاشة كاملة (تقريب بصباعين) ----------
+var vz = { s: 1, x: 0, y: 0 }, vPts = {}, vStart = null, vLastTap = 0;
+function vApply() { $('vImg').style.transform = 'translate(' + vz.x + 'px,' + vz.y + 'px) scale(' + vz.s + ')'; }
+function openViewer(src, caption) {
+  vz = { s: 1, x: 0, y: 0 }; vApply();
+  $('vImg').src = src; $('vSave').href = src;
+  $('vSave').download = 'hesabaty-' + todayKey() + '.jpg';
+  $('vCap').textContent = (caption ? caption + ' — ' : '') + 'قرّب بصباعين، أو دوس مرتين';
+  $('vShare').hidden = !(navigator.share && navigator.canShare);
+  $('viewer').classList.add('on');
+}
+function closeViewer() { $('viewer').classList.remove('on'); vPts = {}; }
+function sharePhoto() {
+  fetch($('vImg').src).then(function (r) { return r.blob(); }).then(function (b) {
+    var f = new File([b], 'hesabaty-photo.jpg', { type: 'image/jpeg' });
+    if (navigator.canShare && navigator.canShare({ files: [f] })) return navigator.share({ files: [f], title: 'حساباتي' });
+    toast('المشاركة مش متاحة هنا، استخدم «حفظ»');
+  }).catch(function () {});
+}
+(function () {
+  var st = $('vStage');
+  function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+  st.addEventListener('pointerdown', function (e) {
+    st.setPointerCapture(e.pointerId);
+    vPts[e.pointerId] = { x: e.clientX, y: e.clientY };
+    var ids = Object.keys(vPts);
+    if (ids.length === 1) {
+      var now = Date.now();
+      if (now - vLastTap < 300) { vz = vz.s > 1 ? { s: 1, x: 0, y: 0 } : { s: 2.5, x: 0, y: 0 }; vApply(); vLastTap = 0; return; }
+      vLastTap = now;
+    }
+    vStart = { z: { s: vz.s, x: vz.x, y: vz.y }, pts: JSON.parse(JSON.stringify(vPts)) };
+  });
+  st.addEventListener('pointermove', function (e) {
+    if (!vPts[e.pointerId] || !vStart) return;
+    vPts[e.pointerId] = { x: e.clientX, y: e.clientY };
+    var ids = Object.keys(vPts);
+    if (ids.length >= 2 && vStart.pts[ids[0]] && vStart.pts[ids[1]]) {
+      var d0 = dist(vStart.pts[ids[0]], vStart.pts[ids[1]]), d1 = dist(vPts[ids[0]], vPts[ids[1]]);
+      vz.s = Math.max(1, Math.min(6, vStart.z.s * d1 / (d0 || 1)));
+    } else if (ids.length === 1 && vz.s > 1 && vStart.pts[ids[0]]) {
+      vz.x = vStart.z.x + (vPts[ids[0]].x - vStart.pts[ids[0]].x);
+      vz.y = vStart.z.y + (vPts[ids[0]].y - vStart.pts[ids[0]].y);
+    }
+    if (vz.s === 1) { vz.x = 0; vz.y = 0; }
+    vApply();
+  });
+  function up(e) { delete vPts[e.pointerId]; vStart = Object.keys(vPts).length ? { z: { s: vz.s, x: vz.x, y: vz.y }, pts: JSON.parse(JSON.stringify(vPts)) } : null; }
+  st.addEventListener('pointerup', up); st.addEventListener('pointercancel', up);
+  st.addEventListener('wheel', function (e) { e.preventDefault(); vz.s = Math.max(1, Math.min(6, vz.s * (e.deltaY < 0 ? 1.15 : .87))); if (vz.s === 1) { vz.x = 0; vz.y = 0; } vApply(); }, { passive: false });
+})();
+
+// ---------- تفريغ المساحة ----------
+function cleanCutoff() {
+  var n = parseInt($('cleanN').value, 10) || 0, d = new Date();
+  if ($('cleanUnit').value === 'w') d.setDate(d.getDate() - n * 7); else d.setMonth(d.getMonth() - n);
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+}
+function photoTargets() {
+  var cut = cleanCutoff(), out = [];
+  S.tx.forEach(function (t) { if (t.photo && t.date < cut) out.push(t); });
+  S.debts.forEach(function (d) { if (d.photo && d.date < cut) out.push(d); });
+  return out;
+}
+function photoSizes() {
+  return dbAll('photos').then(function (ph) {
+    var used = {}, sizes = {}, total = 0, orphan = [];
+    S.tx.concat(S.debts).forEach(function (x) { if (x.photo) used[x.photo] = 1; });
+    Object.keys(ph).forEach(function (k) { var s = Math.round(String(ph[k]).length * .75); sizes[k] = s; total += s; if (!used[k]) orphan.push(k); });
+    return { sizes: sizes, total: total, count: Object.keys(ph).length, orphan: orphan };
+  });
+}
+function nPh(n) { return n === 1 ? 'صورة واحدة' : n === 2 ? 'صورتين' : n <= 10 ? n + ' صور' : n + ' صورة'; }
+function mb(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' ميجا' : Math.max(1, Math.round(b / 1024)) + ' كيلو'; }
+function renderSpace() {
+  photoSizes().then(function (z) {
+    $('spaceNow').textContent = z.count ? 'الصور واخدة ' + mb(z.total) + ' (' + nPh(z.count) + ') من مساحة الموبايل.' : 'مافيش صور متخزنة دلوقتي.';
+    previewClean(z);
+  });
+}
+function previewClean(z) {
+  if (!z || !z.sizes) return photoSizes().then(previewClean);
+  var list = photoTargets(), size = 0;
+  list.forEach(function (x) { size += z.sizes[x.photo] || 0; });
+  z.orphan.forEach(function (k) { size += z.sizes[k] || 0; });
+  var n = list.length + z.orphan.length;
+  $('cleanPreview').textContent = n ? 'هيتمسح ' + nPh(n) + ' وهتوفّر حوالي ' + mb(size) + '.' : 'مافيش صور أقدم من كده.';
+  $('cleanBtn').disabled = !n;
+}
+function cleanPhotos() {
+  photoSizes().then(function (z) {
+    var list = photoTargets(), n = list.length + z.orphan.length;
+    if (!n) return toast('مافيش صور تتمسح');
+    var unit = $('cleanUnit').value === 'w' ? 'أسبوع' : 'شهر';
+    if (!confirm('هتمسح ' + nPh(n) + ' أقدم من ' + $('cleanN').value + ' ' + unit + ' من الموبايل. العمليات نفسها هتفضل، بس الصور مش هترجع. متأكد؟')) return;
+    var dels = z.orphan.slice();
+    list.forEach(function (x) { dels.push(x.photo); x.photo = ''; x.photoGone = true; });
+    return dels.reduce(function (p, k) { return p.then(function () { return dbDel('photos', k); }); }, Promise.resolve())
+      .then(function () { return commit('اتمسح ' + nPh(n) + ' ✓'); }).then(renderSpace);
+  });
+}
 
 // ---------- الميزانية والمحافظ والدولار ----------
 function saveBudget() {
