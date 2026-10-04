@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>حساباتي</title>
+<meta name="description" content="حساباتك الشخصية: الدخل والصرف والسلف والمحافظ، على موبايلك.">
+<meta name="theme-color" content="#1e6b57">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef2ef; --surface: #ffffff; --surface-2: #f4f7f5; --line: #dbe3df;
+    --ink: #13302a; --muted: #5f7670; --faint: #93a6a1;
+    --note: #1e6b57; --note-ink: #f2fbf7; --gold: #c9a227;
+    --out: #b4234a; --in: #1e7a4f; --debt: #3c6fb4;
+    --pill: #ffffff; --focus: #1e6b57;
+    --shadow: 0 1px 0 rgba(19,48,42,.04), 0 12px 30px -16px rgba(19,48,42,.4);
+    --ease: cubic-bezier(.2,.8,.2,1);
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b1615; --surface: #12211f; --surface-2: #172a27; --line: #223834;
+    --ink: #e4eeeb; --muted: #94aba5; --faint: #5f7a74;
+    --note: #164a3e; --note-ink: #eaf7f1; --gold: #e2c15a;
+    --out: #ff7d95; --in: #5fd6a2; --debt: #8ab4ff;
+    --pill: #23423c; --focus: #5fd6a2;
+    --shadow: 0 12px 32px -16px rgba(0,0,0,.75);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: 'Readex Pro', Tahoma, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.55;
+    font-variant-numeric: tabular-nums; padding-bottom: calc(92px + env(safe-area-inset-bottom));
+    transition: background .3s, color .3s;
+  }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 0 16px; }
+
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 14px 0 10px; }
+  .brand { font-weight: 600; font-size: 17px; }
+  .month { color: var(--muted); font-size: 13px; margin-inline-start: 10px; font-weight: 400; }
+  .icon-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; transition: transform .2s var(--ease); }
+  .icon-btn:active { transform: scale(.92); }
+  .icon-btn svg { width: 20px; height: 20px; }
+
+  /* الكارت زي البنكنوت */
+  .note { position: relative; overflow: hidden; border-radius: 24px; background: var(--note); color: var(--note-ink); padding: 20px 20px 18px; box-shadow: var(--shadow); isolation: isolate; }
+  .note svg.guilloche { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; color: var(--gold); opacity: .5; }
+  .note .seal { position: absolute; inset-inline-end: -26px; top: -26px; width: 130px; height: 130px; z-index: -1; color: var(--gold); opacity: .55; animation: spin 90s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .note .lbl { font-size: 13px; opacity: .85; }
+  .note .big { font-size: 46px; font-weight: 600; line-height: 1.1; letter-spacing: -1px; margin: 2px 0 14px; }
+  .note .big small { font-size: 16px; font-weight: 400; opacity: .75; margin-inline-start: 6px; letter-spacing: 0; }
+  .note .row { display: flex; gap: 28px; font-size: 13px; }
+  .note .row b { display: block; font-size: 17px; font-weight: 500; }
+  .note .alert { margin-top: 12px; font-size: 13px; background: rgba(0,0,0,.2); border-radius: 10px; padding: 6px 10px; }
+
+  /* تذكيرات مستحقة */
+  .dues { display: grid; gap: 8px; margin-top: 12px; }
+  .due { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--gold); border-radius: 16px; padding: 10px 12px; animation: rise .35s var(--ease) both; }
+  .due .t { flex: 1; min-width: 0; font-size: 14px; }
+  .due .t small { display: block; color: var(--muted); font-size: 12px; }
+  .due button { border: 0; border-radius: 10px; padding: 8px 10px; font-size: 13px; }
+  .due .pay { background: var(--ink); color: var(--bg); }
+  .due .skip { background: transparent; color: var(--muted); }
+
+  h2 { font-size: 17px; font-weight: 600; margin: 24px 0 10px; }
+  h3.sub { font-size: 15px; font-weight: 500; margin: 0 0 4px; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
+  .panel + .panel { margin-top: 12px; }
+  .hint { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
+
+  /* سويتش متحرك */
+  .seg { position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); background: var(--surface-2); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
+  .seg .pill { position: absolute; top: 4px; bottom: 4px; inset-inline-start: 4px; width: calc((100% - 8px) / var(--n)); border-radius: 10px; background: var(--pill);
+    box-shadow: 0 1px 3px rgba(0,0,0,.12); transform: translateX(calc(var(--i) * -100%)); transition: transform .32s var(--ease); }
+  .seg button { position: relative; z-index: 1; border: 0; background: transparent; border-radius: 10px; padding: 10px 4px; font-weight: 500; color: var(--muted); font-size: 14px; transition: color .25s; }
+  .seg button[aria-pressed="true"] { color: var(--ink); }
+  .seg button.out[aria-pressed="true"] { color: var(--out); }
+  .seg button.in[aria-pressed="true"] { color: var(--in); }
+  .seg button.debt[aria-pressed="true"] { color: var(--debt); }
+  .seg.small button { padding: 8px 2px; font-size: 13px; }
+
+  .amount { display: flex; align-items: baseline; justify-content: center; gap: 8px; margin: 18px 0 6px; }
+  .amount input { width: 4ch; min-width: 2ch; max-width: 100%; field-sizing: content; text-align: center; border: 0; background: transparent; font-size: 48px; font-weight: 600; letter-spacing: -1px; padding: 0; }
+  .amount input::placeholder { color: var(--faint); }
+  .amount input:focus { outline: none; }
+  .amount span { color: var(--muted); font-size: 15px; }
+  .cur { border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); border-radius: 10px; padding: 4px 10px; font-size: 15px; transition: transform .15s var(--ease), color .2s, border-color .2s; }
+  .cur:active { transform: scale(.92); }
+  .cur.usd { color: var(--debt); border-color: var(--debt); }
+  .conv { text-align: center; color: var(--muted); font-size: 13px; min-height: 18px; margin-bottom: 2px; }
+  .tiles { display: grid; grid-template-columns: repeat(var(--n, 3), 1fr); gap: 8px; margin-top: 12px; }
+  .tile { all: unset; box-sizing: border-box; cursor: pointer; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px;
+    display: grid; gap: 2px; min-width: 0; animation: rise .35s var(--ease) both; transition: transform .15s var(--ease), border-color .2s; }
+  .tile:nth-child(2) { animation-delay: .05s; } .tile:nth-child(3) { animation-delay: .1s; }
+  .tile:active { transform: scale(.97); }
+  .tile:focus-visible { outline: 2px solid var(--focus); }
+  .tile .k { font-size: 12px; color: var(--muted); }
+  .tile .v { font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; direction: ltr; unicode-bidi: isolate; text-align: end; }
+  .tile .s { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tile .s b { font-weight: 500; }
+  .tile .in { color: var(--in); } .tile .out { color: var(--out); }
+  .amount-line { height: 2px; background: var(--line); border-radius: 2px; margin: 0 auto 6px; max-width: 260px; transition: background .25s; }
+  .amount:focus-within + .amount-line { background: var(--focus); }
+
+  label.f { display: block; font-size: 13px; color: var(--muted); margin: 14px 0 6px; }
+  .field { width: 100%; padding: 12px 14px; border: 1px solid var(--line); background: var(--surface-2); border-radius: 12px; font-size: 16px; transition: border-color .2s; }
+  .field:focus { outline: none; border-color: var(--focus); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: 14px; transition: transform .15s var(--ease), border-color .2s, color .2s, background .2s; }
+  .chip:active { transform: scale(.94); }
+  .chip[aria-pressed="true"] { border-color: var(--focus); color: var(--focus); background: var(--surface-2); }
+  .sugg { border: 1px solid var(--line); border-radius: 12px; margin-top: 6px; overflow: hidden; background: var(--surface); animation: rise .2s var(--ease); }
+  .sugg button { display: block; width: 100%; text-align: start; border: 0; border-bottom: 1px solid var(--line); background: transparent; padding: 10px 14px; }
+  .sugg button:last-child { border-bottom: 0; }
+
+  .reveal { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .32s var(--ease), opacity .25s; }
+  .reveal > div { overflow: hidden; }
+  .reveal.closed { grid-template-rows: 0fr; opacity: 0; }
+
+  details.more { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 12px; }
+  details.more summary { cursor: pointer; color: var(--muted); font-size: 14px; list-style: none; display: flex; align-items: center; gap: 8px; }
+  details.more summary::-webkit-details-marker { display: none; }
+  details.more summary::before { content: '+'; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 6px; border: 1px solid var(--line); font-size: 14px; line-height: 1; transition: transform .25s var(--ease); }
+  details.more[open] summary::before { transform: rotate(45deg); }
+  details.more[open] > div { animation: rise .3s var(--ease); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .attach { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .attach label { display: inline-flex; align-items: center; gap: 8px; border: 1px dashed var(--faint); border-radius: 12px; padding: 10px 14px; color: var(--muted); font-size: 14px; cursor: pointer; }
+  .attach img { width: 44px; height: 44px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); animation: pop .3s var(--ease); }
+  .attach .x { border: 0; background: none; color: var(--out); font-size: 13px; }
+
+  .primary { width: 100%; margin-top: 16px; padding: 15px; border: 0; border-radius: 14px; background: var(--ink); color: var(--bg); font-size: 17px; font-weight: 600;
+    transition: transform .15s var(--ease), background .3s, opacity .2s; }
+  .primary:active { transform: scale(.98); }
+  .primary:disabled { opacity: .6; }
+  .primary.done { background: var(--in); color: #fff; }
+  .ghost { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 14px; transition: transform .15s var(--ease); }
+  .ghost:active { transform: scale(.97); }
+  .danger { color: var(--out); }
+
+  .ask { margin-top: 12px; border: 1px solid var(--gold); border-radius: 14px; padding: 12px 14px; background: var(--surface-2); animation: rise .25s var(--ease); }
+  .ask .btns { display: flex; gap: 8px; margin-top: 10px; }
+  .ask .btns button { flex: 1; }
+  .ask .yes { background: var(--ink); color: var(--bg); border: 0; border-radius: 12px; padding: 10px; }
+  .err { color: var(--out); font-size: 14px; min-height: 20px; margin-top: 8px; }
+
+  .toast { position: fixed; inset-inline: 16px; bottom: calc(92px + env(safe-area-inset-bottom)); max-width: 448px; margin: 0 auto;
+    background: var(--ink); color: var(--bg); border-radius: 16px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start;
+    transform: translateY(24px) scale(.98); opacity: 0; pointer-events: none; transition: transform .35s var(--ease), opacity .25s; z-index: 30; }
+  .toast.show { transform: none; opacity: 1; pointer-events: auto; }
+  .toast .t { flex: 1; font-size: 14px; }
+  .toast .t small { display: block; opacity: .8; margin-top: 2px; }
+  .toast button { border: 1px solid currentColor; background: transparent; color: inherit; border-radius: 10px; padding: 6px 10px; font-size: 13px; }
+
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { display: flex; align-items: center; gap: 12px; padding: 12px 2px; border-bottom: 1px solid var(--line); }
+  .list li:last-child { border-bottom: 0; }
+  .list .what { flex: 1; min-width: 0; }
+  .list .what b { font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .list .what small { color: var(--muted); font-size: 12px; }
+  .list .amt { font-weight: 600; white-space: nowrap; direction: ltr; unicode-bidi: isolate; }
+  .amt.out { color: var(--out); } .amt.in { color: var(--in); }
+  .rowbtn { all: unset; display: flex; align-items: center; gap: 12px; width: 100%; cursor: pointer; border-radius: 10px; transition: background .2s; }
+  .rowbtn:active { background: var(--surface-2); }
+  .rowbtn:focus-visible { outline: 2px solid var(--focus); }
+  .list li.day { font-size: 12px; color: var(--muted); padding: 16px 2px 4px; border-bottom: 0; }
+
+  .donut { display: grid; grid-template-columns: 140px 1fr; gap: 16px; align-items: center; }
+  .donut svg { width: 140px; height: 140px; }
+  .donut circle.seg-arc { transition: stroke-dasharray .8s var(--ease), stroke-dashoffset .8s var(--ease); }
+  .legend { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  .legend li { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .legend span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .bar { height: 8px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; margin-top: 6px; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--in); border-radius: 8px; transition: width .8s var(--ease); }
+  .bar i.warn { background: var(--gold); } .bar i.over { background: var(--out); }
+
+  /* سويتش تشغيل/إيقاف */
+  .sw { position: relative; width: 46px; height: 28px; flex: none; }
+  .sw input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+  .sw span { position: absolute; inset: 0; border-radius: 28px; background: var(--line); transition: background .25s; }
+  .sw span::after { content: ''; position: absolute; top: 3px; inset-inline-start: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .28s var(--ease); }
+  .sw input:checked + span { background: var(--in); }
+  .sw input:checked + span::after { transform: translateX(-18px); }
+  .sw input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .setrow { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .setrow:last-child { border-bottom: 0; }
+  .setrow .what { flex: 1; }
+  .setrow .what small { display: block; color: var(--muted); font-size: 12px; }
+  .setrow select.field { width: auto; padding: 8px 10px; font-size: 14px; }
+
+  nav.tabs { position: fixed; bottom: 0; inset-inline: 0; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line); padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); z-index: 20; }
+  nav.tabs .in { position: relative; max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+  nav.tabs .mark { position: absolute; top: -7px; inset-inline-start: 0; width: 25%; height: 3px; display: flex; justify-content: center; transform: translateX(calc(var(--i, 0) * -100%)); transition: transform .35s var(--ease); }
+  nav.tabs .mark::after { content: ''; width: 28px; height: 3px; border-radius: 0 0 3px 3px; background: var(--ink); }
+  nav.tabs button { border: 0; background: none; display: grid; justify-items: center; gap: 2px; padding: 6px 0; color: var(--faint); font-size: 12px; transition: color .25s; }
+  nav.tabs button svg { width: 22px; height: 22px; transition: transform .25s var(--ease); }
+  nav.tabs button[aria-selected="true"] { color: var(--ink); font-weight: 500; }
+  nav.tabs button[aria-selected="true"] svg { transform: translateY(-2px); }
+  .view { display: none; }
+  .view.on { display: block; animation: viewIn .35s var(--ease); }
+  @keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+
+  .scrim { position: fixed; inset: 0; background: rgba(0,0,0,.38); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 40; }
+  .scrim.on { opacity: 1; pointer-events: auto; }
+  .sheet { position: fixed; inset-inline: 0; bottom: 0; z-index: 41; background: var(--surface); border-radius: 22px 22px 0 0; max-height: 88vh; overflow: auto;
+    padding: 10px 16px calc(18px + env(safe-area-inset-bottom)); max-width: 480px; margin: 0 auto;
+    transform: translateY(105%); visibility: hidden; transition: transform .35s var(--ease), visibility .35s; }
+  .sheet.on { transform: none; visibility: visible; }
+  .sheet .grab { width: 40px; height: 4px; border-radius: 4px; background: var(--line); margin: 0 auto 10px; }
+  .sheet h3 { margin: 0 0 2px; font-size: 17px; font-weight: 600; }
+  .sheet .acts { display: flex; gap: 10px; margin-top: 16px; }
+  .sheet .acts .primary { margin: 0; flex: 2; }
+  .sheet .acts .ghost { flex: 1; }
+
+  .empty { color: var(--muted); font-size: 14px; }
+  .loading .note .big, .loading .note .row b { color: transparent; background: rgba(255,255,255,.15); border-radius: 8px; animation: shimmer 1.2s infinite; }
+  @keyframes shimmer { 50% { opacity: .5; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+  .banner { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--gold); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; font-size: 14px; animation: rise .3s var(--ease); }
+  .banner button { margin-inline-start: auto; border: 0; background: var(--ink); color: var(--bg); border-radius: 10px; padding: 8px 12px; font-size: 13px; }
+  .monthnav { display: flex; align-items: center; justify-content: space-between; margin-top: 24px; }
+  .monthnav .icon-btn { font-size: 22px; line-height: 1; }
+  .row3 { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; }
+  .row3 small { display: block; color: var(--muted); font-size: 12px; }
+  .row3 b { font-size: 18px; font-weight: 600; }
+  .row3 .in { color: var(--in); } .row3 .out { color: var(--out); }
+  label.ghost { display: block; }
+  input[type=date].field { min-height: 46px; }
+</style>
+
+</head>
+<body class="loading">
+<div class="wrap">
+  <header class="top">
+    <div class="brand">حساباتي<span class="month" id="month"></span></div>
+    <div style="display:flex;gap:8px">
+      <button class="icon-btn" id="syncBtn" aria-label="النسخة الاحتياطية" onclick="go('v-set'); setTimeout(function(){ $('backupBox').scrollIntoView({behavior:'smooth'}); }, 200)"></button>
+      <button class="icon-btn" id="themeBtn" aria-label="تغيير الشكل" onclick="cycleTheme()"></button>
+    </div>
+  </header>
+
+  <div class="banner" id="banner" hidden></div>
+
+  <section class="note" aria-live="polite">
+    <svg class="guilloche" id="guilloche" viewBox="0 0 400 220" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <svg class="seal" id="seal" viewBox="0 0 100 100" aria-hidden="true"></svg>
+    <div class="lbl">فاضلك الشهر ده</div>
+    <div class="big"><span id="remain">0</span><small>ج.م</small></div>
+    <div class="row">
+      <div>دخل<b id="inc">0</b></div>
+      <div>صرف<b id="out">0</b></div>
+    </div>
+    <div class="alert" id="noteAlert" hidden></div>
+  </section>
+  <div class="tiles" id="tiles"></div>
+  <div class="dues" id="dues"></div>
+
+  <!-- تسجيل -->
+  <main class="view on" id="v-add">
+    <h2 id="addTitle">سجّل عملية</h2>
+    <div class="panel">
+      <div class="seg" id="typeSeg" style="--n:3;--i:0" role="group" aria-label="نوع العملية">
+        <span class="pill" aria-hidden="true"></span>
+        <button class="out" aria-pressed="true" data-v="صرف">صرف</button>
+        <button class="in" aria-pressed="false" data-v="دخل">دخل</button>
+        <button class="debt" aria-pressed="false" data-v="سلفة">سلفة</button>
+      </div>
+      <div class="reveal closed" id="debtBox"><div>
+        <div class="seg small" id="kindSeg" style="--n:4;--i:0;margin-top:12px" role="group" aria-label="نوع السلفة">
+          <span class="pill" aria-hidden="true"></span>
+          <button aria-pressed="true" data-v="سلّفت">سلّفت حد</button>
+          <button aria-pressed="false" data-v="استلفت">استلفت</button>
+          <button aria-pressed="false" data-v="رجّعلي">رجّعلي</button>
+          <button aria-pressed="false" data-v="رجّعتله">رجّعتله</button>
+        </div>
+      </div></div>
+
+      <div class="amount">
+        <input id="amount" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="المبلغ" oninput="cleanAmount(this); showConv()">
+        <button class="cur" id="curBtn" type="button" onclick="toggleCur()" aria-label="العملة">ج.م</button>
+      </div>
+      <div class="amount-line"></div>
+      <div class="conv" id="conv"></div>
+
+      <div id="itemBox">
+        <label class="f" for="item" id="itemLabel">اتصرف في إيه</label>
+        <input class="field" id="item" autocomplete="off" placeholder="اكتب أو اختار من تحت" oninput="onItemInput()">
+        <div id="sugg" class="sugg" hidden></div>
+        <div id="chips" class="chips"></div>
+      </div>
+      <div id="personBox" hidden>
+        <label class="f" for="person">الشخص</label>
+        <input class="field" id="person" autocomplete="off" placeholder="اسمه">
+        <div id="peopleChips" class="chips"></div>
+      </div>
+
+      <div id="walletAsk" hidden>
+        <label class="f">من أنهي محفظة؟</label>
+        <div class="chips" id="walletChips"></div>
+      </div>
+
+      <details class="more">
+        <summary id="moreLbl">التاريخ، ملاحظة، صورة، محفظة</summary>
+        <div>
+          <div class="two">
+            <div><label class="f" for="date">التاريخ</label><input class="field" id="date" type="date"></div>
+            <div id="walletPick"><label class="f" for="wallet">المحفظة</label><select class="field" id="wallet"></select></div>
+          </div>
+          <label class="f" for="note">ملاحظة</label><input class="field" id="note" autocomplete="off">
+          <div class="attach">
+            <label><input type="file" id="file" accept="image/*" hidden onchange="pickFile(this)">📎 ضيف صورة أو فاتورة</label>
+            <img id="thumb" alt="الصورة المختارة" hidden><button class="x" id="clearFile" hidden onclick="clearFile()">شيل</button>
+          </div>
+        </div>
+      </details>
+
+      <div id="ask" class="ask" hidden></div>
+      <div class="err" id="err"></div>
+      <button class="primary" id="save" onclick="trySave()">سجّل</button>
+    </div>
+  </main>
+
+  <!-- العمليات -->
+  <main class="view" id="v-list">
+    <div class="monthnav">
+      <button class="icon-btn" onclick="shiftMonth(-1)" aria-label="الشهر اللي فات">›</button>
+      <h2 id="listMonth" style="margin:0"></h2>
+      <button class="icon-btn" onclick="shiftMonth(1)" aria-label="الشهر الجاي">‹</button>
+    </div>
+    <div class="panel" id="monthSum" style="margin-top:12px"></div>
+    <div class="panel" id="donutBox" style="margin-top:12px"></div>
+    <h2>العمليات</h2>
+    <input class="field" id="search" placeholder="🔎 دوّر على بند أو ملاحظة" oninput="renderRecent()" autocomplete="off">
+    <ul class="list" id="recent" style="margin-top:6px"></ul>
+  </main>
+
+  <!-- الفلوس -->
+  <main class="view" id="v-money">
+    <h2>السلف</h2>
+    <div class="panel"><ul class="list" id="debts"></ul></div>
+
+    <h2>الميزانية</h2>
+    <div class="panel">
+      <ul class="list" id="budgets"></ul>
+      <div class="two" style="margin-top:12px">
+        <input class="field" id="bItem" placeholder="البند" autocomplete="off" aria-label="البند">
+        <input class="field" id="bAmount" placeholder="المبلغ في الشهر" inputmode="decimal" autocomplete="off" aria-label="الميزانية" oninput="cleanAmount(this)">
+      </div>
+      <button class="ghost" style="width:100%;margin-top:10px" onclick="saveBudget()">حط الميزانية</button>
+      <p class="hint" style="margin-top:8px">عشان تشيل ميزانية، حط المبلغ صفر.</p>
+    </div>
+
+    <h2>المحافظ</h2>
+    <div class="panel">
+      <ul class="list" id="wallets"></ul>
+      <label class="f">حوّل بين المحافظ</label>
+      <div class="two">
+        <select class="field" id="trFrom" aria-label="من"></select>
+        <select class="field" id="trTo" aria-label="إلى"></select>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <input class="field" id="trAmount" placeholder="المبلغ" inputmode="decimal" autocomplete="off" aria-label="مبلغ التحويل" oninput="cleanAmount(this)">
+        <button class="ghost" onclick="doTransfer()">حوّل</button>
+      </div>
+    </div>
+
+    <h2>تصريف دولار</h2>
+    <div class="panel">
+      <div class="seg small" id="exSeg" style="--n:2;--i:0" role="group" aria-label="نوع التصريف">
+        <span class="pill" aria-hidden="true"></span>
+        <button aria-pressed="true" data-v="sell">بعت دولار</button>
+        <button aria-pressed="false" data-v="buy">اشتريت دولار</button>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <div><label class="f" for="exUsd">بالدولار</label><input class="field" id="exUsd" inputmode="decimal" autocomplete="off" placeholder="$" oninput="cleanAmount(this); exHint()"></div>
+        <div><label class="f" for="exEgp">بالجنيه</label><input class="field" id="exEgp" inputmode="decimal" autocomplete="off" oninput="cleanAmount(this)"></div>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <select class="field" id="exWallet" aria-label="محفظة الجنيه"></select>
+        <button class="ghost" onclick="doExchange()">سجّل التصريف</button>
+      </div>
+      <p class="hint" style="margin-top:8px" id="exHintTxt"></p>
+    </div>
+  </main>
+
+  <!-- الإعدادات -->
+  <main class="view" id="v-set">
+    <h2>النسخة الاحتياطية</h2>
+    <div class="panel" id="backupBox">
+      <p class="hint" id="backupState"></p>
+      <button class="primary" id="driveBtn" style="margin-top:10px" onclick="driveBackup(true)">اربط Google Drive</button>
+      <div class="two" style="margin-top:10px">
+        <button class="ghost" onclick="driveRestore()">رجّع من Drive</button>
+        <button class="ghost" onclick="exportCsv()">نزّل إكسيل</button>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <button class="ghost" onclick="downloadBackup()">نزّل نسخة ملف</button>
+        <label class="ghost" style="text-align:center;cursor:pointer">رجّع من ملف<input type="file" accept=".json,application/json" hidden onchange="restoreFile(this)"></label>
+      </div>
+    </div>
+
+    <h2>التذكيرات</h2>
+    <div class="panel">
+      <p class="hint">أقساط وفواتير ومواعيد. لما ييجي ميعادها تظهر فوق، ولو سمحت بالإشعارات بيوصلك إشعار لما تفتح التطبيق.</p>
+      <ul class="list" id="reminders"></ul>
+      <button class="ghost" style="width:100%;margin-top:10px" onclick="openReminder()">+ تذكير جديد</button>
+      <button class="ghost" id="notifBtn" style="width:100%;margin-top:8px" onclick="askNotify()">اسمح بالإشعارات</button>
+    </div>
+
+    <h2>الفلوس بتطلع منين</h2>
+    <div class="panel">
+      <label class="f" style="margin-top:0">المحفظة الأساسية</label>
+      <div class="chips" id="defWalletChips"></div>
+      <div class="setrow" style="margin-top:8px">
+        <div class="what">اسألني على المحفظة كل مرة<small>لو مقفولة، كل حاجة بتتسجل على المحفظة الأساسية</small></div>
+        <label class="sw"><input type="checkbox" id="askWallet" onchange="S.settings.askWallet=this.checked; commit('اتحفظ ✓')" aria-label="اسألني على المحفظة كل مرة"><span></span></label>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <input class="field" id="newWallet" placeholder="محفظة جديدة" autocomplete="off" aria-label="اسم المحفظة الجديدة">
+        <button class="ghost" onclick="addWallet()">ضيفها</button>
+      </div>
+    </div>
+
+    <h2>سعر الدولار</h2>
+    <div class="panel">
+      <p class="hint" id="rateNow"></p>
+      <div class="two" style="margin-top:8px">
+        <input class="field" id="rateManual" inputmode="decimal" autocomplete="off" placeholder="سعر ثابت من عندك" aria-label="سعر الدولار اليدوي" oninput="cleanAmount(this)">
+        <button class="ghost" onclick="setRate($('rateManual').value)">ثبّت السعر</button>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <button class="ghost" id="rateAuto" onclick="setRate('')">رجّعه تلقائي</button>
+        <button class="ghost" onclick="fetchRate(true)">حدّث السعر</button>
+      </div>
+    </div>
+
+    <h2>ترتيب البنود</h2>
+    <div class="panel">
+      <p class="hint">لو بند اتكتب بأكتر من اسم (زي «نور» و«كهرباء»)، ادمجهم في اسم واحد.</p>
+      <div class="two" style="margin-top:8px">
+        <input class="field" id="mergeFrom" placeholder="الاسم الغلط" autocomplete="off" aria-label="الاسم الغلط" list="itemsList">
+        <input class="field" id="mergeTo" placeholder="الاسم الصح" autocomplete="off" aria-label="الاسم الصح" list="itemsList">
+      </div>
+      <datalist id="itemsList"></datalist>
+      <button class="ghost" style="width:100%;margin-top:10px" onclick="mergeItems()">ادمج</button>
+    </div>
+
+    <h2>الشكل</h2>
+    <div class="panel">
+      <div class="seg" id="themeSeg" style="--n:3;--i:0" role="group" aria-label="الشكل">
+        <span class="pill" aria-hidden="true"></span>
+        <button aria-pressed="true" data-v="auto">زي الموبايل</button>
+        <button aria-pressed="false" data-v="light">نهاري</button>
+        <button aria-pressed="false" data-v="dark">ليلي</button>
+      </div>
+    </div>
+    <p class="hint" style="text-align:center;margin:20px 0 0">بياناتك على الموبايل ده بس، ومحدش يقدر يشوفها غيرك.<br><span id="ver"></span></p>
+  </main>
+</div>
+
+<nav class="tabs" aria-label="الأقسام">
+  <div class="in" role="tablist" id="tabs">
+    <span class="mark" aria-hidden="true"></span>
+    <button role="tab" aria-selected="true" data-v="v-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>تسجيل</button>
+    <button role="tab" aria-selected="false" data-v="v-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h9"/></svg>العمليات</button>
+    <button role="tab" aria-selected="false" data-v="v-money"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/></svg>الفلوس</button>
+    <button role="tab" aria-selected="false" data-v="v-set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>الإعدادات</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast" role="status"><div class="t" id="toastText"></div><button id="toastUndo" hidden>تراجع</button></div>
+<div class="scrim" id="scrim" onclick="closeSheets()"></div>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle">
+  <div class="grab"></div>
+  <h3 id="shTitle">تعديل العملية</h3>
+  <p class="hint" id="shSub"></p>
+  <div class="two">
+    <div><label class="f" for="eAmount" id="eAmountLbl">المبلغ</label><input class="field" id="eAmount" inputmode="decimal" oninput="cleanAmount(this)"></div>
+    <div><label class="f" for="eDate">التاريخ</label><input class="field" id="eDate" type="date"></div>
+  </div>
+  <div class="two">
+    <div><label class="f" for="eItem">البند</label><input class="field" id="eItem" autocomplete="off"></div>
+    <div><label class="f" for="eWallet">المحفظة</label><select class="field" id="eWallet"></select></div>
+  </div>
+  <label class="f" for="eNote">ملاحظة</label><input class="field" id="eNote" autocomplete="off">
+  <img id="ePhoto" alt="صورة العملية" hidden style="width:100%;margin-top:12px;border-radius:12px;border:1px solid var(--line)">
+  <div class="err" id="eErr"></div>
+  <div class="acts">
+    <button class="ghost danger" id="eDel" onclick="deleteTx()">امسح</button>
+    <button class="primary" onclick="saveEdit()">احفظ التعديل</button>
+  </div>
+</div>
+
+<div class="sheet" id="rSheet" role="dialog" aria-modal="true" aria-labelledby="rTitle">
+  <div class="grab"></div>
+  <h3 id="rTitle">تذكير جديد</h3>
+  <label class="f" for="rName">اسمه</label>
+  <input class="field" id="rName" placeholder="مثلاً قسط العربية" autocomplete="off">
+  <label class="f">بيتكرر</label>
+  <div class="seg small" id="repSeg" style="--n:3;--i:0" role="group" aria-label="التكرار">
+    <span class="pill" aria-hidden="true"></span>
+    <button aria-pressed="true" data-v="شهري">كل شهر</button>
+    <button aria-pressed="false" data-v="أسبوعي">كل أسبوع</button>
+    <button aria-pressed="false" data-v="مرة">مرة واحدة</button>
+  </div>
+  <div class="two">
+    <div><label class="f" id="rDayLbl">يوم كام في الشهر</label>
+      <select class="field" id="rDayM" aria-label="اليوم"></select>
+      <select class="field" id="rDayW" hidden aria-label="اليوم"></select>
+      <input class="field" id="rDate" type="date" hidden aria-label="التاريخ">
+    </div>
+    <div><label class="f" for="rAmount">المبلغ (لو فيه)</label><input class="field" id="rAmount" inputmode="decimal" oninput="cleanAmount(this)" placeholder="اختياري"></div>
+  </div>
+  <div class="two">
+    <div><label class="f" for="rItem">يتسجل تحت بند</label><input class="field" id="rItem" placeholder="لو فاضي باسم التذكير" autocomplete="off"></div>
+    <div><label class="f" for="rWallet">من محفظة</label><select class="field" id="rWallet"></select></div>
+  </div>
+  <div class="err" id="rErr"></div>
+  <div class="acts">
+    <button class="ghost danger" id="rDel" onclick="deleteReminder()" hidden>امسح</button>
+    <button class="primary" onclick="saveReminder()">احفظ التذكير</button>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+//  حساباتي — نسخة محلية. كل البيانات على الموبايل (IndexedDB)،
+//  ونسخة احتياطية على Google Drive بتاع صاحب الموبايل.
+// =====================================================================
+
+// ====== الإعداد الوحيد: Client ID من Google Cloud (للنسخة الاحتياطية على Drive) ======
+var GOOGLE_CLIENT_ID = '';
+// =======================================================================================
+
+var APP_VERSION = '1.0.0';
+var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
+var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
+var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
+var MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---------- التخزين (IndexedDB) ----------
+var DB = null;
+function dbOpen() {
+  return new Promise(function (ok, bad) {
+    var r = indexedDB.open('hesabaty', 1);
+    r.onupgradeneeded = function () { var db = r.result; db.createObjectStore('kv'); db.createObjectStore('photos'); };
+    r.onsuccess = function () { DB = r.result; ok(); };
+    r.onerror = function () { bad(r.error); };
+  });
+}
+function dbGet(store, key) {
+  return new Promise(function (ok, bad) { var r = DB.transaction(store).objectStore(store).get(key); r.onsuccess = function () { ok(r.result); }; r.onerror = function () { bad(r.error); }; });
+}
+function dbPut(store, key, val) {
+  return new Promise(function (ok, bad) { var t = DB.transaction(store, 'readwrite'); t.objectStore(store).put(val, key); t.oncomplete = function () { ok(); }; t.onerror = function () { bad(t.error); }; });
+}
+function dbDel(store, key) {
+  return new Promise(function (ok) { var t = DB.transaction(store, 'readwrite'); t.objectStore(store).delete(key); t.oncomplete = function () { ok(); }; t.onerror = function () { ok(); }; });
+}
+function dbAll(store) {
+  return new Promise(function (ok, bad) {
+    var out = {}, r = DB.transaction(store).objectStore(store).openCursor();
+    r.onsuccess = function () { var c = r.result; if (c) { out[c.key] = c.value; c.continue(); } else ok(out); };
+    r.onerror = function () { bad(r.error); };
+  });
+}
+function dbClear(store) {
+  return new Promise(function (ok) { var t = DB.transaction(store, 'readwrite'); t.objectStore(store).clear(); t.oncomplete = function () { ok(); }; });
+}
+
+// ---------- الحالة ----------
+function freshState() {
+  return {
+    v: 1, nextId: 1,
+    tx: [], debts: [], transfers: [], reminders: [],
+    wallets: [{ name: 'كاش', opening: 0, cur: 'ج' }, { name: 'بنك', opening: 0, cur: 'ج' }, { name: 'فودافون كاش', opening: 0, cur: 'ج' }, { name: 'إنستاباي', opening: 0, cur: 'ج' }],
+    budgets: {},
+    settings: { defaultWallet: 'كاش', askWallet: false },
+    rate: { manual: 0, auto: 0, autoAt: '' },
+    backup: { folderId: '', fileId: '', last: '', lastDaily: '', dirtyAt: '' }
+  };
+}
+var S = null;
+function nid() { return S.nextId++; }
+function save() { return dbPut('kv', 'state', S); }
+var undoStack = null;
+function commit(msg, undo) {
+  S.backup.dirtyAt = new Date().toISOString();
+  return save().then(function () { render(); if (msg) toast(msg, undo); scheduleBackup(); });
+}
+
+// ---------- أدوات ----------
+function $(id) { return document.getElementById(id); }
+function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+function fmtU(n) { n = Math.round(n * 100) / 100; return n % 1 ? n.toFixed(2) : fmt(n); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); }
+function digits(s) { return String(s).replace(/[٠-٩]/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); }).replace(/[٫,]/g, '.'); }
+function cleanAmount(el) { var v = digits(el.value).replace(/[^\d.]/g, ''); if (v !== el.value) el.value = v; }
+function num(el) { var n = parseFloat(el.value); return n > 0 ? n : 0; }
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+function todayKey() { var d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+function addDays(key, n) { var d = new Date(key + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+function weekday(key) { return new Date(key + 'T12:00:00Z').getUTCDay() || 7; }
+function dim(y, m) { return new Date(Date.UTC(y, m, 0)).getUTCDate(); }
+function dShort(k) { return k ? k.slice(8) + '/' + k.slice(5, 7) : ''; }
+var toastTimer = null;
+function toast(html, undo) {
+  $('toastText').innerHTML = html;
+  var b = $('toastUndo'); b.hidden = !undo; b.onclick = undo ? function () { $('toast').classList.remove('show'); undo(); } : null;
+  $('toast').classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { $('toast').classList.remove('show'); }, undo ? 7000 : 3500);
+}
+
+// ---------- توحيد الأسماء و«قصدك؟» ----------
+function key(s) {
+  s = String(s || '').trim().replace(/[\u064B-\u0652\u0640]/g, '').replace(/[أإآٱ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي')
+    .replace(/ؤ/g, 'و').replace(/ئ/g, 'ي').replace(/\s+/g, ' ');
+  s = s.split(' ').map(function (w) { return (w.length > 3 && w.indexOf('ال') === 0) ? w.slice(2) : w; }).join(' ');
+  return s.replace(/اء$/, 'ا').replace(/ء$/, '');
+}
+function lev(a, b) {
+  var m = a.length, n = b.length, d = [], i, j;
+  for (i = 0; i <= m; i++) d[i] = [i];
+  for (j = 0; j <= n; j++) d[0][j] = j;
+  for (i = 1; i <= m; i++) for (j = 1; j <= n; j++) d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+  return d[m][n];
+}
+/** البنود مترتبة من الأكتر استخدام */
+function itemsOf(type) {
+  var c = {};
+  S.tx.forEach(function (t) { if (t.type === type) c[t.item] = (c[t.item] || 0) + 1; });
+  return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; });
+}
+function allItems(type) {
+  var seen = {}, out = [];
+  itemsOf(type).concat(itemsOf(type === 'صرف' ? 'دخل' : 'صرف')).forEach(function (x) { if (!seen[x]) { seen[x] = 1; out.push(x); } });
+  return out;
+}
+function resolve(text, type) {
+  var k = key(text), items = allItems(type), best = null, bestD = 99;
+  for (var i = 0; i < items.length; i++) {
+    var ik = key(items[i]);
+    if (ik === k) return { exact: items[i] };
+    var dist = lev(ik, k), limit = Math.max(ik.length, k.length) >= 7 ? 2 : 1;
+    var score = ik.indexOf(k) === 0 ? dist - .5 : dist;
+    if (k.length >= 3 && dist <= limit && score < bestD) { best = items[i]; bestD = score; }
+  }
+  return best ? { maybe: best } : {};
+}
+
+// ---------- الحسابات ----------
+function monthKey(y, m) { return y + '-' + pad2(m); }
+var viewYM = null;
+function curYM() { var d = new Date(); return { y: d.getFullYear(), m: d.getMonth() + 1 }; }
+function monthStats(ym) {
+  var mk = monthKey(ym.y, ym.m), r = { income: 0, expense: 0, exp: {}, inc: {}, count: 0, label: MONTHS[ym.m - 1] + ' ' + ym.y };
+  S.tx.forEach(function (t) {
+    if (t.date.slice(0, 7) !== mk) return;
+    r.count++;
+    if (t.type === 'دخل') { r.income += t.amount; r.inc[t.item] = (r.inc[t.item] || 0) + t.amount; }
+    else { r.expense += t.amount; r.exp[t.item] = (r.exp[t.item] || 0) + t.amount; }
+  });
+  return r;
+}
+function wallet(name) { for (var i = 0; i < S.wallets.length; i++) if (S.wallets[i].name === name) return S.wallets[i]; return null; }
+function usdWallet(create) {
+  for (var i = 0; i < S.wallets.length; i++) if (S.wallets[i].cur === '$') return S.wallets[i].name;
+  if (!create) return '';
+  S.wallets.push({ name: 'دولار', opening: 0, cur: '$' });
+  return 'دولار';
+}
+function rate() { return S.rate.manual || S.rate.auto || 0; }
+function balances() {
+  var bal = {}, r = rate();
+  S.wallets.forEach(function (w) { bal[w.name] = w.opening || 0; });
+  S.tx.forEach(function (t) {
+    var w = wallet(t.wallet) ? t.wallet : S.wallets[0].name;
+    var a = wallet(w).cur === '$' ? (t.usd || (t.rate ? t.amount / t.rate : (r ? t.amount / r : 0))) : t.amount;
+    bal[w] += t.type === 'دخل' ? a : -a;
+  });
+  S.debts.forEach(function (d) {
+    var w = wallet(d.wallet) ? d.wallet : S.wallets[0].name;
+    bal[w] += ({ 'سلّفت': -1, 'رجّعلي': 1, 'استلفت': 1, 'رجّعتله': -1 })[d.kind] * d.amount;
+  });
+  S.transfers.forEach(function (x) {
+    if (bal[x.from] !== undefined) bal[x.from] -= x.amount;
+    if (bal[x.to] !== undefined) bal[x.to] += (x.got || x.amount);
+  });
+  var total = 0;
+  S.wallets.forEach(function (w) { total += w.cur === '$' ? bal[w.name] * r : bal[w.name]; });
+  return { bal: bal, total: total };
+}
+function debtBalances() {
+  var b = {};
+  S.debts.forEach(function (d) { b[d.person] = (b[d.person] || 0) + ({ 'سلّفت': 1, 'رجّعلي': -1, 'استلفت': -1, 'رجّعتله': 1 })[d.kind] * d.amount; });
+  return b;
+}
+function people() {
+  var c = {};
+  S.debts.forEach(function (d) { c[d.person] = (c[d.person] || 0) + 1; });
+  return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; });
+}
+function knownPerson(name) {
+  var k = key(name), p = people();
+  for (var i = 0; i < p.length; i++) if (key(p[i]) === k) return p[i];
+  return String(name).trim();
+}
+function budgetFor(item) {
+  var k = key(item);
+  for (var n in S.budgets) if (key(n) === k) return { name: n, budget: S.budgets[n] };
+  return null;
+}
+function spentOn(name, st) { var k = key(name), s = 0; for (var x in st.exp) if (key(x) === k) s += st.exp[x]; return s; }
+function budgetNote(item, amount) {
+  var bf = budgetFor(item); if (!bf) return '';
+  var spent = spentOn(bf.name, monthStats(curYM())), before = spent - amount, b = bf.budget;
+  var t = '🎯 ' + esc(bf.name) + ': ' + fmt(spent) + ' من ' + fmt(b);
+  if (spent > b && before <= b) t += '<br>🚨 عدّيت الميزانية بـ ' + fmt(spent - b);
+  else if (spent >= .8 * b && before < .8 * b) t += '<br>⚠️ وصلت 80%، فاضلك ' + fmt(b - spent);
+  return t;
+}
+
+// ---------- التذكيرات ----------
+function occurrences(r, today) {
+  if (r.repeat === 'مرة') { var k = r.day; return { last: k <= today ? k : null, next: k >= today ? k : null }; }
+  if (r.repeat === 'أسبوعي') {
+    var back = (weekday(today) - r.day + 7) % 7, last = addDays(today, -back);
+    return { last: last, next: back === 0 ? today : addDays(last, 7) };
+  }
+  var D = r.day, y = +today.slice(0, 4), m = +today.slice(5, 7);
+  var thisK = y + '-' + pad2(m) + '-' + pad2(Math.min(D, dim(y, m)));
+  if (thisK <= today) { var ny = m === 12 ? y + 1 : y, nm = m === 12 ? 1 : m + 1; return { last: thisK, next: thisK === today ? today : ny + '-' + pad2(nm) + '-' + pad2(Math.min(D, dim(ny, nm))) }; }
+  var py = m === 1 ? y - 1 : y, pm = m === 1 ? 12 : m - 1;
+  return { last: py + '-' + pad2(pm) + '-' + pad2(Math.min(D, dim(py, pm))), next: thisK };
+}
+function remInfo(r) {
+  var o = occurrences(r, todayKey());
+  return { occ: o.last, next: o.next, due: r.active && !!o.last && (r.lastPaid || '') < o.last && (r.repeat !== 'مرة' || !r.lastPaid),
+    label: r.repeat === 'شهري' ? 'كل شهر يوم ' + r.day : r.repeat === 'أسبوعي' ? 'كل ' + WEEK[r.day - 1][0] : 'مرة واحدة ' + dShort(r.day) };
+}
+
+// ---------- الشكل ----------
+var SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg>';
+var MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
+var CLOUD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18h10a4 4 0 0 0 .5-8A6 6 0 0 0 6 9.5 4.3 4.3 0 0 0 7 18z"/>';
+var themePref = 'auto';
+function applyTheme() {
+  var dark = themePref === 'dark' || (themePref === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  $('themeBtn').innerHTML = dark ? SUN : MOON;
+  var m = document.querySelector('meta[name=theme-color]'); if (m) m.content = dark ? '#0b1615' : '#1e6b57';
+  setSeg('themeSeg', themePref);
+}
+function setThemePref(p) { themePref = p; try { localStorage.setItem('theme', p); } catch (e) {} applyTheme(); }
+function cycleTheme() { setThemePref(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); }
+try { themePref = localStorage.getItem('theme') || 'auto'; } catch (e) {}
+if (window.matchMedia) { var mq = matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', applyTheme); }
+
+// ---------- سويتشات متحركة ----------
+function setSeg(id, value) {
+  var seg = $(id), idx = 0;
+  seg.querySelectorAll('button').forEach(function (b, i) { var on = b.dataset.v === value; b.setAttribute('aria-pressed', on); if (on) idx = i; });
+  seg.style.setProperty('--i', idx);
+}
+function bindSeg(id, fn) { $(id).querySelectorAll('button').forEach(function (b) { b.onclick = function () { fn(b.dataset.v); }; }); }
+
+// ---------- زخرفة البنكنوت ----------
+(function () {
+  var g = '';
+  for (var k = 0; k < 16; k++) {
+    var y0 = 20 + k * 12, d = 'M0 ' + y0, amp = 10 + (k % 4) * 3, ph = k * .55;
+    for (var x = 0; x <= 400; x += 8) d += ' L' + x + ' ' + (y0 + Math.sin(x / 34 + ph) * amp).toFixed(1);
+    g += '<path d="' + d + '" fill="none" stroke="currentColor" stroke-width=".6" opacity="' + (.25 + (k % 3) * .12) + '"/>';
+  }
+  $('guilloche').innerHTML = g;
+  var s = '';
+  for (var i = 0; i < 36; i++) s += '<ellipse cx="50" cy="50" rx="46" ry="16" fill="none" stroke="currentColor" stroke-width=".5" transform="rotate(' + (i * 5) + ' 50 50)"/>';
+  $('seal').innerHTML = s + '<circle cx="50" cy="50" r="12" fill="none" stroke="currentColor" stroke-width=".8"/>';
+})();
+
+var shown = {};
+function countTo(id, to) {
+  var el = $(id), from = shown[id] || 0; shown[id] = to;
+  if (reduced || from === to) { el.textContent = fmt(to); return; }
+  var t0 = null;
+  function step(t) { if (!t0) t0 = t; var p = Math.min(1, (t - t0) / 700), e = 1 - Math.pow(1 - p, 3); el.textContent = fmt(from + (to - from) * e); if (p < 1) requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+}
+
+// ---------- التنقل ----------
+function go(v) {
+  var idx = 0;
+  $('tabs').querySelectorAll('button').forEach(function (b, i) { var on = b.dataset.v === v; b.setAttribute('aria-selected', on); if (on) idx = i; });
+  $('tabs').querySelector('.mark').style.setProperty('--i', idx);
+  document.querySelectorAll('.view').forEach(function (x) { x.classList.toggle('on', x.id === v); });
+  window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+  if (v === 'v-list') renderList();
+  if (v === 'v-money') renderBars();
+}
+$('tabs').querySelectorAll('button').forEach(function (b) { b.onclick = function () { go(b.dataset.v); }; });
+
+// ---------- الرسم ----------
+var mode = 'صرف', debtKind = 'سلّفت', cur = 'ج', exDir = 'sell', repeat = 'شهري';
+var pickedWallet = null, walletTouched = false, photo = null, editing = null, remEditing = null;
+
+function render() {
+  document.body.classList.remove('loading');
+  var st = monthStats(curYM());
+  $('month').textContent = st.label;
+  countTo('remain', st.income - st.expense); countTo('inc', st.income); countTo('out', st.expense);
+  var hot = Object.keys(S.budgets).map(function (n) { return { name: n, b: S.budgets[n], s: spentOn(n, st) }; }).filter(function (x) { return x.s >= .8 * x.b; });
+  $('noteAlert').hidden = !hot.length;
+  $('noteAlert').textContent = hot.map(function (x) { return (x.s > x.b ? 'عدّيت ميزانية ' : 'قرّبت تخلّص ميزانية ') + x.name; }).join('، ');
+  renderTiles(); renderDues(); renderForm(); renderMoney(); renderSettings(); renderBackupState();
+  if ($('v-list').classList.contains('on')) renderList();
+}
+
+function renderTiles() {
+  var b = balances(), db = debtBalances(), toMe = 0, onMe = 0;
+  Object.keys(db).forEach(function (p) { if (db[p] > 0) toMe += db[p]; else onMe -= db[p]; });
+  var uw = usdWallet(false), r = rate();
+  var t = [
+    '<button class="tile" data-go="v-money"><span class="k">💳 كل فلوسك</span><span class="v">' + fmt(b.total) + '</span><span class="s">' +
+      ((toMe || onMe) ? 'بعد السلف: <b>' + fmt(b.total + toMe - onMe) + '</b>' : 'في كل المحافظ') + '</span></button>',
+    '<button class="tile" data-go="v-money"><span class="k">🤝 السلف</span>' + ((toMe || onMe)
+      ? '<span class="v in">' + fmt(toMe) + '</span><span class="s">ليك' + (onMe ? '، وعليك <b class="out">' + fmt(onMe) + '</b>' : '') + '</span>'
+      : '<span class="v">0</span><span class="s">خالصين ✓</span>') + '</button>'];
+  if (uw) t.push('<button class="tile" data-go="v-money"><span class="k">💵 الدولار</span><span class="v">' + fmtU(b.bal[uw]) + '$</span><span class="s">' +
+    (r ? '≈ ' + fmt(b.bal[uw] * r) + ' ج' : 'السعر مش معروف') + '</span></button>');
+  $('tiles').style.setProperty('--n', t.length);
+  $('tiles').innerHTML = t.join('');
+  $('tiles').querySelectorAll('.tile').forEach(function (x) { x.onclick = function () { go(x.dataset.go); }; });
+}
+
+function renderDues() {
+  $('dues').innerHTML = S.reminders.map(function (r) { var i = remInfo(r); return i.due ? { r: r, i: i } : null; }).filter(Boolean).map(function (x) {
+    return '<div class="due"><div class="t">⏰ ' + esc(x.r.title) + (x.r.amount ? '، ' + fmt(x.r.amount) : '') + '<small>' + esc(x.i.label) + '</small></div>' +
+      '<button class="pay" data-id="' + x.r.id + '" data-m="pay">' + (x.r.amount ? 'اتدفع، سجّله' : 'خلصت') + '</button>' +
+      '<button class="skip" data-id="' + x.r.id + '" data-m="skip">مش الفترة دي</button></div>';
+  }).join('');
+  $('dues').querySelectorAll('button').forEach(function (b) { b.onclick = function () { reminderAction(+b.dataset.id, b.dataset.m); }; });
+}
+
+function walletOpts(sel, onlyEgp) {
+  return S.wallets.filter(function (w) { return !onlyEgp || w.cur !== '$'; }).map(function (w) { return '<option' + (w.name === sel ? ' selected' : '') + '>' + esc(w.name) + '</option>'; }).join('');
+}
+
+function renderForm() {
+  setSeg('typeSeg', mode);
+  var isDebt = mode === 'سلفة';
+  $('debtBox').classList.toggle('closed', !isDebt);
+  setSeg('kindSeg', debtKind);
+  $('itemBox').hidden = isDebt; $('personBox').hidden = !isDebt;
+  $('curBtn').hidden = isDebt; if (isDebt && cur === '$') toggleCur();
+  $('itemLabel').textContent = mode === 'دخل' ? 'جاي منين' : 'اتصرف في إيه';
+  $('save').textContent = isDebt ? 'سجّل السلفة' : 'سجّل';
+  $('addTitle').textContent = isDebt ? 'سجّل سلفة' : 'سجّل عملية';
+  var ask = S.settings.askWallet;
+  $('walletAsk').hidden = !ask; $('walletPick').hidden = ask;
+  if (!pickedWallet || !wallet(pickedWallet)) pickedWallet = S.settings.defaultWallet;
+  $('wallet').innerHTML = walletOpts(pickedWallet);
+  $('wallet').onchange = function () { walletTouched = true; pickedWallet = this.value; };
+  $('walletChips').innerHTML = S.wallets.map(function (w) { return '<button class="chip" type="button" aria-pressed="' + (w.name === pickedWallet) + '" data-v="' + esc(w.name) + '">' + esc(w.name) + '</button>'; }).join('');
+  $('walletChips').querySelectorAll('.chip').forEach(function (b) { b.onclick = function () { pickedWallet = b.dataset.v; walletTouched = true; renderForm(); }; });
+  if (!$('date').value) $('date').value = todayKey();
+  renderChips(); showConv();
+  $('peopleChips').innerHTML = people().slice(0, 10).map(function (p) { return '<button class="chip" type="button" data-v="' + esc(p) + '">' + esc(p) + '</button>'; }).join('');
+  $('peopleChips').querySelectorAll('.chip').forEach(function (b) { b.onclick = function () { $('person').value = b.dataset.v; if (!$('amount').value) $('amount').focus(); }; });
+}
+function renderChips() {
+  if (mode === 'سلفة') return;
+  $('chips').innerHTML = itemsOf(mode).slice(0, 10).map(function (x) { return '<button class="chip" type="button" aria-pressed="' + (x === $('item').value) + '" data-v="' + esc(x) + '">' + esc(x) + '</button>'; }).join('');
+  $('chips').querySelectorAll('.chip').forEach(function (b) { b.onclick = function () { pick(b.dataset.v); }; });
+}
+
+// ----- العمليات -----
+function shiftMonth(n) { var m = viewYM.m + n, y = viewYM.y; if (m < 1) { m = 12; y--; } if (m > 12) { m = 1; y++; } viewYM = { y: y, m: m }; renderList(); }
+function renderList() {
+  if (!viewYM) viewYM = curYM();
+  var st = monthStats(viewYM);
+  $('listMonth').textContent = st.label;
+  $('monthSum').innerHTML = '<div class="row3"><div><small>دخل</small><b class="in">' + fmt(st.income) + '</b></div><div><small>صرف</small><b class="out">' + fmt(st.expense) + '</b></div><div><small>المتبقي</small><b>' + fmt(st.income - st.expense) + '</b></div></div>';
+  renderDonut(st); renderRecent();
+}
+function renderDonut(st) {
+  var keys = Object.keys(st.exp).sort(function (a, b) { return st.exp[b] - st.exp[a]; });
+  if (!keys.length) { $('donutBox').innerHTML = '<p class="empty">مافيش صرف في الشهر ده.</p>'; return; }
+  var parts = keys.slice(0, 7).map(function (k) { return { n: k, v: st.exp[k] }; });
+  var rest = keys.slice(7).reduce(function (s, k) { return s + st.exp[k]; }, 0);
+  if (rest) parts.push({ n: 'حاجات تانية', v: rest });
+  var total = st.expense || 1, r = 52, c = 2 * Math.PI * r, off = 0, rings = '';
+  parts.forEach(function (p, i) {
+    var len = p.v / total * c;
+    rings += '<circle class="seg-arc" r="' + r + '" cx="70" cy="70" fill="none" stroke="' + PALETTE[i % 8] + '" stroke-width="18" stroke-dasharray="0 ' + c + '" data-len="' + len + '" data-off="' + (-off) + '" transform="rotate(-90 70 70)"/>';
+    off += len;
+  });
+  $('donutBox').innerHTML = '<div class="donut"><svg viewBox="0 0 140 140" role="img" aria-label="تقسيم الصرف">' + rings +
+    '<text x="70" y="66" text-anchor="middle" font-size="11" fill="currentColor" opacity=".6">الصرف</text><text x="70" y="85" text-anchor="middle" font-size="17" font-weight="600" fill="currentColor">' + fmt(st.expense) + '</text></svg>' +
+    '<ul class="legend">' + parts.map(function (p, i) { return '<li><i style="background:' + PALETTE[i % 8] + '"></i><span>' + esc(p.n) + '</span><b>' + Math.round(p.v * 100 / total) + '%</b></li>'; }).join('') + '</ul></div>';
+  requestAnimationFrame(function () { requestAnimationFrame(function () {
+    $('donutBox').querySelectorAll('circle.seg-arc').forEach(function (e) { e.setAttribute('stroke-dasharray', e.dataset.len + ' ' + (c - e.dataset.len)); e.setAttribute('stroke-dashoffset', e.dataset.off); });
+  }); });
+}
+function renderRecent() {
+  var mk = monthKey(viewYM.y, viewYM.m), q = key($('search').value);
+  var list = S.tx.filter(function (t) { return q ? (key(t.item).indexOf(q) >= 0 || key(t.note).indexOf(q) >= 0) : t.date.slice(0, 7) === mk; })
+    .sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.id - a.id; }).slice(0, 300);
+  if (!list.length) { $('recent').innerHTML = '<li class="empty">' + (q ? 'مالقيتش حاجة.' : 'مافيش عمليات في الشهر ده.') + '</li>'; return; }
+  var html = '', last = null;
+  list.forEach(function (t) {
+    if (t.date !== last) { html += '<li class="day" aria-hidden="true">' + dShort(t.date) + (q ? '/' + t.date.slice(0, 4) : '') + '</li>'; last = t.date; }
+    html += '<li><button class="rowbtn" data-id="' + t.id + '"><span class="what"><b>' + esc(t.item) + (t.photo ? ' 📎' : '') + '</b><small>' + esc(t.wallet) +
+      (t.note ? '، ' + esc(t.note) : '') + (t.usd ? '، ≈ ' + fmt(t.amount) + ' ج' : '') + '</small></span><span class="amt ' + (t.type === 'دخل' ? 'in">+' : 'out">−') +
+      (t.usd ? fmtU(t.usd) + '$' : fmt(t.amount)) + '</span></button></li>';
+  });
+  $('recent').innerHTML = html;
+  $('recent').querySelectorAll('.rowbtn').forEach(function (b) { b.onclick = function () { openSheet(+b.dataset.id); }; });
+}
+
+// ----- الفلوس -----
+function renderMoney() {
+  var db = debtBalances(), ps = Object.keys(db).filter(function (p) { return db[p] !== 0; });
+  $('debts').innerHTML = ps.length ? ps.map(function (p) {
+    return '<li><span class="what"><b>' + esc(p) + '</b><small>' + (db[p] > 0 ? 'عليه ليك' : 'إنت عليك ليه') + '</small></span><span class="amt ' + (db[p] > 0 ? 'in' : 'out') + '">' + fmt(Math.abs(db[p])) + '</span></li>';
+  }).join('') : '<li class="empty">مافيش سلف مفتوحة. سجّل سلفة من «تسجيل» ← سلفة.</li>';
+  var st = monthStats(curYM()), names = Object.keys(S.budgets);
+  $('budgets').innerHTML = names.length ? names.map(function (n) {
+    var s = spentOn(n, st), b = S.budgets[n], p = Math.round(s * 100 / b);
+    return '<li style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><b style="font-weight:500">' + esc(n) + '</b><span class="hint" style="margin:0">' + fmt(s) + ' من ' + fmt(b) + '</span></div>' +
+      '<div class="bar" role="progressbar" aria-label="' + esc(n) + '" aria-valuenow="' + p + '" aria-valuemin="0" aria-valuemax="100"><i class="' + (p >= 100 ? 'over' : p >= 80 ? 'warn' : '') + '" data-w="' + Math.min(100, p) + '"></i></div></li>';
+  }).join('') : '<li class="empty">مافيش ميزانيات. حط واحدة من تحت.</li>';
+  var bl = balances(), r = rate();
+  $('wallets').innerHTML = S.wallets.map(function (w) {
+    var usd = w.cur === '$';
+    return '<li><span class="what"><b>' + esc(w.name) + '</b><small>' + (w.name === S.settings.defaultWallet ? 'الأساسية' : '') + (usd && r ? '≈ ' + fmt(bl.bal[w.name] * r) + ' ج' : '') + '</small></span>' +
+      '<span class="amt">' + (usd ? fmtU(bl.bal[w.name]) + '$' : fmt(bl.bal[w.name])) + '</span><button class="ghost" style="padding:6px 10px;font-size:13px" data-w="' + esc(w.name) + '">ظبّط</button></li>';
+  }).join('') + '<li><span class="what"><b>الإجمالي</b><small>بالجنيه</small></span><span class="amt">' + fmt(bl.total) + '</span></li>';
+  $('wallets').querySelectorAll('button[data-w]').forEach(function (b) { b.onclick = function () { setBalance(b.dataset.w); }; });
+  ['trFrom', 'trTo', 'eWallet', 'rWallet'].forEach(function (id) { var v = $(id).value; $(id).innerHTML = walletOpts(v); if (v && wallet(v)) $(id).value = v; });
+  if (S.wallets[1] && $('trFrom').value === $('trTo').value) $('trTo').value = S.wallets[1].name;
+  $('exWallet').innerHTML = walletOpts(S.settings.defaultWallet, true);
+  setSeg('exSeg', exDir); exHint();
+  if ($('v-money').classList.contains('on')) renderBars();
+}
+function renderBars() {
+  requestAnimationFrame(function () { requestAnimationFrame(function () { document.querySelectorAll('.bar i[data-w]').forEach(function (i) { i.style.width = i.dataset.w + '%'; }); }); });
+}
+
+// ----- الإعدادات -----
+function hourOpts() { var o = ''; for (var h = 0; h < 24; h++) o += '<option value="' + h + '">' + h + '</option>'; return o; }
+function renderSettings() {
+  $('defWalletChips').innerHTML = S.wallets.map(function (w) { return '<button class="chip" type="button" aria-pressed="' + (w.name === S.settings.defaultWallet) + '" data-v="' + esc(w.name) + '">' + esc(w.name) + '</button>'; }).join('');
+  $('defWalletChips').querySelectorAll('.chip').forEach(function (b) { b.onclick = function () { S.settings.defaultWallet = b.dataset.v; pickedWallet = b.dataset.v; commit('اتحفظ ✓'); }; });
+  $('askWallet').checked = !!S.settings.askWallet;
+  var r = rate();
+  $('rateNow').textContent = r ? 'الدولار دلوقتي بـ ' + fmtU(r) + ' جنيه (' + (S.rate.manual ? 'يدوي' + (S.rate.auto ? '، والتلقائي ' + fmtU(S.rate.auto) : '') : 'تلقائي' + (S.rate.autoAt ? '، اتحدّث ' + dShort(S.rate.autoAt) : '')) + ')' : 'سعر الدولار مش معروف لسه. افتح النت أو اكتبه بإيدك.';
+  $('rateAuto').hidden = !S.rate.manual;
+  $('reminders').innerHTML = S.reminders.length ? S.reminders.map(function (r) {
+    var i = remInfo(r);
+    return '<li><button class="rowbtn" data-id="' + r.id + '"><span class="what"><b>' + esc(r.title) + (i.due ? ' ⏰' : '') + '</b><small>' + esc(i.label) + (i.next ? '، الجاي ' + dShort(i.next) : '') + '</small></span>' +
+      (r.amount ? '<span class="amt">' + fmt(r.amount) + '</span>' : '') + '</button><label class="sw"><input type="checkbox" data-id="' + r.id + '"' + (r.active ? ' checked' : '') + ' aria-label="تشغيل ' + esc(r.title) + '"><span></span></label></li>';
+  }).join('') : '<li class="empty">مافيش تذكيرات لسه.</li>';
+  $('reminders').querySelectorAll('.rowbtn').forEach(function (b) { b.onclick = function () { openReminder(+b.dataset.id); }; });
+  $('reminders').querySelectorAll('input[type=checkbox]').forEach(function (c) { c.onchange = function () { var r = remById(+c.dataset.id); r.active = c.checked; commit(c.checked ? 'التذكير اشتغل' : 'التذكير اتوقف'); }; });
+  $('notifBtn').hidden = !('Notification' in window) || Notification.permission === 'granted';
+  $('itemsList').innerHTML = allItems('صرف').map(function (x) { return '<option value="' + esc(x) + '">'; }).join('');
+  $('ver').textContent = 'نسخة ' + APP_VERSION;
+}
+
+// ---------- التسجيل ----------
+bindSeg('typeSeg', function (v) { mode = v; $('ask').hidden = true; $('err').textContent = ''; renderForm(); });
+bindSeg('kindSeg', function (v) { debtKind = v; setSeg('kindSeg', v); });
+bindSeg('themeSeg', setThemePref);
+bindSeg('exSeg', function (v) { exDir = v; setSeg('exSeg', v); exHint(); });
+bindSeg('repSeg', setRepeat);
+
+function pick(x) { $('item').value = x; $('sugg').hidden = true; $('ask').hidden = true; renderChips(); if (!$('amount').value) $('amount').focus(); }
+function onItemInput() {
+  $('ask').hidden = true; renderChips();
+  var k = key($('item').value), box = $('sugg');
+  if (k.length < 2) { box.hidden = true; return; }
+  var hits = allItems(mode).filter(function (x) { return key(x).indexOf(k) >= 0 && key(x) !== k; }).slice(0, 5);
+  box.innerHTML = hits.map(function (x) { return '<button type="button" data-v="' + esc(x) + '">' + esc(x) + '</button>'; }).join('');
+  box.querySelectorAll('button').forEach(function (b) { b.onclick = function () { pick(b.dataset.v); }; });
+  box.hidden = !hits.length;
+}
+function toggleCur() {
+  cur = cur === '$' ? 'ج' : '$';
+  $('curBtn').textContent = cur === '$' ? '$' : 'ج.م';
+  $('curBtn').classList.toggle('usd', cur === '$');
+  showConv();
+}
+function showConv() {
+  var a = num($('amount')), r = rate();
+  $('conv').textContent = cur === '$' ? (r ? (a ? '≈ ' + fmt(a * r) + ' ج.م، ' : '') + 'الدولار بـ ' + fmtU(r) : 'سعر الدولار مش معروف، اكتبه من الإعدادات') : '';
+}
+function currentWallet() {
+  if (cur === '$' && !walletTouched) return usdWallet(true);
+  return S.settings.askWallet ? pickedWallet : $('wallet').value;
+}
+function trySave() {
+  $('err').textContent = '';
+  var amount = num($('amount'));
+  if (!amount) { $('err').textContent = 'اكتب المبلغ'; $('amount').focus(); return; }
+  if (mode === 'سلفة') return saveDebt(amount);
+  var item = $('item').value.trim();
+  if (!item) { $('err').textContent = mode === 'صرف' ? 'اكتب اتصرف في إيه' : 'اكتب الفلوس جاية منين'; $('item').focus(); return; }
+  if (cur === '$' && !rate()) { $('err').textContent = 'سعر الدولار مش معروف، اكتبه من الإعدادات'; return; }
+  var r = resolve(item, mode);
+  if (r.exact) return saveTx(r.exact);
+  if (r.maybe) {
+    $('ask').innerHTML = 'قصدك «' + esc(r.maybe) + '»؟<div class="btns"><button class="yes" type="button" id="askY">أيوه، ' + esc(r.maybe) + '</button><button class="ghost" type="button" id="askN">لا، ده جديد</button></div>';
+    $('ask').hidden = false;
+    $('askY').onclick = function () { $('ask').hidden = true; saveTx(r.maybe); };
+    $('askN').onclick = function () { $('ask').hidden = true; saveTx(item); };
+    return;
+  }
+  saveTx(item);
+}
+function doneFlash() {
+  var b = $('save'); b.classList.add('done'); b.textContent = '✓ اتسجل';
+  setTimeout(function () { b.classList.remove('done'); b.textContent = mode === 'سلفة' ? 'سجّل السلفة' : 'سجّل'; }, 1100);
+}
+function resetForm() {
+  ['amount', 'item', 'note', 'person'].forEach(function (id) { $(id).value = ''; });
+  $('date').value = todayKey(); clearFile(); $('sugg').hidden = true;
+  walletTouched = false; pickedWallet = S.settings.defaultWallet; if (cur === '$') toggleCur();
+}
+function storePhoto() {
+  if (!photo) return Promise.resolve('');
+  var id = 'p' + Date.now() + Math.random().toString(16).slice(2, 6);
+  return dbPut('photos', id, photo).then(function () { return id; });
+}
+function saveTx(item) {
+  var amount = num($('amount')), w = currentWallet(), t = { id: nid(), date: $('date').value || todayKey(), type: mode, item: item, note: $('note').value.trim(), wallet: w, photo: '' };
+  if (cur === '$') { t.usd = amount; t.rate = rate(); t.amount = Math.round(amount * t.rate * 100) / 100; } else t.amount = amount;
+  storePhoto().then(function (pid) {
+    t.photo = pid; S.tx.push(t);
+    var note = t.type === 'صرف' ? budgetNote(t.item, t.amount) : '';
+    resetForm(); doneFlash();
+    commit('اتسجل ✓ ' + t.type + ' ' + (t.usd ? fmtU(t.usd) + '$ (≈ ' + fmt(t.amount) + ' ج)' : fmt(t.amount)) + '، ' + esc(t.item) + ' — ' + esc(t.wallet) + (note ? '<small>' + note + '</small>' : ''),
+      function () { removeTx(t.id); commit('اتمسحت العملية'); });
+  });
+}
+function saveDebt(amount) {
+  var person = $('person').value.trim();
+  if (!person) { $('err').textContent = 'اكتب اسم الشخص'; $('person').focus(); return; }
+  person = knownPerson(person);
+  var d = { id: nid(), date: $('date').value || todayKey(), person: person, kind: debtKind, amount: amount, wallet: S.settings.askWallet ? pickedWallet : $('wallet').value, photo: '' };
+  storePhoto().then(function (pid) {
+    d.photo = pid; S.debts.push(d);
+    var n = debtBalances()[person] || 0;
+    resetForm(); doneFlash();
+    commit('🤝 اتسجل: ' + d.kind + ' ' + esc(person) + ' ' + fmt(amount) + '<small>' + (n > 0 ? esc(person) + ' عليه ليك ' + fmt(n) : n < 0 ? 'إنت عليك لـ ' + esc(person) + ' ' + fmt(-n) : 'خالصين ✓') + '</small>',
+      function () { S.debts = S.debts.filter(function (x) { return x.id !== d.id; }); if (d.photo) dbDel('photos', d.photo); commit('اتمسحت السلفة'); });
+  });
+}
+function removeTx(id) {
+  var t = S.tx.filter(function (x) { return x.id === id; })[0];
+  if (t && t.photo) dbDel('photos', t.photo);
+  S.tx = S.tx.filter(function (x) { return x.id !== id; });
+}
+
+// ---------- الصور ----------
+function pickFile(input) {
+  var f = input.files[0]; if (!f) return;
+  var rd = new FileReader();
+  rd.onload = function () {
+    var img = new Image();
+    img.onload = function () {
+      var s = Math.min(1, 1400 / Math.max(img.width, img.height));
+      var cv = document.createElement('canvas'); cv.width = Math.round(img.width * s); cv.height = Math.round(img.height * s);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      photo = cv.toDataURL('image/jpeg', .75);
+      $('thumb').src = photo; $('thumb').hidden = false; $('clearFile').hidden = false;
+    };
+    img.src = rd.result;
+  };
+  rd.readAsDataURL(f);
+}
+function clearFile() { photo = null; $('file').value = ''; $('thumb').hidden = true; $('clearFile').hidden = true; }
+
+// ---------- التعديل ----------
+function txById(id) { return S.tx.filter(function (x) { return x.id === id; })[0]; }
+function openSheet(id) {
+  var t = txById(id); if (!t) return; editing = t;
+  $('shSub').textContent = t.type + (t.usd ? '، بسعر ' + fmtU(t.rate) : '');
+  $('eAmountLbl').textContent = t.usd ? 'المبلغ بالدولار' : 'المبلغ';
+  $('eAmount').value = t.usd || t.amount; $('eItem').value = t.item; $('eDate').value = t.date; $('eNote').value = t.note || '';
+  $('eWallet').innerHTML = walletOpts(t.wallet); $('eErr').textContent = '';
+  $('ePhoto').hidden = true;
+  if (t.photo) dbGet('photos', t.photo).then(function (p) { if (p && editing === t) { $('ePhoto').src = p; $('ePhoto').hidden = false; } });
+  $('scrim').classList.add('on'); $('sheet').classList.add('on');
+}
+function closeSheets() { $('scrim').classList.remove('on'); $('sheet').classList.remove('on'); $('rSheet').classList.remove('on'); editing = null; remEditing = null; }
+function saveEdit() {
+  var t = editing; if (!t) return;
+  var a = num($('eAmount'));
+  if (!a) { $('eErr').textContent = 'اكتب المبلغ'; return; }
+  if (t.usd) { t.usd = a; t.amount = Math.round(a * t.rate * 100) / 100; } else t.amount = a;
+  t.item = $('eItem').value.trim() || t.item; t.date = $('eDate').value || t.date; t.note = $('eNote').value.trim(); t.wallet = $('eWallet').value;
+  closeSheets(); commit('اتعدلت ✓');
+}
+function deleteTx() {
+  var t = editing; if (!t) return;
+  var b = $('eDel');
+  if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'متأكد؟ دوس تاني'; setTimeout(function () { b.dataset.sure = ''; b.textContent = 'امسح'; }, 3000); return; }
+  b.dataset.sure = ''; b.textContent = 'امسح';
+  var copy = JSON.parse(JSON.stringify(t));
+  S.tx = S.tx.filter(function (x) { return x.id !== t.id; });
+  closeSheets();
+  commit('اتمسحت', function () { S.tx.push(copy); commit('رجعت ✓'); });
+}
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSheets(); });
+
+// ---------- الميزانية والمحافظ والدولار ----------
+function saveBudget() {
+  var item = $('bItem').value.trim(), a = $('bAmount').value === '' ? NaN : parseFloat($('bAmount').value);
+  if (!item || isNaN(a)) return toast('اكتب البند والمبلغ');
+  var r = resolve(item, 'صرف'), hits = itemsOf('صرف').filter(function (x) { return key(x).indexOf(key(item)) >= 0; });
+  var name = r.exact || r.maybe || (hits.length === 1 ? hits[0] : item);
+  var old = budgetFor(name); if (old) delete S.budgets[old.name];
+  if (a > 0) S.budgets[name] = a;
+  $('bItem').value = ''; $('bAmount').value = '';
+  commit(a > 0 ? '🎯 ميزانية ' + esc(name) + ' بقت ' + fmt(a) : 'اتشالت ميزانية ' + esc(name));
+}
+function setBalance(name) {
+  var w = wallet(name), v = prompt('رصيد «' + name + '» الحقيقي دلوقتي كام' + (w.cur === '$' ? ' بالدولار' : '') + '؟');
+  if (v === null) return;
+  v = parseFloat(digits(v).replace(/[^\d.]/g, ''));
+  if (isNaN(v)) return toast('اكتب رقم');
+  w.opening += v - balances().bal[name];
+  commit('رصيد ' + esc(name) + ' بقى ' + (w.cur === '$' ? fmtU(v) + '$' : fmt(v)) + ' ✓');
+}
+function addWallet() {
+  var n = $('newWallet').value.trim(); if (!n) return toast('اكتب اسم المحفظة');
+  if (wallet(n)) return toast('المحفظة دي موجودة');
+  S.wallets.push({ name: n, opening: 0, cur: 'ج' }); $('newWallet').value = '';
+  commit('اتضافت محفظة «' + esc(n) + '»');
+}
+function doTransfer() {
+  var a = num($('trAmount')), f = $('trFrom').value, t = $('trTo').value;
+  if (!a) return toast('اكتب مبلغ التحويل');
+  if (f === t) return toast('اختار محفظتين مختلفين');
+  if (wallet(f).cur !== wallet(t).cur) return toast('المحفظتين بعملتين مختلفتين، استخدم «تصريف دولار»');
+  S.transfers.push({ id: nid(), date: todayKey(), from: f, to: t, amount: a });
+  $('trAmount').value = '';
+  commit('🔁 اتحول ' + fmt(a) + ' من ' + esc(f) + ' لـ ' + esc(t));
+}
+function exHint() {
+  var u = num($('exUsd')), r = rate();
+  $('exEgp').placeholder = u && r ? '≈ ' + fmt(u * r) : 'ج.م';
+  $('exHintTxt').textContent = exDir === 'sell' ? 'هيطلع من محفظة الدولار ويدخل محفظة الجنيه اللي تختارها.' : 'هيطلع من محفظة الجنيه اللي تختارها ويدخل محفظة الدولار.';
+}
+function doExchange() {
+  var u = num($('exUsd')), e = num($('exEgp')), r = rate();
+  if (!e && u && r) e = Math.round(u * r);
+  if (!u || !e) return toast('اكتب المبلغ بالدولار والجنيه');
+  var uw = usdWallet(true), ew = $('exWallet').value || S.wallets[0].name;
+  S.transfers.push(exDir === 'buy' ? { id: nid(), date: todayKey(), from: ew, to: uw, amount: e, got: u, kind: 'تصريف' } : { id: nid(), date: todayKey(), from: uw, to: ew, amount: u, got: e, kind: 'تصريف' });
+  $('exUsd').value = ''; $('exEgp').value = '';
+  commit('💱 ' + (exDir === 'buy' ? 'اشتريت ' : 'صرّفت ') + fmtU(u) + '$ بـ ' + fmt(e) + ' ج<small>يعني الدولار بـ ' + fmtU(e / u) + '</small>');
+}
+function setRate(v) {
+  v = parseFloat(digits(v || ''));
+  S.rate.manual = v > 0 ? v : 0; $('rateManual').value = '';
+  commit(S.rate.manual ? 'سعر الدولار اتثبّت على ' + fmtU(v) : 'سعر الدولار رجع تلقائي');
+  if (!S.rate.manual) fetchRate(false);
+}
+function fetchRate(loud) {
+  if (!navigator.onLine) { if (loud) toast('مافيش نت دلوقتي'); return; }
+  fetch('https://open.er-api.com/v6/latest/USD').then(function (r) { return r.json(); }).then(function (j) {
+    var v = j && j.rates && j.rates.EGP;
+    if (v > 0) { S.rate.auto = Math.round(v * 100) / 100; S.rate.autoAt = todayKey(); save().then(render); if (loud) toast('سعر الدولار: ' + fmtU(S.rate.auto)); }
+  }).catch(function () { if (loud) toast('ماقدرتش أجيب السعر دلوقتي'); });
+}
+function mergeItems() {
+  var a = $('mergeFrom').value.trim(), b = $('mergeTo').value.trim();
+  if (!a || !b) return toast('اكتب الاسمين');
+  var ka = key(a), n = 0;
+  S.tx.forEach(function (t) { if (key(t.item) === ka) { t.item = b; n++; } });
+  var bf = budgetFor(a); if (bf && !budgetFor(b)) { S.budgets[b] = bf.budget; delete S.budgets[bf.name]; }
+  $('mergeFrom').value = ''; $('mergeTo').value = '';
+  commit(n ? 'اتدمج ' + n + ' عملية في «' + esc(b) + '»' : 'مالقيتش عمليات باسم «' + esc(a) + '»');
+}
+
+// ---------- التذكيرات ----------
+function remById(id) { return S.reminders.filter(function (r) { return r.id === id; })[0]; }
+function setRepeat(r) {
+  repeat = r; setSeg('repSeg', r);
+  $('rDayM').hidden = r !== 'شهري'; $('rDayW').hidden = r !== 'أسبوعي'; $('rDate').hidden = r !== 'مرة';
+  $('rDayLbl').textContent = r === 'شهري' ? 'يوم كام في الشهر' : r === 'أسبوعي' ? 'أنهي يوم' : 'التاريخ';
+}
+function openReminder(id) {
+  var r = id ? remById(id) : null; remEditing = r;
+  if (!$('rDayM').options.length) {
+    var o = ''; for (var d = 1; d <= 31; d++) o += '<option value="' + d + '">' + d + '</option>';
+    $('rDayM').innerHTML = o;
+    $('rDayW').innerHTML = WEEK.map(function (w) { return '<option value="' + w[1] + '">' + w[0] + '</option>'; }).join('');
+  }
+  $('rWallet').innerHTML = walletOpts((r && r.wallet) || S.settings.defaultWallet);
+  $('rTitle').textContent = r ? 'تعديل التذكير' : 'تذكير جديد';
+  $('rName').value = r ? r.title : ''; $('rAmount').value = r && r.amount ? r.amount : ''; $('rItem').value = r ? r.item : '';
+  setRepeat(r ? r.repeat : 'شهري');
+  $('rDayM').value = r && r.repeat === 'شهري' ? r.day : 1;
+  $('rDayW').value = r && r.repeat === 'أسبوعي' ? r.day : 1;
+  $('rDate').value = r && r.repeat === 'مرة' ? r.day : '';
+  $('rDel').hidden = !r; $('rErr').textContent = '';
+  $('scrim').classList.add('on'); $('rSheet').classList.add('on');
+}
+function saveReminder() {
+  var title = $('rName').value.trim();
+  if (!title) { $('rErr').textContent = 'اكتب اسم التذكير'; return; }
+  var day = repeat === 'شهري' ? +$('rDayM').value : repeat === 'أسبوعي' ? +$('rDayW').value : $('rDate').value;
+  if (repeat === 'مرة' && !day) { $('rErr').textContent = 'اختار التاريخ'; return; }
+  var r = remEditing || { id: nid(), active: true, lastPaid: '', lastNotified: '' };
+  r.title = title; r.repeat = repeat; r.day = day; r.amount = num($('rAmount')); r.item = $('rItem').value.trim(); r.wallet = $('rWallet').value;
+  if (!remEditing) S.reminders.push(r);
+  closeSheets(); commit('اتحفظ التذكير ⏰');
+}
+function deleteReminder() {
+  if (!remEditing) return;
+  var b = $('rDel');
+  if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'متأكد؟'; setTimeout(function () { b.dataset.sure = ''; b.textContent = 'امسح'; }, 3000); return; }
+  b.dataset.sure = ''; b.textContent = 'امسح';
+  var id = remEditing.id; S.reminders = S.reminders.filter(function (r) { return r.id !== id; });
+  closeSheets(); commit('اتمسح التذكير');
+}
+function reminderAction(id, m) {
+  var r = remById(id), i = remInfo(r); if (!i.due) return;
+  var msg = '👌 اتعدّى الفترة دي';
+  if (m === 'pay' && r.amount) {
+    S.tx.push({ id: nid(), date: todayKey(), type: 'صرف', amount: r.amount, item: r.item || r.title, note: 'تذكير: ' + r.title, wallet: wallet(r.wallet) ? r.wallet : S.settings.defaultWallet, photo: '' });
+    msg = '✅ اتسجل ' + fmt(r.amount) + ' — ' + esc(r.item || r.title);
+  } else if (m === 'pay') msg = '✅ تمام';
+  r.lastPaid = i.occ;
+  commit(msg);
+}
+function askNotify() {
+  if (!('Notification' in window)) return toast('الموبايل ده مش بيدعم الإشعارات من التطبيق');
+  Notification.requestPermission().then(function (p) { render(); toast(p === 'granted' ? 'تمام، هتوصلك إشعارات ✓' : 'الإشعارات مقفولة'); });
+}
+function notifyDues() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  var today = todayKey(), any = false;
+  S.reminders.forEach(function (r) {
+    var i = remInfo(r);
+    if (!i.due || r.lastNotified === today) return;
+    r.lastNotified = today; any = true;
+    var body = (r.amount ? fmt(r.amount) + ' ج — ' : '') + i.label;
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.ready.then(function (reg) { reg.showNotification('⏰ ' + r.title, { body: body, icon: 'icon-192.png', tag: 'r' + r.id }); });
+    else new Notification('⏰ ' + r.title, { body: body });
+  });
+  if (any) save();
+}
+
+// ---------- النسخة الاحتياطية ----------
+function buildBackup() {
+  return dbAll('photos').then(function (ph) { return JSON.stringify({ app: 'hesabaty', version: APP_VERSION, at: new Date().toISOString(), state: S, photos: ph }); });
+}
+function applyBackup(text) {
+  var j = JSON.parse(text);
+  if (!j || j.app !== 'hesabaty' || !j.state) throw new Error('الملف ده مش نسخة من حساباتي');
+  var keep = S.backup;
+  S = j.state; S.backup = Object.assign({}, S.backup || {}, { folderId: keep.folderId, fileId: keep.fileId });
+  return dbClear('photos').then(function () {
+    return Object.keys(j.photos || {}).reduce(function (p, k) { return p.then(function () { return dbPut('photos', k, j.photos[k]); }); }, Promise.resolve());
+  }).then(save).then(render);
+}
+function downloadBackup() {
+  buildBackup().then(function (txt) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([txt], { type: 'application/json' }));
+    a.download = 'hesabaty-' + todayKey() + '.json'; a.click();
+    toast('اتنزلت النسخة ✓');
+  });
+}
+function restoreFile(input) {
+  var f = input.files[0]; if (!f) return;
+  if (!confirm('هترجّع النسخة دي بدل كل البيانات اللي على الموبايل دلوقتي. متأكد؟')) { input.value = ''; return; }
+  f.text().then(applyBackup).then(function () { toast('رجعت النسخة ✓'); }).catch(function (e) { toast(esc(e.message)); }).then(function () { input.value = ''; });
+}
+function exportCsv() {
+  var rows = [['التاريخ', 'النوع', 'المبلغ (جنيه)', 'بالدولار', 'سعر الدولار', 'البند', 'المحفظة', 'ملاحظة']];
+  S.tx.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }).forEach(function (t) { rows.push([t.date, t.type, t.amount, t.usd || '', t.rate || '', t.item, t.wallet, t.note || '']); });
+  rows.push([]); rows.push(['السلف']); rows.push(['التاريخ', 'الشخص', 'الحركة', 'المبلغ', 'المحفظة']);
+  S.debts.forEach(function (d) { rows.push([d.date, d.person, d.kind, d.amount, d.wallet]); });
+  var csv = '\ufeff' + rows.map(function (r) { return r.map(function (c) { c = String(c); return /[",\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(','); }).join('\r\n');
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'hesabaty-' + todayKey() + '.csv'; a.click();
+  toast('اتنزل الملف ✓ افتحه بإكسيل أو جوجل شيت');
+}
+
+// --- Google Drive ---
+var gToken = null, gTokenExp = 0, gClient = null;
+function gisLoad() {
+  if (window.google && google.accounts && google.accounts.oauth2) return Promise.resolve();
+  return new Promise(function (ok, bad) {
+    var s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+    s.onload = ok; s.onerror = function () { bad(new Error('مافيش نت أو جوجل مش راضية تفتح')); };
+    document.head.appendChild(s);
+  });
+}
+function getToken(interactive) {
+  if (gToken && Date.now() < gTokenExp - 60000) return Promise.resolve(gToken);
+  if (!interactive) return Promise.reject(new Error('محتاج دوسة'));
+  if (!GOOGLE_CLIENT_ID) return Promise.reject(new Error('النسخة الاحتياطية على Drive لسه مش متظبطة في التطبيق (Client ID). استخدم «نزّل نسخة ملف» لحد ما تتظبط.'));
+  return gisLoad().then(function () {
+    return new Promise(function (ok, bad) {
+      gClient = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID, scope: 'https://www.googleapis.com/auth/drive.file',
+        callback: function (r) {
+          if (r.error) return bad(new Error('ماتمّتش الموافقة'));
+          gToken = r.access_token; gTokenExp = Date.now() + (r.expires_in || 3600) * 1000;
+          S.backup.linked = true; save(); ok(gToken);
+        },
+        error_callback: function () { bad(new Error('اتقفلت شاشة جوجل')); }
+      });
+      gClient.requestAccessToken({ prompt: S.backup.linked ? '' : 'consent' });
+    });
+  });
+}
+function gApi(method, url, body, ctype) {
+  return getToken(false).then(function (t) {
+    var h = { Authorization: 'Bearer ' + t }; if (ctype) h['Content-Type'] = ctype;
+    return fetch(url, { method: method, headers: h, body: body }).then(function (r) {
+      if (!r.ok) return r.text().then(function (x) { throw new Error('Drive ' + r.status); });
+      return r.status === 204 ? null : r.json();
+    });
+  });
+}
+function driveFolder() {
+  if (S.backup.folderId) return Promise.resolve(S.backup.folderId);
+  var q = encodeURIComponent("name='حساباتي - نسخ احتياطية' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+  return gApi('GET', 'https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id)').then(function (j) {
+    if (j.files && j.files.length) return j.files[0].id;
+    return gApi('POST', 'https://www.googleapis.com/drive/v3/files', JSON.stringify({ name: 'حساباتي - نسخ احتياطية', mimeType: 'application/vnd.google-apps.folder' }), 'application/json').then(function (f) { return f.id; });
+  }).then(function (id) { S.backup.folderId = id; return id; });
+}
+function driveUpload(name, text, fileId, folder) {
+  var boundary = 'b' + Date.now(), meta = fileId ? {} : { name: name, parents: [folder], mimeType: 'application/json' };
+  var body = '--' + boundary + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(meta) + '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' + text + '\r\n--' + boundary + '--';
+  var url = 'https://www.googleapis.com/upload/drive/v3/files' + (fileId ? '/' + fileId : '') + '?uploadType=multipart&fields=id';
+  return gApi(fileId ? 'PATCH' : 'POST', url, body, 'multipart/related; boundary=' + boundary);
+}
+var backingUp = false;
+function driveBackup(interactive) {
+  if (backingUp) return Promise.resolve();
+  if (!navigator.onLine) { if (interactive) toast('مافيش نت دلوقتي، هتتاخد النسخة أول ما النت يرجع'); return Promise.resolve(); }
+  backingUp = true; setSync('busy');
+  return getToken(interactive).then(driveFolder).then(function (folder) {
+    return buildBackup().then(function (txt) {
+      var main = driveUpload('hesabaty-backup.json', txt, S.backup.fileId, folder).catch(function (e) {
+        if (S.backup.fileId && /404/.test(e.message)) { S.backup.fileId = ''; return driveUpload('hesabaty-backup.json', txt, '', folder); }
+        throw e;
+      });
+      return main.then(function (f) {
+        S.backup.fileId = f.id;
+        var today = todayKey();
+        if (S.backup.lastDaily === today) return;
+        return driveUpload('hesabaty-' + today + '.json', txt, '', folder).then(function () { S.backup.lastDaily = today; return pruneDaily(folder); });
+      });
+    });
+  }).then(function () {
+    S.backup.last = new Date().toISOString(); S.backup.dirtyAt = '';
+    return save().then(function () { renderBackupState(); if (interactive) toast('اتاخدت نسخة على Drive ✓'); });
+  }).catch(function (e) {
+    if (interactive) toast(esc(e.message));
+    renderBackupState();
+  }).then(function () { backingUp = false; renderBackupState(); });
+}
+function pruneDaily(folder) {
+  var q = encodeURIComponent("'" + folder + "' in parents and name contains 'hesabaty-20' and trashed=false");
+  return gApi('GET', 'https://www.googleapis.com/drive/v3/files?q=' + q + '&orderBy=name desc&fields=files(id,name)').then(function (j) {
+    return (j.files || []).slice(10).reduce(function (p, f) { return p.then(function () { return gApi('DELETE', 'https://www.googleapis.com/drive/v3/files/' + f.id); }); }, Promise.resolve());
+  }).catch(function () {});
+}
+function driveRestore() {
+  getToken(true).then(driveFolder).then(function (folder) {
+    var q = encodeURIComponent("'" + folder + "' in parents and name='hesabaty-backup.json' and trashed=false");
+    return gApi('GET', 'https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id,modifiedTime)');
+  }).then(function (j) {
+    if (!j.files || !j.files.length) throw new Error('مالقيتش نسخة على Drive للحساب ده');
+    var f = j.files[0];
+    if (!confirm('لقيت نسخة من ' + f.modifiedTime.slice(0, 10) + '. هترجّعها بدل البيانات اللي على الموبايل. متأكد؟')) return;
+    return getToken(false).then(function (t) {
+      return fetch('https://www.googleapis.com/drive/v3/files/' + f.id + '?alt=media', { headers: { Authorization: 'Bearer ' + t } }).then(function (r) { return r.text(); });
+    }).then(applyBackup).then(function () { S.backup.fileId = f.id; save(); toast('رجعت النسخة ✓'); });
+  }).catch(function (e) { toast(esc(e.message)); });
+}
+var backupTimer = null;
+function scheduleBackup() {
+  clearTimeout(backupTimer);
+  backupTimer = setTimeout(function () { if (gToken && Date.now() < gTokenExp - 60000) driveBackup(false); else renderBackupState(); }, 20000);
+}
+function setSync(state) { $('syncBtn').innerHTML = CLOUD + (state === 'ok' ? '<path d="M9.5 13.5l2 2 3.5-3.5"/>' : state === 'busy' ? '<path d="M12 11v4M10 13h4" opacity=".7"/>' : '<path d="M12 11.5v2.5M12 16v.01"/>') + '</svg>'; $('syncBtn').style.color = state === 'warn' ? 'var(--gold)' : ''; }
+function renderBackupState() {
+  if (!S) return;
+  var b = S.backup, last = b.last ? new Date(b.last) : null, hours = last ? (Date.now() - last) / 36e5 : 1e9;
+  var linkedNow = gToken && Date.now() < gTokenExp - 60000;
+  $('backupState').innerHTML = !GOOGLE_CLIENT_ID ? 'النسخة على Drive مش متظبطة في التطبيق لسه. خد نسخة ملف وابعتها لنفسك من وقت للتاني.'
+    : !b.linked ? 'اربط Google Drive عشان التطبيق ياخد نسخة من بياناتك لوحده. التطبيق بيشوف ملفاته هو بس، مش أي حاجة تانية في الدرايف.'
+    : (last ? 'آخر نسخة: ' + dShort(last.toISOString().slice(0, 10)) + ' الساعة ' + pad2(last.getHours()) + ':' + pad2(last.getMinutes()) : 'لسه مااتاخدتش نسخة.') +
+      (linkedNow ? ' النسخ بتتاخد لوحدها دلوقتي ✓' : ' جوجل بيطلب دوسة كل فترة عشان يجدد الإذن.');
+  $('driveBtn').textContent = !b.linked ? 'اربط Google Drive' : 'خد نسخة دلوقتي';
+  var dirty = b.dirtyAt && (!b.last || b.dirtyAt > b.last);
+  setSync(backingUp ? 'busy' : (dirty && hours > 20) ? 'warn' : b.last ? 'ok' : 'warn');
+  var banner = $('banner');
+  if (b.linked && dirty && hours > 24 && !linkedNow && GOOGLE_CLIENT_ID) {
+    banner.hidden = false;
+    banner.innerHTML = '☁️ آخر نسخة احتياطية من ' + (last ? Math.floor(hours / 24) + ' يوم' : 'زمان') + '<button onclick="driveBackup(true)">خد نسخة</button>';
+  } else banner.hidden = true;
+}
+window.addEventListener('online', function () { scheduleBackup(); if (!S.rate.autoAt || S.rate.autoAt !== todayKey()) fetchRate(false); });
+
+// ---------- التحديثات (Service Worker) ----------
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  navigator.serviceWorker.register('sw.js').catch(function () {});
+}
+
+// ---------- البداية ----------
+applyTheme();
+dbOpen().then(function () { return dbGet('kv', 'state'); }).then(function (st) {
+  S = st || freshState();
+  var fresh = freshState();
+  Object.keys(fresh).forEach(function (k) { if (S[k] === undefined) S[k] = fresh[k]; });
+  if (!wallet(S.settings.defaultWallet)) S.settings.defaultWallet = S.wallets[0].name;
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+  return save();
+}).then(function () {
+  render(); notifyDues();
+  if (!S.rate.autoAt || S.rate.autoAt !== todayKey()) fetchRate(false);
+}).catch(function (e) {
+  document.body.classList.remove('loading');
+  $('err').textContent = 'التطبيق مش قادر يفتح التخزين على الموبايل ده: ' + e.message;
+});
+</script>
+</body>
+</html>
