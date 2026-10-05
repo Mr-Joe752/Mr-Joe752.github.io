@@ -317,6 +317,7 @@
   .viewer .vbar .grow { flex: 1; }
   .viewer .cap { color: #fff; opacity: .8; font-size: 13px; text-align: center; padding: 8px 12px calc(14px + env(safe-area-inset-bottom)); }
   .photo-thumb { width: 100%; margin-top: 12px; border-radius: 12px; border: 1px solid var(--line); cursor: zoom-in; }
+  .dnote { display: block; color: var(--ink) !important; opacity: .85; white-space: normal; }
   .gone { margin-top: 12px; color: var(--muted); font-size: 13px; }
   .pclean { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
   input[type=date].field { min-height: 46px; }
@@ -428,6 +429,10 @@
   <main class="view" id="v-money">
     <h2>السلف</h2>
     <div class="panel"><ul class="list" id="debts"></ul><p class="hint" style="margin-top:6px" id="debtsHint" hidden>دوس على أي حد عشان تشوف كل حركاته وصورها.</p></div>
+    <div id="usdDebtsBox" hidden>
+      <h2>سلف الدولار</h2>
+      <div class="panel"><ul class="list" id="usdDebts"></ul></div>
+    </div>
 
     <h2>الميزانية</h2>
     <div class="panel">
@@ -689,7 +694,7 @@ var GOOGLE_CLIENT_ID = '247280462624-08ukk2snqmf3f7j34csme9noafosapgi.apps.googl
 var AUTH_URL = 'https://hesabaty-auth.onyxgp80.workers.dev';
 // =======================================================================================
 
-var APP_VERSION = '1.4.0';
+var APP_VERSION = '1.5.1';
 var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
 var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
 var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
@@ -838,6 +843,7 @@ function balances() {
     bal[w] += t.type === 'دخل' ? a : -a;
   });
   S.debts.forEach(function (d) {
+    if (d.cur === '$') return; // سلف الدولار دفتر لوحده، مالهاش علاقة بالمحافظ
     var w = wallet(d.wallet) ? d.wallet : S.wallets[0].name;
     bal[w] += ({ 'سلّفت': -1, 'رجّعلي': 1, 'استلفت': 1, 'رجّعتله': -1 })[d.kind] * d.amount;
   });
@@ -849,11 +855,14 @@ function balances() {
   S.wallets.forEach(function (w) { total += w.cur === '$' ? bal[w.name] * r : bal[w.name]; });
   return { bal: bal, total: total };
 }
-function debtBalances() {
+function debtBalances(c) {
+  c = c || '';
   var b = {};
-  S.debts.forEach(function (d) { b[d.person] = (b[d.person] || 0) + ({ 'سلّفت': 1, 'رجّعلي': -1, 'استلفت': -1, 'رجّعتله': 1 })[d.kind] * d.amount; });
+  S.debts.forEach(function (d) { if ((d.cur || '') !== c) return; b[d.person] = (b[d.person] || 0) + ({ 'سلّفت': 1, 'رجّعلي': -1, 'استلفت': -1, 'رجّعتله': 1 })[d.kind] * d.amount; });
   return b;
 }
+function peopleOf(c) { var seen = {}; S.debts.forEach(function (d) { if ((d.cur || '') === c) seen[d.person] = 1; }); return people().filter(function (p) { return seen[p]; }); }
+function debtLine(n, c) { var f = c === '$' ? function (x) { return fmtU(x) + '$'; } : fmt; return n > 0 ? 'عليه ليك ' + f(n) : n < 0 ? 'إنت عليك ليه ' + f(-n) : 'خالصين ✓'; }
 function people() {
   var c = {};
   S.debts.forEach(function (d) { c[d.person] = (c[d.person] || 0) + 1; });
@@ -979,11 +988,14 @@ function renderTiles() {
   var b = balances(), db = debtBalances(), toMe = 0, onMe = 0;
   Object.keys(db).forEach(function (p) { if (db[p] > 0) toMe += db[p]; else onMe -= db[p]; });
   var uw = usdWallet(false), total = b.total, usd = uw ? b.bal[uw] : null;
-  var net = toMe - onMe;
+  var net = toMe - onMe, dbu = debtBalances('$'), netU = 0;
+  Object.keys(dbu).forEach(function (p) { netU += dbu[p]; });
+  var hasUsdDebt = S.debts.some(function (d) { return d.cur === '$'; });
   var debtTxt = net > 0 ? '+' + fmt(net) : net < 0 ? '−' + fmt(-net) : '0';
   $('tiles').innerHTML =
     '<div><span>كل فلوسك</span><b class="' + (total < 0 ? 'neg' : '') + '">' + (total < 0 ? '−' + fmt(-total) : fmt(total)) + '</b></div>' +
     '<div><span>السلف</span><b class="' + (net > 0 ? 'pos' : net < 0 ? 'neg' : '') + '">' + debtTxt + '</b></div>' +
+    (hasUsdDebt ? '<div><span>سلف الدولار</span><b class="' + (netU > 0 ? 'pos' : netU < 0 ? 'neg' : '') + '">' + (netU > 0 ? '+' + fmtU(netU) : netU < 0 ? '−' + fmtU(-netU) : '0') + '$</b></div>' : '') +
     (usd !== null ? '<div><span>الدولار</span><b class="' + (usd < 0 ? 'neg' : '') + '">' + (usd < 0 ? '−' + fmtU(-usd) : fmtU(usd)) + '$</b></div>' : '');
 }
 
@@ -1006,7 +1018,7 @@ function renderForm() {
   $('debtBox').classList.toggle('closed', !isDebt);
   setSeg('kindSeg', debtKind);
   $('itemBox').hidden = isDebt; $('personBox').hidden = !isDebt;
-  $('curBtn').hidden = isDebt; if (isDebt && cur === '$') toggleCur();
+  $('curBtn').hidden = false; kindLabels();
   $('itemLabel').textContent = mode === 'دخل' ? 'جاي منين' : 'اتصرف في إيه';
   $('save').textContent = saveLabel();
   $('addTitle').textContent = isDebt ? 'سجّل سلفة' : 'سجّل عملية';
@@ -1146,14 +1158,16 @@ function renderRecent() {
 
 // ----- الفلوس -----
 function renderMoney() {
-  var db = debtBalances(), ps = Object.keys(db).filter(function (p) { return db[p] !== 0; });
-  var allP = people();
-  $('debts').innerHTML = allP.length ? allP.map(function (p) {
-    var n = db[p] || 0, hasPh = S.debts.some(function (d) { return d.person === p && d.photo; });
-    return '<li><button class="rowbtn" data-p="' + esc(p) + '"><span class="what"><b>' + esc(p) + (hasPh ? ' 📎' : '') + '</b><small>' + (n > 0 ? 'عليه ليك' : n < 0 ? 'إنت عليك ليه' : 'خالصين ✓') + '</small></span><span class="amt ' + (n > 0 ? 'in' : n < 0 ? 'out' : '') + '">' + fmt(Math.abs(n)) + '</span></button></li>';
-  }).join('') : '<li class="empty">مافيش سلف. سجّل سلفة من «تسجيل» ← سلفة.</li>';
-  $('debtsHint').hidden = !allP.length;
-  $('debts').querySelectorAll('.rowbtn').forEach(function (b) { b.onclick = function () { openPerson(b.dataset.p); }; });
+  var db = debtBalances(''), dbu = debtBalances('$'), egpP = peopleOf(''), usdP = peopleOf('$');
+  var row = function (p, n, c) {
+    var hasPh = S.debts.some(function (d) { return d.person === p && (d.cur || '') === c && d.photo; });
+    return '<li><button class="rowbtn" data-p="' + esc(p) + '"><span class="what"><b>' + esc(p) + (hasPh ? ' 📎' : '') + '</b><small>' + (n > 0 ? 'عليه ليك' : n < 0 ? 'إنت عليك ليه' : 'خالصين ✓') + '</small></span><span class="amt ' + (n > 0 ? 'in' : n < 0 ? 'out' : '') + '">' + (c ? fmtU(Math.abs(n)) + '$' : fmt(Math.abs(n))) + '</span></button></li>';
+  };
+  $('debts').innerHTML = egpP.length ? egpP.map(function (p) { return row(p, db[p] || 0, ''); }).join('') : '<li class="empty">مافيش سلف بالجنيه. سجّل سلفة من «تسجيل» ← سلفة.</li>';
+  $('debtsHint').hidden = !egpP.length && !usdP.length;
+  $('usdDebtsBox').hidden = !usdP.length;
+  $('usdDebts').innerHTML = usdP.map(function (p) { return row(p, dbu[p] || 0, '$'); }).join('');
+  document.querySelectorAll('#debts .rowbtn, #usdDebts .rowbtn').forEach(function (b) { b.onclick = function () { openPerson(b.dataset.p); }; });
   var st = monthStats(curYM()), names = Object.keys(S.budgets);
   $('budgets').innerHTML = names.length ? names.map(function (n) {
     var s = spentOn(n, st), b = S.budgets[n], p = Math.round(s * 100 / b);
@@ -1219,15 +1233,20 @@ function onItemInput() {
   box.querySelectorAll('button').forEach(function (b) { b.onclick = function () { pick(b.dataset.v); }; });
   box.hidden = !hits.length;
 }
+var KIND_LBL = { '': ['سلّفت حد', 'استلفت', 'رجّعلي', 'رجّعتله'], '$': ['سلّفت حد $', 'عليّا $', 'رجّعلي $', 'سدّدت $'] };
+function kindLabels() {
+  var l = KIND_LBL[cur === '$' ? '$' : ''];
+  $('kindSeg').querySelectorAll('button').forEach(function (b, i) { b.textContent = l[i]; });
+}
 function toggleCur() {
   cur = cur === '$' ? 'ج' : '$';
   $('curBtn').textContent = cur === '$' ? '$' : 'ج.م';
   $('curBtn').classList.toggle('usd', cur === '$');
-  showConv();
+  kindLabels(); showConv();
 }
 function showConv() {
   var a = num($('amount')), r = rate();
-  $('conv').textContent = cur === '$' ? (r ? (a ? '≈ ' + fmt(a * r) + ' ج.م، ' : '') + 'الدولار بـ ' + fmtU(r) : 'سعر الدولار مش معروف، اكتبه من الإعدادات') : '';
+  $('conv').textContent = cur === '$' && mode === 'سلفة' ? 'سلف الدولار دفتر لوحده، مش بيأثر على محافظك' : cur === '$' ? (r ? (a ? '≈ ' + fmt(a * r) + ' ج.م، ' : '') + 'الدولار بـ ' + fmtU(r) : 'سعر الدولار مش معروف، اكتبه من الإعدادات') : '';
 }
 function currentWallet() {
   if (cur === '$' && !walletTouched) return usdWallet(true);
@@ -1293,12 +1312,16 @@ function saveDebt(amount) {
   var person = $('person').value.trim();
   if (!person) { $('err').textContent = 'اختار الشخص'; return; }
   person = knownPerson(person);
-  var d = { id: nid(), date: $('date').value || todayKey(), person: person, kind: debtKind, amount: amount, wallet: S.settings.askWallet ? pickedWallet : $('wallet').value, photo: '' };
+  var dc = cur === '$' ? '$' : '';
+  var w = S.settings.askWallet ? pickedWallet : $('wallet').value;
+  if (dc === '$') w = '';
+  else if (wallet(w) && wallet(w).cur === '$') w = S.settings.defaultWallet;
+  var d = { id: nid(), date: $('date').value || todayKey(), person: person, kind: debtKind, amount: amount, cur: dc, note: $('note').value.trim(), wallet: w, photo: '' };
   storePhoto().then(function (pid) {
     d.photo = pid; S.debts.push(d);
-    var n = debtBalances()[person] || 0;
+    var n = debtBalances(dc)[person] || 0;
     resetForm(); doneFlash();
-    commit('🤝 اتسجل: ' + d.kind + ' ' + esc(person) + ' ' + fmt(amount) + '<small>' + (n > 0 ? esc(person) + ' عليه ليك ' + fmt(n) : n < 0 ? 'إنت عليك لـ ' + esc(person) + ' ' + fmt(-n) : 'خالصين ✓') + '</small>',
+    commit('🤝 اتسجل: ' + d.kind + ' ' + esc(person) + ' ' + (dc ? fmtU(amount) + '$' : fmt(amount)) + (d.note ? ' (' + esc(d.note) + ')' : '') + '<small>' + esc(person) + ': ' + debtLine(n, dc) + '</small>',
       function () { S.debts = S.debts.filter(function (x) { return x.id !== d.id; }); if (d.photo) dbDel('photos', d.photo); commit('اتمسحت السلفة'); });
   });
 }
@@ -1370,12 +1393,14 @@ function togglePhotoFilter() {
 // ---------- سجل شخص في السلف ----------
 function openPerson(p) {
   var rows = S.debts.filter(function (d) { return d.person === p; }).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.id - a.id; });
-  var n = debtBalances()[p] || 0;
+  var n = debtBalances('')[p] || 0, nu = debtBalances('$')[p] || 0, hasU = S.debts.some(function (d) { return d.person === p && d.cur === '$'; });
+  var hasE = S.debts.some(function (d) { return d.person === p && !d.cur; });
   $('pTitle').textContent = '🤝 ' + p;
-  $('pSub').textContent = n > 0 ? 'عليه ليك ' + fmt(n) : n < 0 ? 'إنت عليك ليه ' + fmt(-n) : 'خالصين ✓';
+  $('pSub').textContent = [hasE ? 'بالجنيه: ' + debtLine(n, '') : '', hasU ? 'بالدولار: ' + debtLine(nu, '$') : ''].filter(Boolean).join(' · ');
   $('pList').innerHTML = rows.map(function (d) {
-    return '<li><span class="what"><b>' + esc(d.kind) + '</b><small>' + dShort(d.date) + '/' + d.date.slice(0, 4) + '، ' + esc(d.wallet || '') + (d.photoGone ? '، الصورة اتمسحت' : '') + '</small></span>' +
-      '<span class="amt">' + fmt(d.amount) + '</span>' +
+    return '<li><span class="what"><b>' + esc(d.kind) + '</b><small>' + dShort(d.date) + '/' + d.date.slice(0, 4) + (d.cur === '$' ? '' : '، ' + esc(d.wallet || '')) + (d.photoGone ? '، الصورة اتمسحت' : '') + '</small>' +
+      (d.note ? '<small class="dnote">📝 ' + esc(d.note) + '</small>' : '') + '</span>' +
+      '<span class="amt">' + (d.cur === '$' ? fmtU(d.amount) + '$' : fmt(d.amount)) + '</span>' +
       (d.photo ? '<button class="ghost" style="padding:6px 10px;font-size:13px" data-ph="' + d.id + '">📎 الصورة</button>' : '') +
       '<button class="ghost danger" style="padding:6px 10px;font-size:13px" data-del="' + d.id + '" aria-label="امسح">✕</button></li>';
   }).join('');
@@ -1667,8 +1692,8 @@ function restoreFile(input) {
 function exportCsv() {
   var rows = [['التاريخ', 'النوع', 'المبلغ (جنيه)', 'بالدولار', 'سعر الدولار', 'البند', 'المحفظة', 'ملاحظة']];
   S.tx.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }).forEach(function (t) { rows.push([t.date, t.type, t.amount, t.usd || '', t.rate || '', t.item, t.wallet, t.note || '']); });
-  rows.push([]); rows.push(['السلف']); rows.push(['التاريخ', 'الشخص', 'الحركة', 'المبلغ', 'المحفظة']);
-  S.debts.forEach(function (d) { rows.push([d.date, d.person, d.kind, d.amount, d.wallet]); });
+  rows.push([]); rows.push(['السلف']); rows.push(['التاريخ', 'الشخص', 'الحركة', 'المبلغ', 'العملة', 'المحفظة', 'ملاحظة']);
+  S.debts.forEach(function (d) { rows.push([d.date, d.person, d.kind, d.amount, d.cur === '$' ? 'دولار' : 'جنيه', d.wallet, d.note || '']); });
   var csv = '\ufeff' + rows.map(function (r) { return r.map(function (c) { c = String(c); return /[",\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(','); }).join('\r\n');
   var a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
