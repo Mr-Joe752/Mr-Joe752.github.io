@@ -118,6 +118,24 @@
   .field { width: 100%; padding: 12px 14px; border: 1px solid var(--line); background: var(--surface-2); border-radius: 12px; font-size: 16px; transition: border-color .2s; }
   .field:focus { outline: none; border-color: var(--focus); }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .amount input[readonly] { caret-color: transparent; cursor: default; }
+  .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0 4px; direction: ltr; }
+  .keypad button { height: 46px; border: 0; border-radius: 14px; background: var(--surface-2); font-size: 22px; font-weight: 500; color: var(--ink);
+    transition: transform .1s var(--ease), background .15s; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  .keypad button:active { transform: scale(.94); background: var(--line); }
+  .keypad .k-del { font-size: 18px; color: var(--muted); }
+  .itemhead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 8px 0 8px; }
+  .itemhead .f { font-size: 13px; color: var(--muted); }
+  .itemhead .picked { font-weight: 600; color: var(--focus); font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .itemgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .itemgrid button { min-height: 46px; padding: 8px 6px; border: 1px solid var(--line); background: var(--surface); border-radius: 14px; font-size: 14px; line-height: 1.25;
+    overflow: hidden; text-overflow: ellipsis; transition: transform .12s var(--ease), border-color .2s, background .2s, color .2s; touch-action: manipulation; }
+  .itemgrid button:active { transform: scale(.95); }
+  .itemgrid button[aria-pressed="true"] { border-color: var(--focus); background: var(--surface-2); color: var(--focus); font-weight: 600; }
+  .itemgrid .other { color: var(--muted); border-style: dashed; }
+  .typebox { margin-top: 10px; }
+  #v-add .keypad { margin-top: 14px; }
+  #v-add details.more { margin-top: 12px; }
   .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: 14px; transition: transform .15s var(--ease), border-color .2s, color .2s, background .2s; }
   .chip:active { transform: scale(.94); }
   .chip[aria-pressed="true"] { border-color: var(--focus); color: var(--focus); background: var(--surface-2); }
@@ -156,9 +174,9 @@
   .ask .yes { background: var(--ink); color: var(--bg); border: 0; border-radius: 12px; padding: 10px; }
   .err { color: var(--out); font-size: 14px; min-height: 20px; margin-top: 8px; }
 
-  .toast { position: fixed; inset-inline: 16px; bottom: calc(92px + env(safe-area-inset-bottom)); max-width: 448px; margin: 0 auto;
+  .toast { position: fixed; inset-inline: 16px; top: calc(10px + env(safe-area-inset-top)); max-width: 448px; margin: 0 auto; box-shadow: 0 10px 30px -12px rgba(0,0,0,.45);
     background: var(--ink); color: var(--bg); border-radius: 16px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start;
-    transform: translateY(24px) scale(.98); opacity: 0; pointer-events: none; transition: transform .35s var(--ease), opacity .25s; z-index: 30; }
+    transform: translateY(-24px) scale(.98); opacity: 0; pointer-events: none; transition: transform .35s var(--ease), opacity .25s; z-index: 30; }
   .toast.show { transform: none; opacity: 1; pointer-events: auto; }
   .toast .t { flex: 1; font-size: 14px; }
   .toast .t small { display: block; opacity: .8; margin-top: 2px; }
@@ -310,29 +328,39 @@
       </div></div>
 
       <div class="amount">
-        <input id="amount" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="المبلغ" oninput="cleanAmount(this); showConv()">
+        <input id="amount" readonly inputmode="none" autocomplete="off" placeholder="0" aria-label="المبلغ" oninput="cleanAmount(this); showConv()">
         <button class="cur" id="curBtn" type="button" onclick="toggleCur()" aria-label="العملة">ج.م</button>
       </div>
       <div class="amount-line"></div>
       <div class="conv" id="conv"></div>
-
       <div id="itemBox">
-        <label class="f" for="item" id="itemLabel">اتصرف في إيه</label>
-        <input class="field" id="item" autocomplete="off" placeholder="اكتب أو اختار من تحت" oninput="onItemInput()">
-        <div id="sugg" class="sugg" hidden></div>
-        <div id="chips" class="chips"></div>
+        <div class="itemhead"><span class="f" id="itemLabel">اتصرف في إيه</span><span class="picked" id="pickedItem"></span></div>
+        <div id="chips" class="itemgrid"></div>
+        <div class="reveal closed typebox" id="typeBox"><div>
+          <input class="field" id="item" autocomplete="off" placeholder="اكتب اسم البند" enterkeyhint="done" oninput="onItemInput()">
+          <div id="sugg" class="sugg" hidden></div>
+        </div></div>
       </div>
       <div id="personBox" hidden>
-        <label class="f" for="person">الشخص</label>
-        <input class="field" id="person" autocomplete="off" placeholder="اسمه">
-        <div id="peopleChips" class="chips"></div>
+        <div class="itemhead"><span class="f">الشخص</span><span class="picked" id="pickedPerson"></span></div>
+        <div id="peopleChips" class="itemgrid"></div>
+        <div class="reveal closed typebox" id="personTypeBox"><div>
+          <input class="field" id="person" autocomplete="off" placeholder="اسمه" enterkeyhint="done" oninput="$('pickedPerson').textContent = this.value; renderPeople()">
+        </div></div>
       </div>
-
       <div id="walletAsk" hidden>
         <label class="f">من أنهي محفظة؟</label>
         <div class="chips" id="walletChips"></div>
       </div>
-
+      <div class="keypad" id="keypad" aria-label="أرقام المبلغ">
+        <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+        <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+        <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
+        <button type="button" data-k=".">.</button><button type="button" data-k="0">0</button><button type="button" class="k-del" data-k="del" aria-label="امسح رقم">⌫</button>
+      </div>
+      <div id="ask" class="ask" hidden></div>
+      <div class="err" id="err"></div>
+      <button class="primary" id="save" onclick="trySave()">سجّل</button>
       <details class="more">
         <summary id="moreLbl">التاريخ، ملاحظة، صورة، محفظة</summary>
         <div>
@@ -347,10 +375,6 @@
           </div>
         </div>
       </details>
-
-      <div id="ask" class="ask" hidden></div>
-      <div class="err" id="err"></div>
-      <button class="primary" id="save" onclick="trySave()">سجّل</button>
     </div>
   </main>
 
@@ -442,6 +466,14 @@
       <button class="ghost" id="notifBtn" style="width:100%;margin-top:8px" onclick="askNotify()">اسمح بالإشعارات</button>
     </div>
 
+    <h2>التسجيل السريع</h2>
+    <div class="panel">
+      <div class="setrow">
+        <div class="what">سجّل أول ما أختار البند<small>تكتب المبلغ وتدوس البند، ويتسجل على طول من غير زرار «سجّل»</small></div>
+        <label class="sw"><input type="checkbox" id="quickSave" onchange="S.settings.quickSave=this.checked; commit('اتحفظ ✓')" aria-label="سجّل أول ما أختار البند"><span></span></label>
+      </div>
+    </div>
+
     <h2>الفلوس بتطلع منين</h2>
     <div class="panel">
       <label class="f" style="margin-top:0">المحفظة الأساسية</label>
@@ -516,7 +548,7 @@
   </div>
 </nav>
 
-<div class="toast" id="toast" role="status"><div class="t" id="toastText"></div><button id="toastUndo" hidden>تراجع</button></div>
+<div class="toast" id="toast" role="status" onclick="if (event.target.id !== 'toastUndo') this.classList.remove('show')"><div class="t" id="toastText"></div><button id="toastUndo" hidden>تراجع</button></div>
 <div class="scrim" id="scrim" onclick="closeSheets()"></div>
 
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle">
@@ -601,7 +633,7 @@
 var GOOGLE_CLIENT_ID = '247280462624-08ukk2snqmf3f7j34csme9noafosapgi.apps.googleusercontent.com';
 // =======================================================================================
 
-var APP_VERSION = '1.1.0';
+var APP_VERSION = '1.2.0';
 var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
 var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
 var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
@@ -679,7 +711,7 @@ function toast(html, undo) {
   var b = $('toastUndo'); b.hidden = !undo; b.onclick = undo ? function () { $('toast').classList.remove('show'); undo(); } : null;
   $('toast').classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function () { $('toast').classList.remove('show'); }, undo ? 7000 : 3500);
+  toastTimer = setTimeout(function () { $('toast').classList.remove('show'); }, undo ? 5000 : 2500);
 }
 
 // ---------- توحيد الأسماء و«قصدك؟» ----------
@@ -936,14 +968,80 @@ function renderForm() {
   $('walletChips').querySelectorAll('.chip').forEach(function (b) { b.onclick = function () { pickedWallet = b.dataset.v; walletTouched = true; renderForm(); }; });
   if (!$('date').value) $('date').value = todayKey();
   renderChips(); showConv();
-  $('peopleChips').innerHTML = people().slice(0, 10).map(function (p) { return '<button class="chip" type="button" data-v="' + esc(p) + '">' + esc(p) + '</button>'; }).join('');
-  $('peopleChips').querySelectorAll('.chip').forEach(function (b) { b.onclick = function () { $('person').value = b.dataset.v; if (!$('amount').value) $('amount').focus(); }; });
+  renderPeople();
 }
 function renderChips() {
-  if (mode === 'سلفة') return;
-  $('chips').innerHTML = itemsOf(mode).slice(0, 10).map(function (x) { return '<button class="chip" type="button" aria-pressed="' + (x === $('item').value) + '" data-v="' + esc(x) + '">' + esc(x) + '</button>'; }).join('');
-  $('chips').querySelectorAll('.chip').forEach(function (b) { b.onclick = function () { pick(b.dataset.v); }; });
+  if (mode === 'سلفة') return renderPeople();
+  var cur = $('item').value.trim(), items = itemsOf(mode).slice(0, 8);
+  $('chips').innerHTML = items.map(function (x) { return '<button type="button" aria-pressed="' + (x === cur) + '" data-v="' + esc(x) + '">' + esc(x) + '</button>'; }).join('') +
+    '<button type="button" class="other" data-other="1">✏️ ' + (items.length ? 'بند تاني' : 'اكتب البند') + '</button>';
+  $('chips').querySelectorAll('button').forEach(function (b) {
+    b.onclick = function () { if (b.dataset.other) openTyping('typeBox', 'item'); else pick(b.dataset.v); };
+  });
+  $('pickedItem').textContent = cur;
 }
+function renderPeople() {
+  var cur = $('person').value.trim(), ps = people().slice(0, 8);
+  $('peopleChips').innerHTML = ps.map(function (x) { return '<button type="button" aria-pressed="' + (x === cur) + '" data-v="' + esc(x) + '">' + esc(x) + '</button>'; }).join('') +
+    '<button type="button" class="other" data-other="1">✏️ ' + (ps.length ? 'حد تاني' : 'اكتب الاسم') + '</button>';
+  $('peopleChips').querySelectorAll('button').forEach(function (b) {
+    b.onclick = function () {
+      if (b.dataset.other) return openTyping('personTypeBox', 'person');
+      $('person').value = b.dataset.v; $('pickedPerson').textContent = b.dataset.v; closeTyping(); renderPeople();
+      if (S.settings.quickSave && num($('amount'))) trySave();
+    };
+  });
+  $('pickedPerson').textContent = cur;
+}
+function openTyping(box, input) {
+  $(box).classList.remove('closed');
+  setTimeout(function () { $(input).focus(); $(input).scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' }); }, 60);
+}
+function closeTyping() { $('typeBox').classList.add('closed'); $('personTypeBox').classList.add('closed'); $('sugg').hidden = true; if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); }
+
+// ---------- لوحة الأرقام ----------
+function fitAmount() {
+  var n = $('amount').value.length;
+  $('amount').style.fontSize = n <= 5 ? '' : n <= 7 ? '38px' : '30px';
+}
+var panelFocused = false;
+function focusPanel() {
+  if (panelFocused) return; panelFocused = true;
+  var r = $('typeSeg').getBoundingClientRect();
+  if (r.top < 0 || r.top > 140) window.scrollTo({ top: window.scrollY + r.top - 70, behavior: reduced ? 'auto' : 'smooth' });
+}
+function kp(k) {
+  var el = $('amount'), v = el.value;
+  if (k === 'del') v = v.slice(0, -1);
+  else if (k === 'clear') v = '';
+  else if (k === '.') { if (v.indexOf('.') < 0) v = (v || '0') + '.'; }
+  else { if (v === '0') v = ''; if (v.replace('.', '').length < 9) v += k; }
+  el.value = v; fitAmount(); showConv(); $('err').textContent = ''; focusPanel();
+  if (navigator.vibrate) try { navigator.vibrate(6); } catch (e) {}
+}
+(function () {
+  var hold = null;
+  $('keypad').querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () { kp(b.dataset.k); });
+    if (b.dataset.k === 'del') {
+      b.addEventListener('pointerdown', function () { hold = setTimeout(function () { kp('clear'); hold = 'done'; }, 550); });
+      ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (ev) { b.addEventListener(ev, function () { if (hold && hold !== 'done') clearTimeout(hold); hold = null; }); });
+    }
+  });
+  // كيبورد الكمبيوتر: الأرقام بتكتب في المبلغ
+  document.addEventListener('keydown', function (e) {
+    if (!$('v-add').classList.contains('on')) return;
+    var a = document.activeElement, tag = a && a.tagName;
+    if (tag === 'INPUT' && a.id !== 'amount' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+    if (/^[0-9]$/.test(e.key)) { kp(e.key); e.preventDefault(); }
+    else if (e.key === '.' || e.key === ',') { kp('.'); e.preventDefault(); }
+    else if (e.key === 'Backspace') { kp('del'); e.preventDefault(); }
+    else if (e.key === 'Enter') { trySave(); e.preventDefault(); }
+  });
+  ['item', 'person'].forEach(function (id) {
+    $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); trySave(); } });
+  });
+})();
 
 // ----- العمليات -----
 function shiftMonth(n) { var m = viewYM.m + n, y = viewYM.y; if (m < 1) { m = 12; y--; } if (m > 12) { m = 1; y++; } viewYM = { y: y, m: m }; renderList(); }
@@ -1031,6 +1129,7 @@ function renderSettings() {
   $('defWalletChips').innerHTML = S.wallets.map(function (w) { return '<button class="chip" type="button" aria-pressed="' + (w.name === S.settings.defaultWallet) + '" data-v="' + esc(w.name) + '">' + esc(w.name) + '</button>'; }).join('');
   $('defWalletChips').querySelectorAll('.chip').forEach(function (b) { b.onclick = function () { S.settings.defaultWallet = b.dataset.v; pickedWallet = b.dataset.v; commit('اتحفظ ✓'); }; });
   $('askWallet').checked = !!S.settings.askWallet;
+  $('quickSave').checked = !!S.settings.quickSave;
   var r = rate();
   $('rateNow').textContent = r ? 'الدولار دلوقتي بـ ' + fmtU(r) + ' جنيه (' + (S.rate.manual ? 'يدوي' + (S.rate.auto ? '، والتلقائي ' + fmtU(S.rate.auto) : '') : 'تلقائي' + (S.rate.autoAt ? '، اتحدّث ' + dShort(S.rate.autoAt) : '')) + ')' : 'سعر الدولار مش معروف لسه. افتح النت أو اكتبه بإيدك.';
   $('rateAuto').hidden = !S.rate.manual;
@@ -1053,7 +1152,10 @@ bindSeg('themeSeg', setThemePref);
 bindSeg('exSeg', function (v) { exDir = v; setSeg('exSeg', v); exHint(); });
 bindSeg('repSeg', setRepeat);
 
-function pick(x) { $('item').value = x; $('sugg').hidden = true; $('ask').hidden = true; renderChips(); if (!$('amount').value) $('amount').focus(); }
+function pick(x) {
+  $('item').value = x; $('sugg').hidden = true; $('ask').hidden = true; closeTyping(); renderChips();
+  if (S.settings.quickSave && num($('amount'))) trySave();
+}
 function onItemInput() {
   $('ask').hidden = true; renderChips();
   var k = key($('item').value), box = $('sugg');
@@ -1080,10 +1182,10 @@ function currentWallet() {
 function trySave() {
   $('err').textContent = '';
   var amount = num($('amount'));
-  if (!amount) { $('err').textContent = 'اكتب المبلغ'; $('amount').focus(); return; }
+  if (!amount) { $('err').textContent = 'اكتب المبلغ'; return; }
   if (mode === 'سلفة') return saveDebt(amount);
   var item = $('item').value.trim();
-  if (!item) { $('err').textContent = mode === 'صرف' ? 'اكتب اتصرف في إيه' : 'اكتب الفلوس جاية منين'; $('item').focus(); return; }
+  if (!item) { $('err').textContent = mode === 'صرف' ? 'اختار البند' : 'اختار جاي منين'; return; }
   if (cur === '$' && !rate()) { $('err').textContent = 'سعر الدولار مش معروف، اكتبه من الإعدادات'; return; }
   var r = resolve(item, mode);
   if (r.exact) return saveTx(r.exact);
@@ -1102,6 +1204,7 @@ function doneFlash() {
 }
 function resetForm() {
   ['amount', 'item', 'note', 'person'].forEach(function (id) { $(id).value = ''; });
+  closeTyping(); $('pickedItem').textContent = ''; $('pickedPerson').textContent = ''; fitAmount();
   $('date').value = todayKey(); clearFile(); $('sugg').hidden = true;
   walletTouched = false; pickedWallet = S.settings.defaultWallet; if (cur === '$') toggleCur();
 }
@@ -1123,7 +1226,7 @@ function saveTx(item) {
 }
 function saveDebt(amount) {
   var person = $('person').value.trim();
-  if (!person) { $('err').textContent = 'اكتب اسم الشخص'; $('person').focus(); return; }
+  if (!person) { $('err').textContent = 'اختار الشخص'; return; }
   person = knownPerson(person);
   var d = { id: nid(), date: $('date').value || todayKey(), person: person, kind: debtKind, amount: amount, wallet: S.settings.askWallet ? pickedWallet : $('wallet').value, photo: '' };
   storePhoto().then(function (pid) {
