@@ -478,7 +478,8 @@
     <h2>النسخة الاحتياطية</h2>
     <div class="panel" id="backupBox">
       <p class="hint" id="backupState"></p>
-      <button class="primary" id="driveBtn" style="margin-top:10px" onclick="driveBackup(true)">اربط Google Drive</button>
+      <button class="primary" id="driveBtn" style="margin-top:10px">اربط Google Drive</button>
+      <button class="ghost danger" id="unlinkBtn" style="width:100%;margin-top:8px" onclick="unlinkDrive()" hidden>افصل الحساب عن الموبايل ده</button>
       <div class="two" style="margin-top:10px">
         <button class="ghost" onclick="driveRestore()">رجّع من Drive</button>
         <button class="ghost" onclick="exportCsv()">نزّل إكسيل</button>
@@ -684,9 +685,11 @@
 
 // ====== الإعداد الوحيد: Client ID من Google Cloud (للنسخة الاحتياطية على Drive) ======
 var GOOGLE_CLIENT_ID = '247280462624-08ukk2snqmf3f7j34csme9noafosapgi.apps.googleusercontent.com';
+// وسيط تسجيل الدخول (Cloudflare Worker) عشان النسخة تتاخد لوحدها من غير ما يطلب الإيميل تاني. سيبه فاضي لو مش متركب.
+var AUTH_URL = 'https://hesabaty-auth.onyxgp80.workers.dev';
 // =======================================================================================
 
-var APP_VERSION = '1.3.0';
+var APP_VERSION = '1.4.0';
 var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
 var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
 var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
@@ -1636,13 +1639,14 @@ function notifyDues() {
 
 // ---------- النسخة الاحتياطية ----------
 function buildBackup() {
-  return dbAll('photos').then(function (ph) { return JSON.stringify({ app: 'hesabaty', version: APP_VERSION, at: new Date().toISOString(), state: S, photos: ph }); });
+  var st = JSON.parse(JSON.stringify(S)); st.backup = { last: S.backup.last };
+  return dbAll('photos').then(function (ph) { return JSON.stringify({ app: 'hesabaty', version: APP_VERSION, at: new Date().toISOString(), state: st, photos: ph }); });
 }
 function applyBackup(text) {
   var j = JSON.parse(text);
   if (!j || j.app !== 'hesabaty' || !j.state) throw new Error('الملف ده مش نسخة من حساباتي');
   var keep = S.backup;
-  S = j.state; S.backup = Object.assign({}, S.backup || {}, { folderId: keep.folderId, fileId: keep.fileId });
+  S = j.state; S.backup = Object.assign({}, S.backup || {}, { folderId: keep.folderId, fileId: keep.fileId, deviceKey: keep.deviceKey, email: keep.email, linked: keep.linked, last: keep.last, lastDaily: keep.lastDaily });
   return dbClear('photos').then(function () {
     return Object.keys(j.photos || {}).reduce(function (p, k) { return p.then(function () { return dbPut('photos', k, j.photos[k]); }); }, Promise.resolve());
   }).then(save).then(render);
@@ -1682,24 +1686,85 @@ function gisLoad() {
     document.head.appendChild(s);
   });
 }
+function setToken(t, exp) { gToken = t; gTokenExp = Date.now() + (exp || 3600) * 1000; }
+function authPost(path, body) {
+  return fetch(AUTH_URL.replace(/\/$/, '') + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+    .then(function (r) { return r.json().then(function (j) { if (!r.ok) { var e = new Error(j.error || ('auth ' + r.status)); e.code = j.error; throw e; } return j; }); });
+}
+/** إذن الدرايف: من الذاكرة، أو من الوسيط من غير أي شاشة، أو (لو interactive) نسجّل دخول */
 function getToken(interactive) {
   if (gToken && Date.now() < gTokenExp - 60000) return Promise.resolve(gToken);
+  if (AUTH_URL && S.backup.deviceKey) {
+    if (!navigator.onLine) return Promise.reject(new Error('مافيش نت'));
+    return authPost('/token', { device_key: S.backup.deviceKey }).then(function (j) {
+      setToken(j.access_token, j.expires_in);
+      if (j.email && j.email !== S.backup.email) { S.backup.email = j.email; save(); }
+      return gToken;
+    }).catch(function (e) {
+      if (e.code === 'relink') { S.backup.deviceKey = ''; S.backup.linked = false; save(); renderBackupState(); }
+      if (interactive && e.code === 'relink') return link();
+      throw e.code === 'relink' ? new Error('محتاج تربط الحساب تاني') : e;
+    });
+  }
   if (!interactive) return Promise.reject(new Error('محتاج دوسة'));
-  if (!GOOGLE_CLIENT_ID) return Promise.reject(new Error('النسخة الاحتياطية على Drive لسه مش متظبطة في التطبيق (Client ID). استخدم «نزّل نسخة ملف» لحد ما تتظبط.'));
+  return link();
+}
+/** تسجيل الدخول مرة واحدة */
+function link() {
+  if (!GOOGLE_CLIENT_ID) return Promise.reject(new Error('النسخة الاحتياطية على Drive لسه مش متظبطة في التطبيق.'));
   return gisLoad().then(function () {
     return new Promise(function (ok, bad) {
-      gClient = google.accounts.oauth2.initTokenClient({
-        client_id: GOOGLE_CLIENT_ID, scope: 'https://www.googleapis.com/auth/drive.file',
-        callback: function (r) {
-          if (r.error) return bad(new Error('ماتمّتش الموافقة'));
-          gToken = r.access_token; gTokenExp = Date.now() + (r.expires_in || 3600) * 1000;
-          S.backup.linked = true; save(); ok(gToken);
-        },
-        error_callback: function () { bad(new Error('اتقفلت شاشة جوجل')); }
-      });
-      gClient.requestAccessToken({ prompt: S.backup.linked ? '' : 'consent' });
+      if (AUTH_URL) {
+        var cc = google.accounts.oauth2.initCodeClient({
+          client_id: GOOGLE_CLIENT_ID, ux_mode: 'popup', select_account: true,
+          scope: 'openid email https://www.googleapis.com/auth/drive.file',
+          callback: function (r) {
+            if (r.error || !r.code) return bad(new Error('ماتمّتش الموافقة'));
+            authPost('/exchange', { code: r.code }).then(function (j) {
+              setToken(j.access_token, j.expires_in);
+              S.backup.deviceKey = j.device_key; S.backup.email = j.email || ''; S.backup.linked = true; S.backup.folderId = ''; S.backup.fileId = '';
+              save().then(function () { renderBackupState(); ok(gToken); });
+            }).catch(function (e) {
+              bad(new Error(e.code === 'no_refresh_token'
+                ? 'جوجل ماادتش إذن دايم. ادخل myaccount.google.com/permissions وشيل «حساباتي»، وبعدين اربط تاني.'
+                : 'ماقدرتش أكمّل الربط (' + (e.code || e.message) + ')'));
+            });
+          },
+          error_callback: function () { bad(new Error('اتقفلت شاشة جوجل')); }
+        });
+        cc.requestCode();
+      } else {
+        var tc = google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID, scope: 'https://www.googleapis.com/auth/drive.file',
+          callback: function (r) {
+            if (r.error) return bad(new Error('ماتمّتش الموافقة'));
+            setToken(r.access_token, r.expires_in); S.backup.linked = true; save(); ok(gToken);
+          },
+          error_callback: function () { bad(new Error('اتقفلت شاشة جوجل')); }
+        });
+        tc.requestAccessToken({ prompt: S.backup.linked ? '' : 'consent' });
+      }
     });
   });
+}
+function unlinkDrive() {
+  if (!confirm('هتفصل حساب جوجل عن الموبايل ده؟ النسخ اللي على Drive هتفضل موجودة.')) return;
+  var k = S.backup.deviceKey;
+  if (AUTH_URL && k) authPost('/unlink', { device_key: k }).catch(function () {});
+  S.backup.deviceKey = ''; S.backup.linked = false; S.backup.email = ''; S.backup.folderId = ''; S.backup.fileId = '';
+  gToken = null; gTokenExp = 0;
+  save().then(function () { renderBackupState(); toast('اتفصل الحساب'); });
+}
+/** أول ربط على موبايل فاضي: لو فيه نسخة، نسأل نرجّعها */
+function linkAndMaybeRestore() {
+  var empty = !S.tx.length && !S.debts.length;
+  getToken(true).then(function () {
+    if (!empty) return driveBackup(true);
+    return findDriveBackup().then(function (f) {
+      if (!f) { toast('اتربط ✓ ومالقيتش نسخة قديمة، هتبدأ من جديد'); return driveBackup(false); }
+      if (confirm('لقيت نسختك على Drive من ' + f.modifiedTime.slice(0, 10) + '. أرجّعها على الموبايل ده؟')) return restoreDriveFile(f);
+    });
+  }).catch(function (e) { toast(esc(e.message)); });
 }
 function gApi(method, url, body, ctype) {
   return getToken(false).then(function (t) {
@@ -1756,40 +1821,62 @@ function pruneDaily(folder) {
     return (j.files || []).slice(10).reduce(function (p, f) { return p.then(function () { return gApi('DELETE', 'https://www.googleapis.com/drive/v3/files/' + f.id); }); }, Promise.resolve());
   }).catch(function () {});
 }
-function driveRestore() {
-  getToken(true).then(driveFolder).then(function (folder) {
+function findDriveBackup() {
+  return driveFolder().then(function (folder) {
     var q = encodeURIComponent("'" + folder + "' in parents and name='hesabaty-backup.json' and trashed=false");
     return gApi('GET', 'https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id,modifiedTime)');
-  }).then(function (j) {
-    if (!j.files || !j.files.length) throw new Error('مالقيتش نسخة على Drive للحساب ده');
-    var f = j.files[0];
+  }).then(function (j) { return j.files && j.files.length ? j.files[0] : null; });
+}
+function restoreDriveFile(f) {
+  return getToken(false).then(function (t) {
+    return fetch('https://www.googleapis.com/drive/v3/files/' + f.id + '?alt=media', { headers: { Authorization: 'Bearer ' + t } }).then(function (r) { return r.text(); });
+  }).then(applyBackup).then(function () { S.backup.fileId = f.id; return save(); }).then(function () { toast('رجعت النسخة ✓'); });
+}
+function driveRestore() {
+  getToken(true).then(findDriveBackup).then(function (f) {
+    if (!f) throw new Error('مالقيتش نسخة على Drive للحساب ده');
     if (!confirm('لقيت نسخة من ' + f.modifiedTime.slice(0, 10) + '. هترجّعها بدل البيانات اللي على الموبايل. متأكد؟')) return;
-    return getToken(false).then(function (t) {
-      return fetch('https://www.googleapis.com/drive/v3/files/' + f.id + '?alt=media', { headers: { Authorization: 'Bearer ' + t } }).then(function (r) { return r.text(); });
-    }).then(applyBackup).then(function () { S.backup.fileId = f.id; save(); toast('رجعت النسخة ✓'); });
+    return restoreDriveFile(f);
   }).catch(function (e) { toast(esc(e.message)); });
 }
 var backupTimer = null;
+function canAutoBackup() { return (gToken && Date.now() < gTokenExp - 60000) || (AUTH_URL && S.backup.deviceKey); }
 function scheduleBackup() {
   clearTimeout(backupTimer);
-  backupTimer = setTimeout(function () { if (gToken && Date.now() < gTokenExp - 60000) driveBackup(false); else renderBackupState(); }, 20000);
+  backupTimer = setTimeout(function () { if (canAutoBackup()) driveBackup(false); else renderBackupState(); }, 3000);
 }
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'hidden' && S && S.backup.dirtyAt && (!S.backup.last || S.backup.dirtyAt > S.backup.last) && canAutoBackup()) {
+    clearTimeout(backupTimer); driveBackup(false);
+  }
+});
 function setSync(state) { $('syncBtn').innerHTML = CLOUD + (state === 'ok' ? '<path d="M9.5 13.5l2 2 3.5-3.5"/>' : state === 'busy' ? '<path d="M12 11v4M10 13h4" opacity=".7"/>' : '<path d="M12 11.5v2.5M12 16v.01"/>') + '</svg>'; $('syncBtn').style.color = state === 'warn' ? 'var(--gold)' : ''; }
 function renderBackupState() {
   if (!S) return;
   var b = S.backup, last = b.last ? new Date(b.last) : null, hours = last ? (Date.now() - last) / 36e5 : 1e9;
-  var linkedNow = gToken && Date.now() < gTokenExp - 60000;
+  var auto = AUTH_URL && b.deviceKey, linkedNow = gToken && Date.now() < gTokenExp - 60000;
+  var lastTxt = last ? 'آخر نسخة: ' + dShort(last.toISOString().slice(0, 10)) + ' الساعة ' + pad2(last.getHours()) + ':' + pad2(last.getMinutes()) + '.' : 'لسه مااتاخدتش نسخة.';
   $('backupState').innerHTML = !GOOGLE_CLIENT_ID ? 'النسخة على Drive مش متظبطة في التطبيق لسه. خد نسخة ملف وابعتها لنفسك من وقت للتاني.'
-    : !b.linked ? 'اربط Google Drive عشان التطبيق ياخد نسخة من بياناتك لوحده. التطبيق بيشوف ملفاته هو بس، مش أي حاجة تانية في الدرايف.'
-    : (last ? 'آخر نسخة: ' + dShort(last.toISOString().slice(0, 10)) + ' الساعة ' + pad2(last.getHours()) + ':' + pad2(last.getMinutes()) : 'لسه مااتاخدتش نسخة.') +
-      (linkedNow ? ' النسخ بتتاخد لوحدها دلوقتي ✓' : ' جوجل بيطلب دوسة كل فترة عشان يجدد الإذن.');
-  $('driveBtn').textContent = !b.linked ? 'اربط Google Drive' : 'خد نسخة دلوقتي';
+    : auto ? '✓ مربوط بـ <b>' + esc(b.email || 'حسابك') + '</b>. أي تعديل بيتاخدله نسخة لوحده. ' + lastTxt
+    : !b.linked ? 'اربط Google Drive مرة واحدة، والتطبيق ياخد نسخة لوحده بعد كل تعديل. ولو غيّرت الموبايل، اربط نفس الإيميل وترجع كل حاجة.'
+    : lastTxt + (linkedNow ? ' النسخ بتتاخد لوحدها دلوقتي ✓' : ' جوجل بيطلب دوسة كل فترة عشان يجدد الإذن.');
+  var upgrade = AUTH_URL && b.linked && !b.deviceKey;
+  $('driveBtn').textContent = upgrade ? 'فعّل النسخ التلقائي (مرة واحدة)' : (auto || b.linked) ? 'خد نسخة دلوقتي' : 'اربط Google Drive';
+  $('driveBtn').onclick = upgrade ? function () { link().then(function () { return driveBackup(true); }).catch(function (e) { toast(esc(e.message)); }); }
+    : (auto || b.linked) ? function () { driveBackup(true); } : linkAndMaybeRestore;
+  $('unlinkBtn').hidden = !(auto || b.linked);
   var dirty = b.dirtyAt && (!b.last || b.dirtyAt > b.last);
-  setSync(backingUp ? 'busy' : (dirty && hours > 20) ? 'warn' : b.last ? 'ok' : 'warn');
+  setSync(backingUp ? 'busy' : (dirty && hours > (auto ? 1 : 20)) ? 'warn' : b.last ? 'ok' : 'warn');
   var banner = $('banner');
-  if (b.linked && dirty && hours > 24 && !linkedNow && GOOGLE_CLIENT_ID) {
+  if (GOOGLE_CLIENT_ID && !b.linked && !S.tx.length && !S.debts.length) {
+    banner.hidden = false;
+    banner.innerHTML = '☁️ كنت مستخدم التطبيق قبل كده؟ سجّل دخول ونرجّع بياناتك<button onclick="linkAndMaybeRestore()">سجّل دخول</button>';
+  } else if (b.linked && !auto && dirty && hours > 24 && !linkedNow && GOOGLE_CLIENT_ID) {
     banner.hidden = false;
     banner.innerHTML = '☁️ آخر نسخة احتياطية من ' + (last ? Math.floor(hours / 24) + ' يوم' : 'زمان') + '<button onclick="driveBackup(true)">خد نسخة</button>';
+  } else if (auto && dirty && hours > 48) {
+    banner.hidden = false;
+    banner.innerHTML = '☁️ النسخة الاحتياطية متأخرة، اتأكد إن فيه نت<button onclick="driveBackup(true)">جرّب دلوقتي</button>';
   } else banner.hidden = true;
 }
 window.addEventListener('online', function () { scheduleBackup(); if (!S.rate.autoAt || S.rate.autoAt !== todayKey()) fetchRate(false); });
