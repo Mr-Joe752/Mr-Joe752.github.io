@@ -694,7 +694,7 @@ var GOOGLE_CLIENT_ID = '247280462624-08ukk2snqmf3f7j34csme9noafosapgi.apps.googl
 var AUTH_URL = 'https://hesabaty-auth.onyxgp80.workers.dev';
 // =======================================================================================
 
-var APP_VERSION = '1.5.1';
+var APP_VERSION = '1.6.0';
 var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
 var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
 var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
@@ -1427,12 +1427,15 @@ function openViewer(src, caption) {
   $('vImg').src = src; $('vSave').href = src;
   $('vSave').download = 'hesabaty-' + todayKey() + '.jpg';
   $('vCap').textContent = (caption ? caption + ' — ' : '') + 'قرّب بصباعين، أو دوس مرتين';
-  $('vShare').hidden = !(navigator.share && navigator.canShare);
+  $('vShare').hidden = !NATIVE && !(navigator.share && navigator.canShare);
+  $('vSave').onclick = NATIVE ? function (e) { e.preventDefault(); saveDataUrl('hesabaty-' + todayKey() + '.jpg', $('vImg').src); } : null;
   $('viewer').classList.add('on');
 }
 function closeViewer() { $('viewer').classList.remove('on'); vPts = {}; }
 function sharePhoto() {
-  fetch($('vImg').src).then(function (r) { return r.blob(); }).then(function (b) {
+  var src = $('vImg').src, m = src.match(/^data:([^;]+);base64,(.*)$/);
+  if (NATIVE && m) return window.Android.shareFile('hesabaty-photo.jpg', m[1], m[2]);
+  fetch(src).then(function (r) { return r.blob(); }).then(function (b) {
     var f = new File([b], 'hesabaty-photo.jpg', { type: 'image/jpeg' });
     if (navigator.canShare && navigator.canShare({ files: [f] })) return navigator.share({ files: [f], title: 'حساباتي' });
     toast('المشاركة مش متاحة هنا، استخدم «حفظ»');
@@ -1662,6 +1665,65 @@ function notifyDues() {
   if (any) save();
 }
 
+// ---------- تطبيق الأندرويد ----------
+var NATIVE = !!(window.Android && window.Android.openAuth);
+function b64utf8(txt) { return btoa(unescape(encodeURIComponent(txt))); }
+/** يحفظ ملف: في تطبيق الأندرويد ← التنزيلات، وفي المتصفح ← تنزيل عادي */
+function saveText(name, mime, txt) {
+  if (NATIVE) return window.Android.saveFile(name, mime, b64utf8(txt));
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt], { type: mime }));
+  a.download = name; a.click();
+  return true;
+}
+function saveDataUrl(name, dataUrl) {
+  var m = String(dataUrl).match(/^data:([^;]+);base64,(.*)$/);
+  if (NATIVE && m) return window.Android.saveFile(name, m[1], m[2]);
+  var a = document.createElement('a'); a.href = dataUrl; a.download = name; a.click();
+  return true;
+}
+/** رجوع: الأول نقفل اللي مفتوح، وبعدين نرجع لصفحة التسجيل، وبعدين نخرج */
+window.onNativeBack = function () {
+  if ($('viewer').classList.contains('on')) { closeViewer(); return true; }
+  if (document.querySelector('.sheet.on')) { closeSheets(); return true; }
+  if ($('v-add').classList.contains('typing')) { closeTyping(); return true; }
+  if (!$('v-add').classList.contains('on')) { go('v-add'); return true; }
+  return false;
+};
+var nativeWait = null;
+/** تطبيق الأندرويد بيرجّع هنا بعد تسجيل الدخول بجوجل */
+window.onNativeLink = function (raw) {
+  var j = {}; try { j = JSON.parse(raw || '{}'); } catch (e) {}
+  if (!j.device_key && !j.error) return;
+  var w = nativeWait; nativeWait = null;
+  if (j.error || !j.device_key) {
+    var msg = j.error === 'no_refresh_token' ? 'جوجل ماادتش إذن دايم. ادخل myaccount.google.com/permissions وشيل «حساباتي»، وبعدين اربط تاني.' : 'ماتمّش الربط (' + (j.error || '؟') + ')';
+    if (w) w.bad(new Error(msg)); else toast(esc(msg));
+    return;
+  }
+  S.backup.deviceKey = j.device_key; S.backup.email = j.email || ''; S.backup.linked = true; S.backup.folderId = ''; S.backup.fileId = '';
+  gToken = null; gTokenExp = 0;
+  save().then(function () { return getToken(false); }).then(function (t) {
+    renderBackupState();
+    if (w) w.ok(t);
+    else { toast('✓ اتربط ' + esc(j.email || 'حسابك')); afterNativeLink(); }
+  }).catch(function (e) { if (w) w.bad(e); else toast(esc(e.message)); });
+};
+/** لو التطبيق كان اتقفل وإحنا بنسجّل دخول */
+function checkPendingNativeLink() {
+  if (!NATIVE || !window.Android.takePendingLink) return;
+  var p = window.Android.takePendingLink();
+  if (p) window.onNativeLink(p);
+}
+function afterNativeLink() {
+  if (S.tx.length || S.debts.length) return driveBackup(false);
+  findDriveBackup().then(function (f) {
+    if (!f) return driveBackup(false);
+    if (confirm('لقيت نسختك على Drive من ' + f.modifiedTime.slice(0, 10) + '. أرجّعها على الموبايل ده؟')) return restoreDriveFile(f);
+  }).catch(function (e) { toast(esc(e.message)); });
+}
+document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && S) checkPendingNativeLink(); });
+
 // ---------- النسخة الاحتياطية ----------
 function buildBackup() {
   var st = JSON.parse(JSON.stringify(S)); st.backup = { last: S.backup.last };
@@ -1678,10 +1740,7 @@ function applyBackup(text) {
 }
 function downloadBackup() {
   buildBackup().then(function (txt) {
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([txt], { type: 'application/json' }));
-    a.download = 'hesabaty-' + todayKey() + '.json'; a.click();
-    toast('اتنزلت النسخة ✓');
+    if (saveText('hesabaty-' + todayKey() + '.json', 'application/json', txt) && !NATIVE) toast('اتنزلت النسخة ✓');
   });
 }
 function restoreFile(input) {
@@ -1695,10 +1754,8 @@ function exportCsv() {
   rows.push([]); rows.push(['السلف']); rows.push(['التاريخ', 'الشخص', 'الحركة', 'المبلغ', 'العملة', 'المحفظة', 'ملاحظة']);
   S.debts.forEach(function (d) { rows.push([d.date, d.person, d.kind, d.amount, d.cur === '$' ? 'دولار' : 'جنيه', d.wallet, d.note || '']); });
   var csv = '\ufeff' + rows.map(function (r) { return r.map(function (c) { c = String(c); return /[",\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(','); }).join('\r\n');
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-  a.download = 'hesabaty-' + todayKey() + '.csv'; a.click();
-  toast('اتنزل الملف ✓ افتحه بإكسيل أو جوجل شيت');
+  saveText('hesabaty-' + todayKey() + '.csv', 'text/csv', csv);
+  if (!NATIVE) toast('اتنزل الملف ✓ افتحه بإكسيل أو جوجل شيت');
 }
 
 // --- Google Drive ---
@@ -1737,6 +1794,13 @@ function getToken(interactive) {
 /** تسجيل الدخول مرة واحدة */
 function link() {
   if (!GOOGLE_CLIENT_ID) return Promise.reject(new Error('النسخة الاحتياطية على Drive لسه مش متظبطة في التطبيق.'));
+  if (NATIVE) {
+    if (!AUTH_URL) return Promise.reject(new Error('محتاج وسيط تسجيل الدخول (AUTH_URL)'));
+    return new Promise(function (ok, bad) {
+      nativeWait = { ok: ok, bad: bad };
+      window.Android.openAuth(AUTH_URL.replace(/\/$/, '') + '/start?state=' + Math.random().toString(36).slice(2));
+    });
+  }
   return gisLoad().then(function () {
     return new Promise(function (ok, bad) {
       if (AUTH_URL) {
@@ -1921,7 +1985,7 @@ dbOpen().then(function () { return dbGet('kv', 'state'); }).then(function (st) {
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   return save();
 }).then(function () {
-  render(); notifyDues();
+  render(); notifyDues(); checkPendingNativeLink();
   if (!S.rate.autoAt || S.rate.autoAt !== todayKey()) fetchRate(false);
 }).catch(function (e) {
   document.body.classList.remove('loading');
