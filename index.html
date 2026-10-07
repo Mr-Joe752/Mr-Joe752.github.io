@@ -265,8 +265,8 @@
 
   nav.tabs { position: fixed; bottom: 0; inset-inline: 0; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid var(--line); padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); z-index: 20; }
-  nav.tabs .in { position: relative; max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
-  nav.tabs .mark { position: absolute; top: -7px; inset-inline-start: 0; width: 25%; height: 3px; display: flex; justify-content: center; transform: translateX(calc(var(--i, 0) * -100%)); transition: transform .35s var(--ease); }
+  nav.tabs .in { position: relative; max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); }
+  nav.tabs .mark { position: absolute; top: -7px; inset-inline-start: 0; width: 20%; height: 3px; display: flex; justify-content: center; transform: translateX(calc(var(--i, 0) * -100%)); transition: transform .35s var(--ease); }
   nav.tabs .mark::after { content: ''; width: 28px; height: 3px; border-radius: 0 0 3px 3px; background: var(--ink); }
   nav.tabs button { border: 0; background: none; display: grid; justify-items: center; gap: 2px; padding: 6px 0; color: var(--faint); font-size: 12px; transition: color .25s; }
   nav.tabs button svg { width: 22px; height: 22px; transition: transform .25s var(--ease); }
@@ -371,7 +371,7 @@
       </div></div>
 
       <div class="amount">
-        <input id="amount" readonly inputmode="none" autocomplete="off" placeholder="0" aria-label="المبلغ" oninput="cleanAmount(this); showConv()">
+        <input id="amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0" aria-label="المبلغ" oninput="cleanAmount(this); fitAmount(); showConv(); $('err').textContent = ''" onfocus="focusPanel()">
         <button class="cur" id="curBtn" type="button" onclick="toggleCur()" aria-label="العملة">ج.م</button>
       </div>
       <div class="amount-line"></div>
@@ -394,12 +394,6 @@
       <div id="walletAsk" hidden>
         <label class="f">من أنهي محفظة؟</label>
         <div class="chips" id="walletChips"></div>
-      </div>
-      <div class="keypad" id="keypad" aria-label="أرقام المبلغ">
-        <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
-        <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
-        <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
-        <button type="button" data-k=".">.</button><button type="button" data-k="0">0</button><button type="button" class="k-del" data-k="del" aria-label="امسح رقم">⌫</button>
       </div>
       <div id="ask" class="ask" hidden></div>
       <div class="err" id="err"></div>
@@ -429,10 +423,6 @@
   <main class="view" id="v-money">
     <h2>السلف</h2>
     <div class="panel"><ul class="list" id="debts"></ul><p class="hint" style="margin-top:6px" id="debtsHint" hidden>دوس على أي حد عشان تشوف كل حركاته وصورها.</p></div>
-    <div id="usdDebtsBox" hidden>
-      <h2>سلف الدولار</h2>
-      <div class="panel"><ul class="list" id="usdDebts"></ul></div>
-    </div>
 
     <h2>الميزانية</h2>
     <div class="panel">
@@ -479,6 +469,39 @@
   </main>
 
   <!-- الإعدادات -->
+  <main class="view" id="v-ext">
+    <h2>مديونات خارجية</h2>
+    <p class="hint">دفتر لوحده لفلوس عليك أو ليك عند ناس، بالجنيه أو بالدولار. مالوش علاقة بالصرف ولا الدخل ولا السلف ولا المحافظ.</p>
+    <div class="panel">
+      <div class="seg small" id="xKindSeg" style="--n:4;--i:0" role="group" aria-label="نوع الحركة">
+        <span class="pill" aria-hidden="true"></span>
+        <button aria-pressed="true" data-v="عليّا">عليّا</button>
+        <button aria-pressed="false" data-v="سدّدت">سدّدت</button>
+        <button aria-pressed="false" data-v="ليّا">ليّا</button>
+        <button aria-pressed="false" data-v="اتسدّدلي">اتسدّدلي</button>
+      </div>
+      <p class="hint" id="xKindHint" style="margin:8px 2px 0"></p>
+      <div class="amount" style="margin:10px 0 4px">
+        <input id="xAmount" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="0" aria-label="المبلغ" oninput="cleanAmount(this)">
+        <button class="cur" id="xCurBtn" type="button" onclick="toggleXCur()" aria-label="العملة">ج.م</button>
+      </div>
+      <div class="amount-line"></div>
+      <label class="f" for="xPerson">مين؟</label>
+      <input class="field" id="xPerson" autocomplete="off" placeholder="اسم الشخص أو الجهة" enterkeyhint="next">
+      <div class="chips" id="xPeople"></div>
+      <label class="f" for="xNote">ملاحظة (لو حابب)</label>
+      <input class="field" id="xNote" autocomplete="off" enterkeyhint="done">
+      <div class="err" id="xErr"></div>
+      <button class="primary" id="xSaveBtn" onclick="saveExt()">سجّل</button>
+    </div>
+
+    <h2>الإجمالي</h2>
+    <div class="panel"><div class="row3" id="xTotals"></div></div>
+
+    <h2>الناس</h2>
+    <div class="panel"><ul class="list" id="xList"></ul><p class="hint" style="margin-top:6px" id="xListHint" hidden>دوس على أي حد عشان تشوف كل حركاته.</p></div>
+  </main>
+
   <main class="view" id="v-set">
     <h2>النسخة الاحتياطية</h2>
     <div class="panel" id="backupBox">
@@ -581,6 +604,7 @@
     <button role="tab" aria-selected="true" data-v="v-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>تسجيل</button>
     <button role="tab" aria-selected="false" data-v="v-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h9"/></svg>العمليات</button>
     <button role="tab" aria-selected="false" data-v="v-money"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/></svg>الفلوس</button>
+    <button role="tab" aria-selected="false" data-v="v-ext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10a2 2 0 0 1 2 2v14l-3-2-2 2-2-2-2 2-2-2-3 2V6a2 2 0 0 1 2-2z"/><path d="M9 9h6M9 13h4"/></svg>مديونات</button>
     <button role="tab" aria-selected="false" data-v="v-set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>الإعدادات</button>
   </div>
 </nav>
@@ -630,6 +654,14 @@
     <button class="ghost danger" id="eDel" onclick="deleteTx()">امسح</button>
     <button class="primary" onclick="saveEdit()">احفظ التعديل</button>
   </div>
+</div>
+
+<div class="sheet" id="eSheet" role="dialog" aria-modal="true" aria-labelledby="eTitle">
+  <div class="grab"></div>
+  <h3 id="eTitle"></h3>
+  <p class="hint" id="eSub"></p>
+  <ul class="list" id="eList"></ul>
+  <div class="acts"><button class="primary" onclick="closeSheets()">تمام</button></div>
 </div>
 
 <div class="sheet" id="pSheet" role="dialog" aria-modal="true" aria-labelledby="pTitle">
@@ -694,7 +726,7 @@ var GOOGLE_CLIENT_ID = '247280462624-08ukk2snqmf3f7j34csme9noafosapgi.apps.googl
 var AUTH_URL = 'https://hesabaty-auth.onyxgp80.workers.dev';
 // =======================================================================================
 
-var APP_VERSION = '1.6.0';
+var APP_VERSION = '1.7.0';
 var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
 var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
 var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
@@ -735,7 +767,7 @@ function dbClear(store) {
 function freshState() {
   return {
     v: 1, nextId: 1,
-    tx: [], debts: [], transfers: [], reminders: [],
+    tx: [], debts: [], transfers: [], reminders: [], ext: [],
     wallets: [{ name: 'كاش', opening: 0, cur: 'ج' }, { name: 'بنك', opening: 0, cur: 'ج' }, { name: 'فودافون كاش', opening: 0, cur: 'ج' }, { name: 'إنستاباي', opening: 0, cur: 'ج' }],
     budgets: {},
     settings: { defaultWallet: 'كاش', askWallet: false },
@@ -980,7 +1012,7 @@ function render() {
   var hot = Object.keys(S.budgets).map(function (n) { return { name: n, b: S.budgets[n], s: spentOn(n, st) }; }).filter(function (x) { return x.s >= .8 * x.b; });
   $('noteAlert').hidden = !hot.length;
   $('noteAlert').textContent = hot.map(function (x) { return (x.s > x.b ? 'عدّيت ميزانية ' : 'قرّبت تخلّص ميزانية ') + x.name; }).join('، ');
-  renderTiles(); renderDues(); renderForm(); renderMoney(); renderSettings(); renderBackupState();
+  renderTiles(); renderDues(); renderForm(); renderMoney(); renderSettings(); renderBackupState(); renderExt();
   if ($('v-list').classList.contains('on')) renderList();
 }
 
@@ -990,12 +1022,12 @@ function renderTiles() {
   var uw = usdWallet(false), total = b.total, usd = uw ? b.bal[uw] : null;
   var net = toMe - onMe, dbu = debtBalances('$'), netU = 0;
   Object.keys(dbu).forEach(function (p) { netU += dbu[p]; });
-  var hasUsdDebt = S.debts.some(function (d) { return d.cur === '$'; });
+  var ext = extTotals();
   var debtTxt = net > 0 ? '+' + fmt(net) : net < 0 ? '−' + fmt(-net) : '0';
   $('tiles').innerHTML =
     '<div><span>كل فلوسك</span><b class="' + (total < 0 ? 'neg' : '') + '">' + (total < 0 ? '−' + fmt(-total) : fmt(total)) + '</b></div>' +
     '<div><span>السلف</span><b class="' + (net > 0 ? 'pos' : net < 0 ? 'neg' : '') + '">' + debtTxt + '</b></div>' +
-    (hasUsdDebt ? '<div><span>سلف الدولار</span><b class="' + (netU > 0 ? 'pos' : netU < 0 ? 'neg' : '') + '">' + (netU > 0 ? '+' + fmtU(netU) : netU < 0 ? '−' + fmtU(-netU) : '0') + '$</b></div>' : '') +
+    (ext.any ? '<div><span>مديونات</span><b>' + ext.short + '</b></div>' : '') +
     (usd !== null ? '<div><span>الدولار</span><b class="' + (usd < 0 ? 'neg' : '') + '">' + (usd < 0 ? '−' + fmtU(-usd) : fmtU(usd)) + '$</b></div>' : '');
 }
 
@@ -1018,7 +1050,7 @@ function renderForm() {
   $('debtBox').classList.toggle('closed', !isDebt);
   setSeg('kindSeg', debtKind);
   $('itemBox').hidden = isDebt; $('personBox').hidden = !isDebt;
-  $('curBtn').hidden = false; kindLabels();
+  $('curBtn').hidden = isDebt; if (isDebt && cur === '$') toggleCur();
   $('itemLabel').textContent = mode === 'دخل' ? 'جاي منين' : 'اتصرف في إيه';
   $('save').textContent = saveLabel();
   $('addTitle').textContent = isDebt ? 'سجّل سلفة' : 'سجّل عملية';
@@ -1071,39 +1103,14 @@ function fitAmount() {
 /** لو المبلغ مش باين وإنت بتكتب، الصفحة تنزل للفورم */
 function focusPanel() {
   var r = $('amount').getBoundingClientRect();
-  if (r.top < 60 || r.bottom > window.innerHeight * 0.45) {
+  if (r.top < 60 || r.bottom > window.innerHeight * 0.4) {
     var t = $('typeSeg').getBoundingClientRect().top;
     window.scrollTo({ top: window.scrollY + t - 70, behavior: reduced ? 'auto' : 'smooth' });
   }
 }
-function kp(k) {
-  var el = $('amount'), v = el.value;
-  if (k === 'del') v = v.slice(0, -1);
-  else if (k === 'clear') v = '';
-  else if (k === '.') { if (v.indexOf('.') < 0) v = (v || '0') + '.'; }
-  else { if (v === '0') v = ''; if (v.replace('.', '').length < 9) v += k; }
-  el.value = v; fitAmount(); showConv(); $('err').textContent = ''; focusPanel();
-  if (navigator.vibrate) try { navigator.vibrate(6); } catch (e) {}
-}
 (function () {
-  var hold = null;
-  $('keypad').querySelectorAll('button').forEach(function (b) {
-    b.addEventListener('click', function () { kp(b.dataset.k); });
-    if (b.dataset.k === 'del') {
-      b.addEventListener('pointerdown', function () { hold = setTimeout(function () { kp('clear'); hold = 'done'; }, 550); });
-      ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (ev) { b.addEventListener(ev, function () { if (hold && hold !== 'done') clearTimeout(hold); hold = null; }); });
-    }
-  });
-  // كيبورد الكمبيوتر: الأرقام بتكتب في المبلغ
-  document.addEventListener('keydown', function (e) {
-    if (!$('v-add').classList.contains('on')) return;
-    var a = document.activeElement, tag = a && a.tagName;
-    if (tag === 'INPUT' && a.id !== 'amount' || tag === 'SELECT' || tag === 'TEXTAREA') return;
-    if (/^[0-9]$/.test(e.key)) { kp(e.key); e.preventDefault(); }
-    else if (e.key === '.' || e.key === ',') { kp('.'); e.preventDefault(); }
-    else if (e.key === 'Backspace') { kp('del'); e.preventDefault(); }
-    else if (e.key === 'Enter') { trySave(); e.preventDefault(); }
-  });
+  // «تم» في كيبورد الأرقام ← يقفل الكيبورد عشان البنود تبان
+  $('amount').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('amount').blur(); } });
   ['item', 'person'].forEach(function (id) {
     $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); trySave(); } });
   });
@@ -1164,10 +1171,8 @@ function renderMoney() {
     return '<li><button class="rowbtn" data-p="' + esc(p) + '"><span class="what"><b>' + esc(p) + (hasPh ? ' 📎' : '') + '</b><small>' + (n > 0 ? 'عليه ليك' : n < 0 ? 'إنت عليك ليه' : 'خالصين ✓') + '</small></span><span class="amt ' + (n > 0 ? 'in' : n < 0 ? 'out' : '') + '">' + (c ? fmtU(Math.abs(n)) + '$' : fmt(Math.abs(n))) + '</span></button></li>';
   };
   $('debts').innerHTML = egpP.length ? egpP.map(function (p) { return row(p, db[p] || 0, ''); }).join('') : '<li class="empty">مافيش سلف بالجنيه. سجّل سلفة من «تسجيل» ← سلفة.</li>';
-  $('debtsHint').hidden = !egpP.length && !usdP.length;
-  $('usdDebtsBox').hidden = !usdP.length;
-  $('usdDebts').innerHTML = usdP.map(function (p) { return row(p, dbu[p] || 0, '$'); }).join('');
-  document.querySelectorAll('#debts .rowbtn, #usdDebts .rowbtn').forEach(function (b) { b.onclick = function () { openPerson(b.dataset.p); }; });
+  $('debtsHint').hidden = !egpP.length;
+  document.querySelectorAll('#debts .rowbtn').forEach(function (b) { b.onclick = function () { openPerson(b.dataset.p); }; });
   var st = monthStats(curYM()), names = Object.keys(S.budgets);
   $('budgets').innerHTML = names.length ? names.map(function (n) {
     var s = spentOn(n, st), b = S.budgets[n], p = Math.round(s * 100 / b);
@@ -1233,16 +1238,11 @@ function onItemInput() {
   box.querySelectorAll('button').forEach(function (b) { b.onclick = function () { pick(b.dataset.v); }; });
   box.hidden = !hits.length;
 }
-var KIND_LBL = { '': ['سلّفت حد', 'استلفت', 'رجّعلي', 'رجّعتله'], '$': ['سلّفت حد $', 'عليّا $', 'رجّعلي $', 'سدّدت $'] };
-function kindLabels() {
-  var l = KIND_LBL[cur === '$' ? '$' : ''];
-  $('kindSeg').querySelectorAll('button').forEach(function (b, i) { b.textContent = l[i]; });
-}
 function toggleCur() {
   cur = cur === '$' ? 'ج' : '$';
   $('curBtn').textContent = cur === '$' ? '$' : 'ج.م';
   $('curBtn').classList.toggle('usd', cur === '$');
-  kindLabels(); showConv();
+  showConv();
 }
 function showConv() {
   var a = num($('amount')), r = rate();
@@ -1312,7 +1312,7 @@ function saveDebt(amount) {
   var person = $('person').value.trim();
   if (!person) { $('err').textContent = 'اختار الشخص'; return; }
   person = knownPerson(person);
-  var dc = cur === '$' ? '$' : '';
+  var dc = '';
   var w = S.settings.askWallet ? pickedWallet : $('wallet').value;
   if (dc === '$') w = '';
   else if (wallet(w) && wallet(w).cur === '$') w = S.settings.defaultWallet;
@@ -1330,6 +1330,110 @@ function removeTx(id) {
   if (t && t.photo) dbDel('photos', t.photo);
   S.tx = S.tx.filter(function (x) { return x.id !== id; });
 }
+
+// ---------- المديونات الخارجية ----------
+var xKind = 'عليّا', xCur = '';
+var X_SIGN = { 'ليّا': 1, 'اتسدّدلي': -1, 'عليّا': -1, 'سدّدت': 1 };   // موجب = ليك، سالب = عليك
+var X_HINT = { 'عليّا': 'إنت بقيت مديون للشخص ده بالمبلغ', 'سدّدت': 'إنت دفعتله جزء أو كل اللي عليك', 'ليّا': 'هو بقى مديون لك بالمبلغ', 'اتسدّدلي': 'هو رجّعلك جزء أو كل اللي عليه' };
+function fmtC(n, c) { return c === '$' ? fmtU(n) + '$' : fmt(n); }
+function extBalances() {
+  var b = {};
+  (S.ext || []).forEach(function (x) {
+    var k = x.person, c = x.cur || '';
+    b[k] = b[k] || { '': 0, '$': 0, has: {} };
+    b[k][c] += X_SIGN[x.kind] * x.amount; b[k].has[c] = 1;
+  });
+  return b;
+}
+function extTotals() {
+  var b = extBalances(), t = { '': { toMe: 0, onMe: 0 }, '$': { toMe: 0, onMe: 0 } }, any = false;
+  Object.keys(b).forEach(function (p) { ['', '$'].forEach(function (c) {
+    if (!b[p].has[c]) return; any = true;
+    if (b[p][c] > 0) t[c].toMe += b[p][c]; else t[c].onMe -= b[p][c];
+  }); });
+  var parts = [];
+  ['', '$'].forEach(function (c) { var n = t[c].toMe - t[c].onMe; if (n) parts.push((n > 0 ? '+' : '−') + fmtC(Math.abs(n), c)); });
+  return { any: any, t: t, short: parts.length ? parts.join(' · ') : '0' };
+}
+function extPeople() {
+  var c = {};
+  (S.ext || []).forEach(function (x) { c[x.person] = (c[x.person] || 0) + 1; });
+  return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; });
+}
+function setXKind(k) {
+  xKind = k; setSeg('xKindSeg', k);
+  $('xKindHint').textContent = X_HINT[k];
+  $('xSaveBtn').textContent = 'سجّل «' + k + '»';
+}
+function toggleXCur() {
+  xCur = xCur === '$' ? '' : '$';
+  $('xCurBtn').textContent = xCur === '$' ? '$' : 'ج.م';
+  $('xCurBtn').classList.toggle('usd', xCur === '$');
+}
+function renderExt() {
+  if (!S) return;
+  setXKind(xKind);
+  var ps = extPeople();
+  $('xPeople').innerHTML = ps.slice(0, 10).map(function (p) { return '<button class="chip" type="button" data-v="' + esc(p) + '">' + esc(p) + '</button>'; }).join('');
+  $('xPeople').querySelectorAll('.chip').forEach(function (b) { b.onclick = function () { $('xPerson').value = b.dataset.v; }; });
+  var tt = extTotals().t, cell = function (lbl, c) {
+    var n = tt[c].toMe - tt[c].onMe;
+    return '<div><small>' + lbl + '</small><b class="' + (n > 0 ? 'in' : n < 0 ? 'out' : '') + '">' + (n < 0 ? '−' : n > 0 ? '+' : '') + fmtC(Math.abs(n), c) + '</b>' +
+      '<small>ليك ' + fmtC(tt[c].toMe, c) + ' · عليك ' + fmtC(tt[c].onMe, c) + '</small></div>';
+  };
+  $('xTotals').style.gridTemplateColumns = 'repeat(2, 1fr)';
+  $('xTotals').innerHTML = cell('بالجنيه', '') + cell('بالدولار', '$');
+  var b = extBalances();
+  $('xList').innerHTML = ps.length ? ps.map(function (p) {
+    var parts = [];
+    ['', '$'].forEach(function (c) { if (b[p].has[c]) { var n = b[p][c]; parts.push('<span class="amt ' + (n > 0 ? 'in' : n < 0 ? 'out' : '') + '">' + (n < 0 ? '−' : n > 0 ? '+' : '') + fmtC(Math.abs(n), c) + '</span>'); } });
+    var sum = ['', '$'].map(function (c) { return b[p].has[c] ? b[p][c] : 0; });
+    var lbl = sum.every(function (n) { return n === 0; }) ? 'خالصين ✓' : sum.some(function (n) { return n < 0; }) && sum.some(function (n) { return n > 0; }) ? 'ليك وعليك' : sum.some(function (n) { return n < 0; }) ? 'إنت عليك ليه' : 'عليه ليك';
+    return '<li><button class="rowbtn" data-p="' + esc(p) + '"><span class="what"><b>' + esc(p) + '</b><small>' + lbl + '</small></span><span style="display:grid;justify-items:end;gap:2px">' + parts.join('') + '</span></button></li>';
+  }).join('') : '<li class="empty">مافيش مديونات متسجلة.</li>';
+  $('xListHint').hidden = !ps.length;
+  $('xList').querySelectorAll('.rowbtn').forEach(function (bt) { bt.onclick = function () { openExtPerson(bt.dataset.p); }; });
+}
+function saveExt() {
+  $('xErr').textContent = '';
+  var a = num($('xAmount')), p = $('xPerson').value.trim();
+  if (!a) { $('xErr').textContent = 'اكتب المبلغ'; $('xAmount').focus(); return; }
+  if (!p) { $('xErr').textContent = 'اكتب مين'; $('xPerson').focus(); return; }
+  var k = key(p); extPeople().forEach(function (q) { if (key(q) === k) p = q; });
+  var x = { id: nid(), date: todayKey(), person: p, kind: xKind, amount: a, cur: xCur, note: $('xNote').value.trim() };
+  S.ext = S.ext || []; S.ext.push(x);
+  $('xAmount').value = ''; $('xNote').value = ''; $('xPerson').value = '';
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  var n = extBalances()[p][xCur];
+  commit('✓ ' + xKind + ' ' + esc(p) + ' ' + fmtC(a, xCur) + '<small>' + esc(p) + ': ' + (n > 0 ? 'عليه ليك ' + fmtC(n, xCur) : n < 0 ? 'إنت عليك ليه ' + fmtC(-n, xCur) : 'خالصين ✓') + '</small>',
+    function () { S.ext = S.ext.filter(function (y) { return y.id !== x.id; }); commit('اتمسحت الحركة'); });
+}
+function openExtPerson(p) {
+  var rows = (S.ext || []).filter(function (x) { return x.person === p; }).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.id - a.id; });
+  var b = extBalances()[p] || { '': 0, '$': 0, has: {} };
+  $('eTitle').textContent = p;
+  $('eSub').textContent = ['', '$'].filter(function (c) { return b.has[c]; }).map(function (c) {
+    var n = b[c]; return (c === '$' ? 'بالدولار: ' : 'بالجنيه: ') + (n > 0 ? 'عليه ليك ' + fmtC(n, c) : n < 0 ? 'إنت عليك ليه ' + fmtC(-n, c) : 'خالصين ✓');
+  }).join(' · ');
+  $('eList').innerHTML = rows.map(function (x) {
+    return '<li><span class="what"><b>' + esc(x.kind) + '</b><small>' + dShort(x.date) + '/' + x.date.slice(0, 4) + '</small>' + (x.note ? '<small class="dnote">📝 ' + esc(x.note) + '</small>' : '') + '</span>' +
+      '<span class="amt">' + fmtC(x.amount, x.cur) + '</span><button class="ghost danger" style="padding:6px 10px;font-size:13px" data-del="' + x.id + '" aria-label="امسح">✕</button></li>';
+  }).join('');
+  $('eList').querySelectorAll('[data-del]').forEach(function (bt) {
+    bt.onclick = function () {
+      if (bt.dataset.sure !== '1') { bt.dataset.sure = '1'; bt.textContent = 'متأكد؟'; setTimeout(function () { bt.dataset.sure = ''; bt.textContent = '✕'; }, 3000); return; }
+      var id = +bt.dataset.del;
+      S.ext = S.ext.filter(function (y) { return y.id !== id; });
+      commit('اتمسحت الحركة').then(function () { if (extPeople().indexOf(p) >= 0) openExtPerson(p); else closeSheets(); });
+    };
+  });
+  $('scrim').classList.add('on'); $('eSheet').classList.add('on');
+}
+bindSeg('xKindSeg', setXKind);
+['xAmount', 'xPerson'].forEach(function (id, i) {
+  $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); (i === 0 ? $('xPerson') : $('xNote')).focus(); } });
+});
+$('xNote').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); saveExt(); } });
 
 // ---------- الصور ----------
 function pickFile(input) {
@@ -1362,7 +1466,7 @@ function openSheet(id) {
   if (t.photo) dbGet('photos', t.photo).then(function (p) { if (p && editing === t) { $('ePhoto').src = p; $('ePhoto').hidden = false; } });
   $('scrim').classList.add('on'); $('sheet').classList.add('on');
 }
-function closeSheets() { $('scrim').classList.remove('on'); ['sheet', 'rSheet', 'pSheet', 'xSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
+function closeSheets() { $('scrim').classList.remove('on'); ['sheet', 'rSheet', 'pSheet', 'xSheet', 'eSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
 function saveEdit() {
   var t = editing; if (!t) return;
   var a = num($('eAmount'));
@@ -1753,6 +1857,8 @@ function exportCsv() {
   S.tx.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }).forEach(function (t) { rows.push([t.date, t.type, t.amount, t.usd || '', t.rate || '', t.item, t.wallet, t.note || '']); });
   rows.push([]); rows.push(['السلف']); rows.push(['التاريخ', 'الشخص', 'الحركة', 'المبلغ', 'العملة', 'المحفظة', 'ملاحظة']);
   S.debts.forEach(function (d) { rows.push([d.date, d.person, d.kind, d.amount, d.cur === '$' ? 'دولار' : 'جنيه', d.wallet, d.note || '']); });
+  rows.push([]); rows.push(['مديونات خارجية']); rows.push(['التاريخ', 'الشخص', 'الحركة', 'المبلغ', 'العملة', 'ملاحظة']);
+  (S.ext || []).forEach(function (x) { rows.push([x.date, x.person, x.kind, x.amount, x.cur === '$' ? 'دولار' : 'جنيه', x.note || '']); });
   var csv = '\ufeff' + rows.map(function (r) { return r.map(function (c) { c = String(c); return /[",\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(','); }).join('\r\n');
   saveText('hesabaty-' + todayKey() + '.csv', 'text/csv', csv);
   if (!NATIVE) toast('اتنزل الملف ✓ افتحه بإكسيل أو جوجل شيت');
@@ -1982,6 +2088,13 @@ dbOpen().then(function () { return dbGet('kv', 'state'); }).then(function (st) {
   var fresh = freshState();
   Object.keys(fresh).forEach(function (k) { if (S[k] === undefined) S[k] = fresh[k]; });
   if (!wallet(S.settings.defaultWallet)) S.settings.defaultWallet = S.wallets[0].name;
+  // سلف الدولار القديمة ← المديونات الخارجية
+  var KMAP = { 'استلفت': 'عليّا', 'رجّعتله': 'سدّدت', 'سلّفت': 'ليّا', 'رجّعلي': 'اتسدّدلي' };
+  var moved = S.debts.filter(function (d) { return d.cur === '$'; });
+  if (moved.length) {
+    moved.forEach(function (d) { S.ext.push({ id: d.id, date: d.date, person: d.person, kind: KMAP[d.kind], amount: d.amount, cur: '$', note: d.note || '' }); });
+    S.debts = S.debts.filter(function (d) { return d.cur !== '$'; });
+  }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   return save();
 }).then(function () {
