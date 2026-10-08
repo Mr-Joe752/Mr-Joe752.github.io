@@ -452,6 +452,15 @@
   .lockscr .lkforgot { border: 0; background: none; color: var(--muted); font-size: 13px; text-decoration: underline; margin-top: 6px; }
   .lockscr.shake .dots { animation: shake .4s; }
   @keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+  /* v1.12 */
+  .ic .emo { font-size: 18px; line-height: 1; font-weight: 400; }
+  .vhead .ic { border: 0; cursor: pointer; }
+  .vhead .ic .emo { font-size: 26px; }
+  .icgrid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; margin-top: 10px; }
+  .icgrid button { aspect-ratio: 1; border: 1px solid var(--line); background: var(--surface-2); border-radius: 12px; font-size: 22px; padding: 0; }
+  .icgrid button[aria-pressed="true"] { border-color: var(--focus); background: color-mix(in srgb, var(--focus) 18%, transparent); }
+  .itemcard .ihead span { display: flex; gap: 4px; flex: none; }
+  #icSheet .acts .ghost { font-size: 13px; padding: 10px 8px; }
   /* v1.10 */
   .donut { grid-template-columns: 96px 1fr; gap: 12px; }
   .donut svg { width: 96px; height: 96px; }
@@ -856,9 +865,17 @@
 
 <div class="scrim" id="scrim" onclick="closeSheets()"></div>
 
+<div class="sheet" id="icSheet" role="dialog" aria-modal="true" aria-labelledby="icTitle">
+  <div class="grab"></div>
+  <h3 id="icTitle">الإيموجي</h3>
+  <p class="hint">بيتغيّر في كل حتة، حتى في العمليات القديمة.</p>
+  <div class="icgrid" id="icGrid"></div>
+  <div class="acts"><button class="ghost" id="icAuto" type="button" onclick="setIcon(null)"></button><button class="ghost" type="button" onclick="setIcon('')">من غير</button><button class="primary" type="button" onclick="closeSheets()">تمام</button></div>
+</div>
+
 <div class="sheet" id="vSheet" role="dialog" aria-modal="true" aria-labelledby="vType">
   <div class="grab"></div>
-  <div class="vhead"><span class="ic" id="vIc"></span><div class="hint" id="vType"></div><div class="vamt" id="vAmt"></div></div>
+  <div class="vhead"><button class="ic" id="vIc" type="button" onclick="viewing && openIconPicker(viewing.item)" aria-label="غيّر الإيموجي"></button><div class="hint" style="font-size:11px;margin:-2px 0 4px">دوس على الإيموجي تغيّره</div><div class="hint" id="vType"></div><div class="vamt" id="vAmt"></div></div>
   <div class="kv" id="vKv"></div>
   <img id="vPhoto" class="photo-thumb" alt="صورة العملية، دوس عليها عشان تكبّرها" hidden>
   <p class="gone" id="vGone" hidden>🗑️ الصورة اتمسحت لتفريغ المساحة.</p>
@@ -1103,7 +1120,7 @@ var GOOGLE_CLIENT_ID = '247280462624-08ukk2snqmf3f7j34csme9noafosapgi.apps.googl
 var AUTH_URL = 'https://hesabaty-auth.onyxgp80.workers.dev';
 // =======================================================================================
 
-var APP_VERSION = '1.10.0';
+var APP_VERSION = '1.12.0';
 var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
 var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
 var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
@@ -1478,7 +1495,7 @@ function renderForm() {
 function renderChips() {
   if (mode === 'سلفة') return renderPeople();
   var cur = $('item').value.trim(), items = itemsOf(mode).slice(0, 7);
-  $('chips').innerHTML = items.map(function (x) { return '<button type="button" aria-pressed="' + (x === cur) + '" data-v="' + esc(x) + '">' + esc(x) + '</button>'; }).join('') +
+  $('chips').innerHTML = items.map(function (x) { return '<button type="button" aria-pressed="' + (x === cur) + '" data-v="' + esc(x) + '">' + withIcon(x) + '</button>'; }).join('') +
     '<button type="button" class="other" data-other="1">✏️ ' + (items.length ? 'بند تاني' : 'اكتب البند') + '</button>';
   $('chips').querySelectorAll('button').forEach(function (b) {
     b.onclick = function () { if (b.dataset.other) openTyping('typeBox', 'item'); else pick(b.dataset.v); };
@@ -1601,7 +1618,7 @@ function renderDonut(st, db) {
   $('donutBox').innerHTML = '<div class="donut"><svg viewBox="0 0 140 140" role="img" aria-label="' + esc(cp.title) + '">' + rings +
     '<text x="70" y="64" text-anchor="middle" font-size="13" fill="currentColor" opacity=".6">' + esc(cp.title) + '</text><text x="70" y="86" text-anchor="middle" font-size="21" font-weight="600" fill="currentColor">' + fmt(cp.total) + '</text></svg>' +
     '<ul class="legend">' + shown.map(function (p, i) {
-      return '<li' + (cp.click && !p.other ? ' class="click" data-it="' + esc(p.n) + '"' : '') + '><i style="background:' + color(i) + '"></i><span>' + esc(p.n) + '</span><b>' + Math.round(p.v * 100 / sum) + '%</b><em>' + fmt(p.v) + '</em></li>';
+      return '<li' + (cp.click && !p.other ? ' class="click" data-it="' + esc(p.n) + '"' : '') + '><i style="background:' + color(i) + '"></i><span>' + (cp.click && !p.other ? withIcon(p.n) : esc(p.n)) + '</span><b>' + Math.round(p.v * 100 / sum) + '%</b><em>' + fmt(p.v) + '</em></li>';
     }).join('') + (more > 0 ? '<li class="more' + (cp.click ? ' click" data-all="1' : '') + '">+ ' + (more === 1 ? 'بند تاني' : more === 2 ? 'بندين تانيين' : more + ' بنود تانية') + (cp.click ? ' · شوفهم بالبنود' : '') + '</li>' : '') + '</ul></div>';
   $('donutBox').querySelectorAll('li[data-it]').forEach(function (li) { li.onclick = function () { setOpsItem(li.dataset.it); }; });
   $('donutBox').querySelectorAll('li[data-all]').forEach(function (li) { li.onclick = function () { opsItem = ''; opsType = chartMode; setOpsView('items'); $('opsViewSeg').scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' }); }; });
@@ -1631,7 +1648,65 @@ function renderOps() {
   renderOpsChips(); renderItemCard();
   if (opsView === 'items' && !opsItem && !key($('search').value)) renderItems(); else renderDays();
 }
-function initial(s) { s = String(s || '').trim().replace(/^ال(?=..)/, ''); return s ? esc(s.charAt(0)) : '•'; }
+// ----- إيموجي البنود -----
+var AUTO_ICONS = [
+  ['💸', 'سداد ديون'], ['💵', 'تحصيل ديون'],
+  ['📺', 'نتفليكس شاهد اشتراك يوتيوب'], ['🎮', 'العاب جيم بلايستيشن'],
+  ['☕', 'قهوه شاي كافيه نسكافيه'], ['🚬', 'سجاير دخان شيشه'],
+  ['🛒', 'سوبر ماركت بقاله عيش خضار فاكهه لحمه لحم فراخ طلبات تموين جمعيه'],
+  ['🍔', 'اكل غدا عشا فطار مطعم وجبه اكله حلويات سندوتشات'],
+  ['⛽', 'بنزين سولار'], ['🚗', 'عربيه ركنه جراج'],
+  ['🚕', 'مواصلات تاكسي اوبر كريم ميكروباص توكتوك اتوبيس مترو قطر'],
+  ['⚡', 'كهربا نور'], ['💧', 'مياه ميه'], ['🔥', 'غاز انبوبه'],
+  ['🌐', 'نت انترنت واي راوتر'], ['📱', 'موبايل رصيد شحن باقه كارت'],
+  ['💊', 'دوا ادويه صيدليه علاج'], ['🩺', 'دكتور كشف تحاليل مستشفي اشعه'],
+  ['🏠', 'ايجار شقه سكن بيت'], ['👕', 'هدوم لبس جزمه ملابس'],
+  ['🎓', 'مدرسه دروس جامعه كورس تعليم كتب مصاريف'], ['🎁', 'هديه هدايا عيديه'],
+  ['🎉', 'خروج فسحه سينما رحله'], ['✈️', 'سفر طيران'],
+  ['💼', 'مرتب راتب شغل'], ['💰', 'مكافاه بونص ارباح عموله حافز'],
+  ['🛠️', 'صيانه تصليح سباك كهربائي'], ['🧾', 'فاتوره فواتير'],
+  ['🕌', 'صدقه زكاه تبرع'], ['💇', 'حلاق كوافير'],
+  ['👶', 'اطفال بيبي حفاضات'], ['🐾', 'قطه كلب'], ['🏦', 'بنك قرض قسط'], ['💳', 'فيزا']
+];
+var ICON_CHOICES = ['🍔', '🛒', '☕', '🍕', '🥖', '🍗', '🍎', '🚕', '🚗', '⛽', '🚌', '⚡', '💧', '🔥', '🌐', '📱', '💊', '🩺', '🏠', '🛋️', '👕', '👟', '🎓', '📚', '🎁', '🎉', '✈️', '💼', '💰', '💵', '💸', '🏦', '💳', '🧾', '🛠️', '🕌', '💇', '🧴', '👶', '🐾', '🎮', '📺', '🚬', '⚽', '🏋️', '❤️', '🤲', '📦'];
+var AUTO_IDX = null;
+function autoIcon(name) {
+  if (!AUTO_IDX) AUTO_IDX = AUTO_ICONS.map(function (a) { return { e: a[0], ws: a[1].split(' ').map(key), whole: key(a[1]) }; });
+  var k = key(name); if (!k) return '';
+  var words = k.split(' ');
+  for (var i = 0; i < AUTO_IDX.length; i++) {
+    var a = AUTO_IDX[i];
+    if (a.ws.length === 2 && k.indexOf(a.whole) >= 0 && (a.e === '💸' || a.e === '💵')) return a.e;
+    for (var j = 0; j < a.ws.length; j++) {
+      var w = a.ws[j];
+      for (var m = 0; m < words.length; m++) if (words[m] === w || (w.length >= 4 && words[m].indexOf(w) === 0)) return a.e;
+    }
+  }
+  return '';
+}
+function itemIcon(name) { var k = key(name); return (S && S.icons && S.icons[k] !== undefined) ? S.icons[k] : autoIcon(name); }
+function initial(s) {
+  var e = itemIcon(s); if (e) return '<span class="emo">' + e + '</span>';
+  s = String(s || '').trim().replace(/^ال(?=..)/, ''); return s ? esc(s.charAt(0)) : '•';
+}
+function withIcon(name) { var e = itemIcon(name); return (e ? e + ' ' : '') + esc(name); }
+var iconFor = '';
+function openIconPicker(name) {
+  iconFor = name;
+  $('icTitle').textContent = 'إيموجي «' + name + '»';
+  var cur = itemIcon(name), auto = autoIcon(name);
+  $('icGrid').innerHTML = ICON_CHOICES.map(function (e) { return '<button type="button" data-e="' + e + '" aria-pressed="' + (e === cur) + '">' + e + '</button>'; }).join('');
+  $('icGrid').querySelectorAll('button').forEach(function (b) { b.onclick = function () { setIcon(b.dataset.e); }; });
+  $('icAuto').textContent = auto ? 'رجّعه تلقائي (' + auto + ')' : 'من غير إيموجي (أول حرف)';
+  showSheet('icSheet');
+}
+function setIcon(e) {
+  var k = key(iconFor); if (!k) return;
+  S.icons = S.icons || {};
+  if (e === null) delete S.icons[k]; else S.icons[k] = e;
+  closeSheets();
+  commit('اتغيّر إيموجي «' + esc(iconFor) + '» ' + (itemIcon(iconFor) || ''));
+}
 function dayLabel(k, wide) {
   var t = todayKey(), base = dShort(k) + (wide && k.slice(0, 4) !== t.slice(0, 4) ? '/' + k.slice(0, 4) : '');
   if (k === t) return 'النهارده، ' + base;
@@ -1742,11 +1817,12 @@ function renderItemCard() {
   var months = 1;
   if (a.first) { var d0 = new Date(a.first + 'T12:00:00'), d1 = new Date(); months = Math.max(1, (d1.getFullYear() - d0.getFullYear()) * 12 + d1.getMonth() - d0.getMonth() + 1); }
   var inc = a.i > a.o, cell = function (l, v, cls) { return '<div><small>' + l + '</small><b class="' + (cls || '') + '">' + v + '</b></div>'; };
-  box.innerHTML = '<div class="ihead"><b>' + esc(it) + '</b><button type="button" onclick="setOpsItem(\'\')">✕ اقفل</button></div>' +
+  box.innerHTML = '<div class="ihead"><b>' + withIcon(it) + '</b><span><button type="button" data-ic="1">🎨 الإيموجي</button><button type="button" onclick="setOpsItem(\'\')">✕ اقفل</button></span></div>' +
     '<p class="hint" style="margin:6px 0 0">' + $('listMonth').textContent + '</p>' +
     '<div class="row3">' + cell(inc ? 'جالك' : 'صرفت', fmt(inc ? m.i : m.o), inc ? 'in' : 'out') + cell('عدد المرات', m.n) + cell('متوسط الشهر', fmt((inc ? a.i : a.o) / months)) + '</div>' +
     '<p class="hint" style="margin:10px 0 0">من الأول (' + a.n + ' عملية من ' + (a.first ? dShort(a.first) + '/' + a.first.slice(0, 4) : '—') + ')</p>' +
     '<div class="row3">' + cell('صرف', fmt(a.o), 'out') + cell('دخل', fmt(a.i), 'in') + cell('الشهور', months) + '</div>';
+  box.querySelector('[data-ic]').onclick = function () { openIconPicker(it); };
   box.hidden = false;
 }
 /** تفاصيل العملية للقراية بس */
@@ -1809,6 +1885,7 @@ function snoozeNudge() {
 function setNudge(k, v) {
   var cfg = S.settings.nudge; cfg[k] = v;
   if (k === 'on' && v) { S.lastEntryAt = S.lastEntryAt || Date.now(); }
+  if ((k === 'on' || k === 'daily') && v && notifyState() !== 'on' && notifyState() !== 'none') setTimeout(askNotify, 600);
   commit(k === 'on' ? (v ? '🔔 هفكّرك كل ' + hrsTxt(cfg.every) + ' لو مسجلتش' : 'التذكير بالتسجيل اتقفل') : k === 'daily' ? (v ? '🌙 ملخص آخر اليوم اشتغل' : 'ملخص آخر اليوم اتقفل') : 'اتحفظ ✓');
 }
 function renderNudgeSet() {
@@ -1823,8 +1900,9 @@ function renderNudgeSet() {
     $('nuFrom').innerHTML = o1; $('nuTo').innerHTML = o2;
   }
   $('nuFrom').value = String(cfg.from); $('nuTo').value = String(cfg.to);
-  var nat = NATIVE && window.Android.setSchedule;
-  $('nuHint').textContent = nat ? 'الإشعارات بتوصلك حتى والتطبيق مقفول ✓' : 'وإنت فاتح التطبيق بيظهرلك شريط فوق. الإشعار والتطبيق مقفول هيشتغل مع تحديث تطبيق الأندرويد الجاي.';
+  var nat = NATIVE && window.Android.setSchedule, ns = notifyState();
+  $('nuHint').innerHTML = !nat ? 'وإنت فاتح التطبيق بيظهرلك شريط فوق. الإشعار والتطبيق مقفول محتاج تطبيق الأندرويد الجديد.'
+    : ns === 'on' ? 'الإشعارات بتوصلك حتى والتطبيق مقفول ✓' : '⚠️ الإشعارات مقفولة. <button class="linkbtn" type="button" onclick="askNotify()">شغّلها</button>';
 }
 document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') checkNudge(); });
 /** بيبعت مواعيد الإشعارات لتطبيق الأندرويد (لو بيدعمها) */
@@ -1911,7 +1989,7 @@ function renderSettings() {
   }).join('') : '<li class="empty">مافيش تذكيرات لسه.</li>';
   $('reminders').querySelectorAll('.rowbtn').forEach(function (b) { b.onclick = function () { openReminder(+b.dataset.id); }; });
   $('reminders').querySelectorAll('input[type=checkbox]').forEach(function (c) { c.onchange = function () { var r = remById(+c.dataset.id); r.active = c.checked; commit(c.checked ? 'التذكير اشتغل' : 'التذكير اتوقف'); }; });
-  $('notifBtn').hidden = !('Notification' in window) || Notification.permission === 'granted';
+  $('notifBtn').hidden = notifyState() === 'on' || notifyState() === 'none';
   $('itemsList').innerHTML = allItems('صرف').map(function (x) { return '<option value="' + esc(x) + '">'; }).join('');
   $('ver').textContent = 'نسخة ' + APP_VERSION; $('ver2').textContent = APP_VERSION;
   $('askWalletRow').hidden = S.wallets.length < 2;
@@ -2392,15 +2470,19 @@ function ensurePin() {
     return saveLock();
   });
 }
-document.addEventListener('visibilitychange', function () {
-  if (document.visibilityState === 'hidden') { lockHiddenAt = Date.now(); return; }
-  if (!lockData || !lockHiddenAt) return;
+function lockOnHide() { if (!lockHiddenAt) lockHiddenAt = Date.now(); noteKeyMem = null; }
+function lockOnShow() {
+  if (!lockData || !lockHiddenAt) { lockHiddenAt = 0; return; }
   var away = Date.now() - lockHiddenAt; lockHiddenAt = 0;
   if (away < (lockData.delay || 0) * 1000) return;
   bookOpenOK = false;
   if (lockData.app) appLock();
   else if ($('v-ext').classList.contains('on') && bookLocked()) { closeSheets(); go('v-money'); }
-});
+}
+document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') lockOnHide(); else lockOnShow(); });
+/** تطبيق الأندرويد بيبلّغ لما يتقفل أو يتفتح */
+window.onNativeHide = function () { lockOnHide(); if (S) save(); };
+window.onNativeShow = function () { lockOnShow(); if (S) { checkNudge(); renderDues(); } };
 function renderLockSet() {
   var has = !!lockData;
   $('lkNone').hidden = has; $('lkHas').hidden = !has;
@@ -2424,7 +2506,7 @@ function removePin() {
     .then(function () { S.book.cfg.lock = false; commit('اتمسح الـ PIN واتلغى القفل'); }).catch(function () {});
 }
 function bioCheck() {
-  if (NATIVE && window.Android.bioAuth) { bioAvail = true; return; }
+  if (NATIVE && window.Android.bioAuth) { try { bioAvail = window.Android.bioAvailable ? !!window.Android.bioAvailable() : true; } catch (e) { bioAvail = false; } if (S) renderLockSet(); return; }
   if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable && window.isSecureContext)
     PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(function (v) { bioAvail = !!v; if (S) renderLockSet(); }).catch(function () {});
 }
@@ -2726,7 +2808,7 @@ function openSheet(id) {
 }
 function closeSheets() {
   if ($('pwSheet').classList.contains('on') && pwDone) { pwDone(true); }
-  noteEditing = null; $('scrim').classList.remove('on'); ['sheet', 'vSheet', 'rSheet', 'pSheet', 'xSheet', 'nSheet', 'tSheet', 'wSheet', 'dSheet', 'dfSheet', 'paySheet', 'bsSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
+  noteEditing = null; $('scrim').classList.remove('on'); ['sheet', 'vSheet', 'icSheet', 'rSheet', 'pSheet', 'xSheet', 'nSheet', 'tSheet', 'wSheet', 'dSheet', 'dfSheet', 'paySheet', 'bsSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
 function saveEdit() {
   var t = editing; if (!t) return;
   var a = num($('eAmount'));
@@ -3048,7 +3130,15 @@ function reminderAction(id, m) {
   r.lastPaid = i.occ;
   commit(msg);
 }
+/** on / ask / off / none */
+function notifyState() {
+  if (NATIVE && window.Android.notifyStatus) { try { return window.Android.notifyStatus(); } catch (e) { return 'none'; } }
+  if (!('Notification' in window)) return 'none';
+  return Notification.permission === 'granted' ? 'on' : Notification.permission === 'denied' ? 'off' : 'ask';
+}
+window.onNativeNotify = function () { render(); nativeSchedule(); toast(notifyState() === 'on' ? 'تمام، هتوصلك إشعارات ✓' : 'الإشعارات مقفولة'); };
 function askNotify() {
+  if (NATIVE && window.Android.askNotify) { window.Android.askNotify(); return; }
   if (!('Notification' in window)) return toast('الموبايل ده مش بيدعم الإشعارات من التطبيق');
   Notification.requestPermission().then(function (p) { render(); toast(p === 'granted' ? 'تمام، هتوصلك إشعارات ✓' : 'الإشعارات مقفولة'); });
 }
