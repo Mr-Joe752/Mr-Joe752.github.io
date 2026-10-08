@@ -265,10 +265,10 @@
 
   nav.tabs { position: fixed; bottom: 0; inset-inline: 0; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid var(--line); padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); z-index: 20; }
-  nav.tabs .in { position: relative; max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); }
-  nav.tabs .mark { position: absolute; top: -7px; inset-inline-start: 0; width: 20%; height: 3px; display: flex; justify-content: center; transform: translateX(calc(var(--i, 0) * -100%)); transition: transform .35s var(--ease); }
+  nav.tabs .in { position: relative; max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(6, 1fr); }
+  nav.tabs .mark { position: absolute; top: -7px; inset-inline-start: 0; width: calc(100% / 6); height: 3px; display: flex; justify-content: center; transform: translateX(calc(var(--i, 0) * -100%)); transition: transform .35s var(--ease); }
   nav.tabs .mark::after { content: ''; width: 28px; height: 3px; border-radius: 0 0 3px 3px; background: var(--ink); }
-  nav.tabs button { border: 0; background: none; display: grid; justify-items: center; gap: 2px; padding: 6px 0; color: var(--faint); font-size: 12px; transition: color .25s; }
+  nav.tabs button { border: 0; background: none; display: grid; justify-items: center; gap: 2px; padding: 6px 0; color: var(--faint); font-size: 11px; transition: color .25s; white-space: nowrap; }
   nav.tabs button svg { width: 22px; height: 22px; transition: transform .25s var(--ease); }
   nav.tabs button[aria-selected="true"] { color: var(--ink); font-weight: 500; }
   nav.tabs button[aria-selected="true"] svg { transform: translateY(-2px); }
@@ -300,6 +300,52 @@
   .monthnav { display: flex; align-items: center; justify-content: space-between; margin-top: 24px; }
   .monthnav .icon-btn { font-size: 22px; line-height: 1; }
   .row3 { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; }
+  .row4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .row4 button { all: unset; box-sizing: border-box; cursor: pointer; text-align: center; padding: 8px 2px; border-radius: 12px; border: 1px solid transparent; transition: background .2s, border-color .2s; }
+  .row4 button[aria-pressed="true"] { background: var(--surface-2); border-color: var(--line); }
+  .row4 button:focus-visible { outline: 2px solid var(--focus); }
+  .row4 small { display: block; color: var(--muted); font-size: 12px; }
+  .row4 b { font-size: 16px; font-weight: 600; direction: ltr; unicode-bidi: isolate; }
+  .row4 .in { color: var(--in); } .row4 .out { color: var(--out); } .row4 .debt { color: var(--debt); }
+  .legend li.click { cursor: pointer; border-radius: 8px; }
+  .legend li.click:active { background: var(--surface-2); }
+  .legend b { font-weight: 600; white-space: nowrap; }
+  .legend em { font-style: normal; color: var(--muted); font-size: 12px; white-space: nowrap; direction: ltr; unicode-bidi: isolate; }
+  .itemcard { margin-top: 10px; }
+  .itemcard .ihead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .itemcard .ihead b { font-size: 16px; }
+  .itemcard .ihead button { border: 0; background: none; color: var(--muted); font-size: 13px; }
+  .itemcard .row3 { margin-top: 8px; } .itemcard .row3 b { font-size: 16px; direction: ltr; unicode-bidi: isolate; }
+  .wacts { display: flex; gap: 4px; }
+  .wacts button { padding: 6px 8px; font-size: 13px; }
+  .notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+  .notecard { all: unset; box-sizing: border-box; cursor: pointer; border-radius: 16px; padding: 12px; min-height: 96px; display: flex; flex-direction: column; gap: 6px; color: #13302a; box-shadow: 0 1px 0 rgba(0,0,0,.06); overflow: hidden; animation: rise .3s var(--ease) both; }
+  .notecard b { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .notecard p { margin: 0; font-size: 13px; line-height: 1.5; opacity: .85; white-space: pre-wrap; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .notecard small { margin-top: auto; font-size: 11px; opacity: .6; }
+  .notecard:focus-visible { outline: 2px solid var(--focus); }
+  .fab { position: fixed; inset-inline-end: 18px; bottom: calc(86px + env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 18px; border: 0; background: var(--ink); color: var(--bg); font-size: 28px; box-shadow: var(--shadow); z-index: 15; display: none; }
+  body.on-notes .fab { display: block; }
+  .colors { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .colors button { width: 30px; height: 30px; border-radius: 50%; border: 2px solid transparent; }
+  .colors button[aria-pressed="true"] { border-color: var(--ink); }
+  textarea.field { min-height: 220px; resize: vertical; line-height: 1.6; font-family: inherit; }
+  .reader { position: fixed; inset: 0; z-index: 55; display: flex; flex-direction: column; color: #13302a; opacity: 0; pointer-events: none; transform: translateY(16px); transition: opacity .25s, transform .3s var(--ease); }
+  .reader.on { opacity: 1; pointer-events: auto; transform: none; }
+  .reader .rbar { display: flex; align-items: center; gap: 8px; padding: calc(10px + env(safe-area-inset-top)) 12px 8px; }
+  .reader .rbar button { border: 1px solid rgba(19,48,42,.2); background: rgba(255,255,255,.55); color: #13302a; border-radius: 12px; padding: 9px 12px; font-size: 14px; }
+  .reader .rbar .grow { flex: 1; }
+  .reader .rbody { flex: 1; overflow: auto; padding: 6px 20px calc(30px + env(safe-area-inset-bottom)); -webkit-overflow-scrolling: touch; }
+  .reader h1 { font-size: 24px; font-weight: 600; margin: 4px 0 6px; line-height: 1.4; }
+  .reader .rmeta { font-size: 12px; opacity: .6; margin-bottom: 14px; }
+  .reader .rtext { white-space: pre-wrap; word-wrap: break-word; line-height: 1.9; user-select: text; -webkit-user-select: text; }
+  .reader .rtext a { color: #1e6b57; }
+  .reader.night { background: #101716 !important; color: #d9e4e1; }
+  .reader.night .rbar button { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.18); color: #d9e4e1; }
+  .reader.night .rtext a { color: #7fd6b0; }
+  .reader.night .rbody { border-top: 3px solid var(--nc, transparent); }
+  .lockrow { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+  .lockrow .what { flex: 1; font-size: 14px; } .lockrow small { display: block; color: var(--muted); font-size: 12px; }
   .row3 small { display: block; color: var(--muted); font-size: 12px; }
   .row3 b { font-size: 18px; font-weight: 600; }
   .row3 .in { color: var(--in); } .row3 .out { color: var(--out); }
@@ -413,9 +459,11 @@
     </div>
     <div class="panel" id="monthSum" style="margin-top:12px"></div>
     <div class="panel" id="donutBox" style="margin-top:12px"></div>
+    <div class="panel itemcard" id="itemCard" hidden></div>
     <h2>العمليات</h2>
-    <input class="field" id="search" placeholder="🔎 دوّر على بند أو ملاحظة" oninput="renderRecent()" autocomplete="off">
+    <input class="field" id="search" placeholder="🔎 دوّر على بند أو ملاحظة" oninput="renderItemCard(); renderRecent()" autocomplete="off">
     <div class="filters"><button class="chip" type="button" id="photoFilter" aria-pressed="false" onclick="togglePhotoFilter()">📎 بالصور بس</button></div>
+    <p class="hint" style="margin:6px 2px 0">دوس على اسم البند تشوف إجماليه، أو على العملية عشان تعدّلها.</p>
     <ul class="list" id="recent" style="margin-top:6px"></ul>
   </main>
 
@@ -438,6 +486,7 @@
     <h2>المحافظ</h2>
     <div class="panel">
       <ul class="list" id="wallets"></ul>
+      <button class="ghost" style="width:100%;margin-top:10px" onclick="promptWallet()">+ محفظة جديدة</button>
       <label class="f">حوّل بين المحافظ</label>
       <div class="two">
         <select class="field" id="trFrom" aria-label="من"></select>
@@ -500,6 +549,13 @@
 
     <h2>الناس</h2>
     <div class="panel"><ul class="list" id="xList"></ul><p class="hint" style="margin-top:6px" id="xListHint" hidden>دوس على أي حد عشان تشوف كل حركاته.</p></div>
+  </main>
+
+  <main class="view" id="v-notes">
+    <h2>مذكرات</h2>
+    <input class="field" id="noteSearch" placeholder="🔎 دوّر في المذكرات" autocomplete="off" oninput="noteQ = this.value; renderNotes()">
+    <div class="notes" id="notesList"></div>
+    <button class="ghost" id="notePassBtn" style="width:100%;margin-top:14px" onclick="changeNotePass()" hidden>🔒 غيّر باسورد المذكرات</button>
   </main>
 
   <main class="view" id="v-set">
@@ -585,6 +641,12 @@
       <p class="hint" style="margin-top:8px">العمليات نفسها مش بتتمسح، الصور بس. والصور اللي بتتمسح من هنا مش بترجع، فلو عاوز تحتفظ بيها نزّل نسخة ملف الأول.</p>
     </div>
 
+    <h2>التحديث</h2>
+    <div class="panel">
+      <p class="hint" id="updNow">النسخة اللي عندك: <span id="ver2"></span></p>
+      <button class="ghost" style="width:100%;margin-top:8px" id="updBtn" onclick="updateApp()">حدّث التطبيق دلوقتي</button>
+    </div>
+
     <h2>الشكل</h2>
     <div class="panel">
       <div class="seg" id="themeSeg" style="--n:3;--i:0" role="group" aria-label="الشكل">
@@ -605,6 +667,7 @@
     <button role="tab" aria-selected="false" data-v="v-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h9"/></svg>العمليات</button>
     <button role="tab" aria-selected="false" data-v="v-money"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/></svg>الفلوس</button>
     <button role="tab" aria-selected="false" data-v="v-ext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10a2 2 0 0 1 2 2v14l-3-2-2 2-2-2-2 2-2-2-3 2V6a2 2 0 0 1 2-2z"/><path d="M9 9h6M9 13h4"/></svg>مديونات</button>
+    <button role="tab" aria-selected="false" data-v="v-notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h5"/></svg>مذكرات</button>
     <button role="tab" aria-selected="false" data-v="v-set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>الإعدادات</button>
   </div>
 </nav>
@@ -654,6 +717,52 @@
     <button class="ghost danger" id="eDel" onclick="deleteTx()">امسح</button>
     <button class="primary" onclick="saveEdit()">احفظ التعديل</button>
   </div>
+</div>
+
+<button class="fab" type="button" aria-label="مذكرة جديدة" onclick="openNote(0)">+</button>
+
+<div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="rdTitle">
+  <div class="rbar">
+    <button type="button" onclick="closeReader()">✕ اقفل</button>
+    <span class="grow"></span>
+    <button type="button" id="rdNight" onclick="toggleReaderNight()" aria-label="الوضع الليلي">🌙</button>
+    <button type="button" onclick="readerZoom(-1)" aria-label="صغّر الخط">ا−</button>
+    <button type="button" onclick="readerZoom(1)" aria-label="كبّر الخط">ا+</button>
+    <button type="button" onclick="readerEdit()">✏️ تعديل</button>
+  </div>
+  <div class="rbody">
+    <h1 id="rdTitle"></h1>
+    <div class="rmeta" id="rdMeta"></div>
+    <div class="rtext" id="rdText"></div>
+  </div>
+</div>
+
+<div class="sheet" id="nSheet" role="dialog" aria-modal="true" aria-labelledby="nHead">
+  <div class="grab"></div>
+  <h3 id="nHead">مذكرة جديدة</h3>
+  <label class="f" for="nTitle">العنوان</label>
+  <input class="field" id="nTitle" autocomplete="off" placeholder="عنوان المذكرة">
+  <label class="f" for="nBody">المذكرة</label>
+  <textarea class="field" id="nBody" placeholder="اكتب هنا…"></textarea>
+  <div class="colors" id="nColors"></div>
+  <div class="lockrow"><div class="what">📌 ثبّتها فوق</div><label class="sw"><input type="checkbox" id="nPinned" aria-label="ثبّتها فوق"><span></span></label></div>
+  <div class="lockrow"><div class="what">🔒 اقفلها بباسورد<small>بتتشفّر، ومحدش يقدر يقراها من غير الباسورد</small></div><label class="sw"><input type="checkbox" id="nLocked" aria-label="اقفلها بباسورد"><span></span></label></div>
+  <div class="acts">
+    <button class="ghost danger" id="nDel" onclick="deleteNote()" hidden>امسح</button>
+    <button class="ghost" type="button" onclick="previewNote()">👁 عرض</button>
+    <button class="primary" onclick="saveNote()">احفظ</button>
+  </div>
+</div>
+
+<div class="sheet" id="pwSheet" role="dialog" aria-modal="true" aria-labelledby="pwTitle">
+  <div class="grab"></div>
+  <h3 id="pwTitle">باسورد المذكرات</h3>
+  <p class="hint" id="pwHint"></p>
+  <label class="f" for="pw1">الباسورد</label>
+  <input class="field" id="pw1" type="password" autocomplete="off" onkeydown="if (event.key === 'Enter') pwDone && pwDone()">
+  <div id="pw2Box"><label class="f" for="pw2">اكتبه تاني</label><input class="field" id="pw2" type="password" autocomplete="off" onkeydown="if (event.key === 'Enter') pwDone && pwDone()"></div>
+  <div class="err" id="pwErr"></div>
+  <div class="acts"><button class="ghost" onclick="pwDone && pwDone(true)">إلغاء</button><button class="primary" onclick="pwDone && pwDone()">تمام</button></div>
 </div>
 
 <div class="sheet" id="eSheet" role="dialog" aria-modal="true" aria-labelledby="eTitle">
@@ -726,7 +835,7 @@ var GOOGLE_CLIENT_ID = '247280462624-08ukk2snqmf3f7j34csme9noafosapgi.apps.googl
 var AUTH_URL = 'https://hesabaty-auth.onyxgp80.workers.dev';
 // =======================================================================================
 
-var APP_VERSION = '1.7.0';
+var APP_VERSION = '1.8.2';
 var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
 var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
 var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
@@ -768,7 +877,8 @@ function freshState() {
   return {
     v: 1, nextId: 1,
     tx: [], debts: [], transfers: [], reminders: [], ext: [],
-    wallets: [{ name: 'كاش', opening: 0, cur: 'ج' }, { name: 'بنك', opening: 0, cur: 'ج' }, { name: 'فودافون كاش', opening: 0, cur: 'ج' }, { name: 'إنستاباي', opening: 0, cur: 'ج' }],
+    wallets: [{ name: 'كاش', opening: 0, cur: 'ج' }],
+    notes: [], noteKey: null,
     budgets: {},
     settings: { defaultWallet: 'كاش', askWallet: false },
     rate: { manual: 0, auto: 0, autoAt: '' },
@@ -997,6 +1107,8 @@ function go(v) {
   if (v === 'v-list') renderList();
   if (v === 'v-money') renderBars();
   if (v === 'v-set') renderSpace();
+  document.body.classList.toggle('on-notes', v === 'v-notes');
+  if (v === 'v-notes') renderNotes();
 }
 $('tabs').querySelectorAll('button').forEach(function (b) { b.onclick = function () { go(b.dataset.v); }; });
 
@@ -1012,7 +1124,7 @@ function render() {
   var hot = Object.keys(S.budgets).map(function (n) { return { name: n, b: S.budgets[n], s: spentOn(n, st) }; }).filter(function (x) { return x.s >= .8 * x.b; });
   $('noteAlert').hidden = !hot.length;
   $('noteAlert').textContent = hot.map(function (x) { return (x.s > x.b ? 'عدّيت ميزانية ' : 'قرّبت تخلّص ميزانية ') + x.name; }).join('، ');
-  renderTiles(); renderDues(); renderForm(); renderMoney(); renderSettings(); renderBackupState(); renderExt();
+  renderTiles(); renderDues(); renderForm(); renderMoney(); renderSettings(); renderBackupState(); renderExt(); renderNotes();
   if ($('v-list').classList.contains('on')) renderList();
 }
 
@@ -1118,31 +1230,90 @@ function focusPanel() {
 
 // ----- العمليات -----
 function shiftMonth(n) { var m = viewYM.m + n, y = viewYM.y; if (m < 1) { m = 12; y--; } if (m > 12) { m = 1; y++; } viewYM = { y: y, m: m }; renderList(); }
+var chartMode = 'صرف';
+function setChart(m) { chartMode = m; renderList(); }
 function renderList() {
   if (!viewYM) viewYM = curYM();
-  var st = monthStats(viewYM);
+  var st = monthStats(viewYM), db = debtBalances(''), toMe = 0, onMe = 0;
+  Object.keys(db).forEach(function (k) { if (db[k] > 0) toMe += db[k]; else onMe -= db[k]; });
+  var rem = st.income - st.expense, dn = toMe - onMe;
   $('listMonth').textContent = st.label;
-  $('monthSum').innerHTML = '<div class="row3"><div><small>دخل</small><b class="in">' + fmt(st.income) + '</b></div><div><small>صرف</small><b class="out">' + fmt(st.expense) + '</b></div><div><small>المتبقي</small><b>' + fmt(st.income - st.expense) + '</b></div></div>';
-  renderDonut(st); renderRecent();
+  var cell = function (m, cls, v) { return '<button type="button" aria-pressed="' + (chartMode === m) + '" onclick="setChart(\'' + m + '\')"><small>' + m + '</small><b class="' + cls + '">' + v + '</b></button>'; };
+  $('monthSum').innerHTML = '<div class="row4">' + cell('دخل', 'in', fmt(st.income)) + cell('صرف', 'out', fmt(st.expense)) +
+    cell('سلف', 'debt', (dn < 0 ? '−' : dn > 0 ? '+' : '') + fmt(Math.abs(dn))) + cell('المتبقي', rem < 0 ? 'out' : '', (rem < 0 ? '−' : '') + fmt(Math.abs(rem))) + '</div>';
+  renderDonut(st, db); renderItemCard(); renderRecent();
 }
-function renderDonut(st) {
-  var keys = Object.keys(st.exp).sort(function (a, b) { return st.exp[b] - st.exp[a]; });
-  if (!keys.length) { $('donutBox').innerHTML = '<p class="empty">مافيش صرف في الشهر ده.</p>'; return; }
-  var parts = keys.slice(0, 7).map(function (k) { return { n: k, v: st.exp[k] }; });
-  var rest = keys.slice(7).reduce(function (s, k) { return s + st.exp[k]; }, 0);
-  if (rest) parts.push({ n: 'حاجات تانية', v: rest });
-  var total = st.expense || 1, r = 52, c = 2 * Math.PI * r, off = 0, rings = '';
+function chartParts(st, db) {
+  if (chartMode === 'دخل') return { title: 'الدخل', total: st.income, map: st.inc, click: true, empty: 'مافيش دخل في الشهر ده.' };
+  if (chartMode === 'صرف') return { title: 'الصرف', total: st.expense, map: st.exp, click: true, empty: 'مافيش صرف في الشهر ده.' };
+  if (chartMode === 'سلف') {
+    var m = {}, t = 0;
+    Object.keys(db).forEach(function (k) { if (db[k]) { m[k + (db[k] > 0 ? ' (ليك)' : ' (عليك)')] = Math.abs(db[k]); t += Math.abs(db[k]); } });
+    return { title: 'السلف', total: t, map: m, click: false, empty: 'مافيش سلف مفتوحة.' };
+  }
+  var mm = {}; if (st.expense) mm['الصرف'] = st.expense; if (st.income > st.expense) mm['المتبقي'] = st.income - st.expense;
+  return { title: 'الدخل', total: Math.max(st.income, st.expense), map: mm, click: false, empty: 'مافيش دخل ولا صرف في الشهر ده.', fixed: ['#b4234a', '#1e7a4f'] };
+}
+function renderDonut(st, db) {
+  var cp = chartParts(st, db || debtBalances('')), map = cp.map;
+  var keys = Object.keys(map).sort(function (a, b) { return map[b] - map[a]; });
+  if (cp.fixed) keys = Object.keys(map);
+  if (!keys.length) { $('donutBox').innerHTML = '<p class="empty">' + cp.empty + '</p>'; return; }
+  var parts = keys.slice(0, 7).map(function (k) { return { n: k, v: map[k] }; });
+  var rest = keys.slice(7).reduce(function (s, k) { return s + map[k]; }, 0);
+  if (rest) parts.push({ n: 'حاجات تانية', v: rest, other: true });
+  var sum = parts.reduce(function (s, x) { return s + x.v; }, 0) || 1;
+  var color = function (i) { return cp.fixed ? cp.fixed[i] : PALETTE[i % 8]; };
+  var r = 52, c = 2 * Math.PI * r, off = 0, rings = '';
   parts.forEach(function (p, i) {
-    var len = p.v / total * c;
-    rings += '<circle class="seg-arc" r="' + r + '" cx="70" cy="70" fill="none" stroke="' + PALETTE[i % 8] + '" stroke-width="18" stroke-dasharray="0 ' + c + '" data-len="' + len + '" data-off="' + (-off) + '" transform="rotate(-90 70 70)"/>';
+    var len = p.v / sum * c;
+    rings += '<circle class="seg-arc" r="' + r + '" cx="70" cy="70" fill="none" stroke="' + color(i) + '" stroke-width="18" stroke-dasharray="0 ' + c + '" data-len="' + len + '" data-off="' + (-off) + '" transform="rotate(-90 70 70)"/>';
     off += len;
   });
-  $('donutBox').innerHTML = '<div class="donut"><svg viewBox="0 0 140 140" role="img" aria-label="تقسيم الصرف">' + rings +
-    '<text x="70" y="66" text-anchor="middle" font-size="11" fill="currentColor" opacity=".6">الصرف</text><text x="70" y="85" text-anchor="middle" font-size="17" font-weight="600" fill="currentColor">' + fmt(st.expense) + '</text></svg>' +
-    '<ul class="legend">' + parts.map(function (p, i) { return '<li><i style="background:' + PALETTE[i % 8] + '"></i><span>' + esc(p.n) + '</span><b>' + Math.round(p.v * 100 / total) + '%</b></li>'; }).join('') + '</ul></div>';
+  $('donutBox').innerHTML = '<div class="donut"><svg viewBox="0 0 140 140" role="img" aria-label="' + esc(cp.title) + '">' + rings +
+    '<text x="70" y="66" text-anchor="middle" font-size="11" fill="currentColor" opacity=".6">' + esc(cp.title) + '</text><text x="70" y="85" text-anchor="middle" font-size="17" font-weight="600" fill="currentColor">' + fmt(cp.total) + '</text></svg>' +
+    '<ul class="legend">' + parts.map(function (p, i) {
+      return '<li' + (cp.click && !p.other ? ' class="click" data-it="' + esc(p.n) + '"' : '') + '><i style="background:' + color(i) + '"></i><span>' + esc(p.n) + '</span><b>' + Math.round(p.v * 100 / sum) + '%</b><em>' + fmt(p.v) + '</em></li>';
+    }).join('') + '</ul></div>';
+  $('donutBox').querySelectorAll('li[data-it]').forEach(function (li) { li.onclick = function () { showItem(li.dataset.it); }; });
   requestAnimationFrame(function () { requestAnimationFrame(function () {
     $('donutBox').querySelectorAll('circle.seg-arc').forEach(function (e) { e.setAttribute('stroke-dasharray', e.dataset.len + ' ' + (c - e.dataset.len)); e.setAttribute('stroke-dashoffset', e.dataset.off); });
   }); });
+}
+/** البند اللي بنعرض إجماليه (من الرسم أو البحث) */
+function currentItem() {
+  var q = key($('search').value);
+  if (!q) return '';
+  var all = {}; S.tx.forEach(function (t) { all[t.item] = 1; });
+  var names = Object.keys(all), exact = names.filter(function (n) { return key(n) === q; });
+  if (exact.length) return exact[0];
+  var hits = names.filter(function (n) { return key(n).indexOf(q) >= 0; });
+  return hits.length === 1 ? hits[0] : '';
+}
+function showItem(name) {
+  $('search').value = name; photoOnly = false; $('photoFilter').setAttribute('aria-pressed', false);
+  renderItemCard(); renderRecent();
+  $('itemCard').scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' });
+}
+function renderItemCard() {
+  var it = currentItem(), box = $('itemCard');
+  if (!it) { box.hidden = true; return; }
+  var k = key(it), mk = monthKey(viewYM.y, viewYM.m), m = { o: 0, i: 0 }, a = { o: 0, i: 0, n: 0, first: '' };
+  S.tx.forEach(function (t) {
+    if (key(t.item) !== k) return;
+    var f = t.type === 'دخل' ? 'i' : 'o';
+    a[f] += t.amount; a.n++; if (!a.first || t.date < a.first) a.first = t.date;
+    if (t.date.slice(0, 7) === mk) m[f] += t.amount;
+  });
+  var months = 1;
+  if (a.first) { var d0 = new Date(a.first + 'T12:00:00'), d1 = new Date(); months = Math.max(1, (d1.getFullYear() - d0.getFullYear()) * 12 + d1.getMonth() - d0.getMonth() + 1); }
+  var cell = function (l, v, cls) { return '<div><small>' + l + '</small><b class="' + (cls || (v < 0 ? 'out' : '')) + '">' + (v < 0 ? '−' + fmt(-v) : fmt(v)) + '</b></div>'; };
+  box.innerHTML = '<div class="ihead"><b>' + esc(it) + '</b><button type="button" onclick="$(\'search\').value=\'\'; renderList()">✕ اقفل</button></div>' +
+    '<p class="hint" style="margin:6px 0 0">' + $('listMonth').textContent + '</p>' +
+    '<div class="row3">' + cell('صرف', m.o, 'out') + cell('دخل', m.i, 'in') + cell('الصافي', m.i - m.o) + '</div>' +
+    '<p class="hint" style="margin:10px 0 0">كل الشهور (' + a.n + ' عملية)</p>' +
+    '<div class="row3">' + cell('صرف', a.o, 'out') + cell('دخل', a.i, 'in') + cell('في الشهر تقريباً', (a.o || a.i) / months) + '</div>';
+  box.hidden = false;
 }
 function renderRecent() {
   var mk = monthKey(viewYM.y, viewYM.m), q = key($('search').value), wide = q || photoOnly;
@@ -1155,12 +1326,18 @@ function renderRecent() {
   var html = '', last = null;
   list.forEach(function (t) {
     if (t.date !== last) { html += '<li class="day" aria-hidden="true">' + dShort(t.date) + (wide ? '/' + t.date.slice(0, 4) : '') + '</li>'; last = t.date; }
-    html += '<li><button class="rowbtn" data-id="' + t.id + '"><span class="what"><b>' + esc(t.item) + (t.photo ? ' 📎' : '') + '</b><small>' + esc(t.wallet) +
+    html += '<li><button class="rowbtn" data-id="' + t.id + '"><span class="what"><b class="itn" data-it="' + esc(t.item) + '">' + esc(t.item) + (t.photo ? ' 📎' : '') + '</b><small>' + esc(t.wallet) +
       (t.note ? '، ' + esc(t.note) : '') + (t.usd ? '، ≈ ' + fmt(t.amount) + ' ج' : '') + '</small></span><span class="amt ' + (t.type === 'دخل' ? 'in">+' : 'out">−') +
       (t.usd ? fmtU(t.usd) + '$' : fmt(t.amount)) + '</span></button></li>';
   });
   $('recent').innerHTML = html;
-  $('recent').querySelectorAll('.rowbtn').forEach(function (b) { b.onclick = function () { openSheet(+b.dataset.id); }; });
+  $('recent').querySelectorAll('.rowbtn').forEach(function (b) {
+    b.onclick = function (e) {
+      var n = e.target.closest && e.target.closest('.itn');
+      if (n && !currentItem()) return showItem(n.dataset.it);
+      openSheet(+b.dataset.id);
+    };
+  });
 }
 
 // ----- الفلوس -----
@@ -1183,9 +1360,12 @@ function renderMoney() {
   $('wallets').innerHTML = S.wallets.map(function (w) {
     var usd = w.cur === '$';
     return '<li><span class="what"><b>' + esc(w.name) + '</b><small>' + (w.name === S.settings.defaultWallet ? 'الأساسية' : '') + (usd && r ? '≈ ' + fmt(bl.bal[w.name] * r) + ' ج' : '') + '</small></span>' +
-      '<span class="amt">' + (usd ? fmtU(bl.bal[w.name]) + '$' : fmt(bl.bal[w.name])) + '</span><button class="ghost" style="padding:6px 10px;font-size:13px" data-w="' + esc(w.name) + '">ظبّط</button></li>';
+      '<span class="amt">' + (usd ? fmtU(bl.bal[w.name]) + '$' : fmt(bl.bal[w.name])) + '</span><span class="wacts"><button class="ghost" data-w="' + esc(w.name) + '">ظبّط</button>' +
+      '<button class="ghost" data-rn="' + esc(w.name) + '" aria-label="غيّر الاسم">✏️</button>' + (S.wallets.length > 1 ? '<button class="ghost danger" data-rm="' + esc(w.name) + '" aria-label="امسح">✕</button>' : '') + '</span></li>';
   }).join('') + '<li><span class="what"><b>الإجمالي</b><small>بالجنيه</small></span><span class="amt">' + fmt(bl.total) + '</span></li>';
   $('wallets').querySelectorAll('button[data-w]').forEach(function (b) { b.onclick = function () { setBalance(b.dataset.w); }; });
+  $('wallets').querySelectorAll('button[data-rn]').forEach(function (b) { b.onclick = function () { renameWallet(b.dataset.rn); }; });
+  $('wallets').querySelectorAll('button[data-rm]').forEach(function (b) { b.onclick = function () { removeWallet(b.dataset.rm); }; });
   ['trFrom', 'trTo', 'eWallet', 'rWallet'].forEach(function (id) { var v = $(id).value; $(id).innerHTML = walletOpts(v); if (v && wallet(v)) $(id).value = v; });
   if (S.wallets[1] && $('trFrom').value === $('trTo').value) $('trTo').value = S.wallets[1].name;
   $('exWallet').innerHTML = walletOpts(S.settings.defaultWallet, true);
@@ -1215,7 +1395,7 @@ function renderSettings() {
   $('reminders').querySelectorAll('input[type=checkbox]').forEach(function (c) { c.onchange = function () { var r = remById(+c.dataset.id); r.active = c.checked; commit(c.checked ? 'التذكير اشتغل' : 'التذكير اتوقف'); }; });
   $('notifBtn').hidden = !('Notification' in window) || Notification.permission === 'granted';
   $('itemsList').innerHTML = allItems('صرف').map(function (x) { return '<option value="' + esc(x) + '">'; }).join('');
-  $('ver').textContent = 'نسخة ' + APP_VERSION;
+  $('ver').textContent = 'نسخة ' + APP_VERSION; $('ver2').textContent = APP_VERSION;
 }
 
 // ---------- التسجيل ----------
@@ -1435,6 +1615,184 @@ bindSeg('xKindSeg', setXKind);
 });
 $('xNote').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); saveExt(); } });
 
+// ---------- التحديث ----------
+function updateApp() {
+  if (!navigator.onLine) return toast('مافيش نت دلوقتي');
+  var b = $('updBtn'); b.disabled = true; b.textContent = 'بيدوّر على تحديث…';
+  fetch('./index.html?check=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.text(); }).then(function (txt) {
+    var m = txt.match(/APP_VERSION = '([\d.]+)'/), latest = m ? m[1] : '';
+    if (latest && latest === APP_VERSION) { b.disabled = false; b.textContent = 'حدّث التطبيق دلوقتي'; return toast('عندك آخر نسخة ✓ (' + APP_VERSION + ')'); }
+    b.textContent = 'بيحدّث…';
+    // بنمسح نسخة الصفحة المحفوظة بس (البيانات في مكان تاني ومش بتتأثر)
+    var clear = window.caches ? caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }) : Promise.resolve();
+    var unreg = navigator.serviceWorker ? navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.update().catch(function () {}); })); }) : Promise.resolve();
+    return Promise.all([save(), clear, unreg]).then(function () { location.replace(location.pathname + '?v=' + (latest || Date.now())); });
+  }).catch(function () { b.disabled = false; b.textContent = 'حدّث التطبيق دلوقتي'; toast('ماقدرتش أوصل للتحديث، جرّب تاني'); });
+}
+
+// ---------- المذكرات ----------
+var NOTE_COLORS = ['#fff7c2', '#ffd8cf', '#d8f0d0', '#d3e6ff', '#ead9ff', '#f0f0ee'];
+var noteKeyMem = null, noteEditing = null, noteQ = '';
+function b64e(buf) { var s = '', a = new Uint8Array(buf); for (var i = 0; i < a.length; i++) s += String.fromCharCode(a[i]); return btoa(s); }
+function b64d(str) { var s = atob(str), a = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
+function deriveKey(pass, salt) {
+  return crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']).then(function (k) {
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: 150000, hash: 'SHA-256' }, k, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  });
+}
+function encText(key, txt) {
+  var iv = crypto.getRandomValues(new Uint8Array(12));
+  return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, new TextEncoder().encode(txt)).then(function (ct) { return { iv: b64e(iv), ct: b64e(ct) }; });
+}
+function decText(key, box) {
+  return crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64d(box.iv) }, key, b64d(box.ct)).then(function (pt) { return new TextDecoder().decode(pt); });
+}
+/** بيطلب الباسورد (أو يعمله أول مرة) ويرجّع المفتاح */
+function askNotePass(firstTime) {
+  return new Promise(function (ok, bad) {
+    $('pwTitle').textContent = firstTime ? 'اعمل باسورد للمذكرات' : 'اكتب باسورد المذكرات';
+    $('pwHint').textContent = firstTime ? 'الباسورد ده بيقفل كل المذكرات اللي تختار تقفلها. لو نسيته، المذكرات المقفولة مش هتتفتح تاني، فاكتبه في مكان آمن.' : '';
+    $('pw2Box').hidden = !firstTime; $('pw1').value = ''; $('pw2').value = ''; $('pwErr').textContent = '';
+    $('scrim').classList.add('on'); $('pwSheet').classList.add('on');
+    setTimeout(function () { $('pw1').focus(); }, 300);
+    pwDone = function (cancel) {
+      if (cancel) { $('pwSheet').classList.remove('on'); if (!document.querySelector('.sheet.on')) $('scrim').classList.remove('on'); return bad(new Error('cancel')); }
+      var p1 = $('pw1').value;
+      if (p1.length < 4) { $('pwErr').textContent = 'الباسورد لازم يبقى 4 حروف أو أرقام على الأقل'; return; }
+      if (firstTime && p1 !== $('pw2').value) { $('pwErr').textContent = 'الباسوردين مش زي بعض'; return; }
+      var salt = firstTime ? crypto.getRandomValues(new Uint8Array(16)) : b64d(S.noteKey.salt);
+      deriveKey(p1, salt).then(function (k) {
+        if (firstTime) return encText(k, 'hesabaty-ok').then(function (chk) { S.noteKey = { salt: b64e(salt), check: chk }; return save().then(function () { return k; }); });
+        return decText(k, S.noteKey.check).then(function (t) { if (t !== 'hesabaty-ok') throw 0; return k; });
+      }).then(function (k) {
+        noteKeyMem = k; $('pwSheet').classList.remove('on'); if (!document.querySelector('.sheet.on')) $('scrim').classList.remove('on'); ok(k);
+      }).catch(function () { $('pwErr').textContent = 'الباسورد غلط'; });
+    };
+  });
+}
+var pwDone = null;
+function getNoteKey() { return noteKeyMem ? Promise.resolve(noteKeyMem) : askNotePass(!S.noteKey); }
+document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') noteKeyMem = null; });
+
+function renderNotes() {
+  if (!S) return;
+  var q = key(noteQ), list = (S.notes || []).slice().sort(function (a, b) { return (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.updated < a.updated ? -1 : 1); });
+  if (q) list = list.filter(function (n) { return key(n.title).indexOf(q) >= 0 || (!n.locked && key(n.body).indexOf(q) >= 0); });
+  $('notesList').innerHTML = list.length ? list.map(function (n) {
+    return '<button class="notecard" data-id="' + n.id + '" style="background:' + (n.color || NOTE_COLORS[0]) + '"><b>' + (n.locked ? '🔒 ' : '') + (n.pinned ? '📌 ' : '') + esc(n.title || 'من غير عنوان') + '</b>' +
+      '<p>' + (n.locked ? 'مذكرة مقفولة' : esc(n.body || '')) + '</p><small>' + dShort(n.updated.slice(0, 10)) + '/' + n.updated.slice(0, 4) + '</small></button>';
+  }).join('') : '<p class="empty" style="grid-column:1/-1">' + (q ? 'مالقيتش حاجة.' : 'مافيش مذكرات لسه. دوس + عشان تكتب أول واحدة.') + '</p>';
+  $('notesList').querySelectorAll('.notecard').forEach(function (b) { b.onclick = function () { openNote(+b.dataset.id); }; });
+  $('notePassBtn').hidden = !S.noteKey;
+}
+function noteById(id) { return (S.notes || []).filter(function (n) { return n.id === id; })[0]; }
+var readerNote = null, readerBody = '', readerSize = 18;
+try { readerSize = +localStorage.getItem('readerSize') || 18; } catch (e) {}
+function linkify(t) { return esc(t).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>'); }
+function showReader(title, body, color, meta) {
+  $('rdTitle').textContent = title || 'من غير عنوان';
+  $('rdMeta').textContent = meta || '';
+  $('rdText').innerHTML = linkify(body || '');
+  $('rdText').style.fontSize = readerSize + 'px';
+  $('reader').style.background = color || NOTE_COLORS[0];
+  $('reader').style.setProperty('--nc', color || NOTE_COLORS[0]);
+  applyReaderNight();
+  $('reader').classList.add('on');
+  $('reader').querySelector('.rbody').scrollTop = 0;
+}
+function readNote(id) {
+  var n = noteById(id); if (!n) return;
+  var go = function (body) {
+    readerNote = n; readerBody = body;
+    showReader(n.title, body, n.color, (n.locked ? '🔒 ' : '') + 'آخر تعديل ' + dShort(n.updated.slice(0, 10)) + '/' + n.updated.slice(0, 4));
+  };
+  if (n.locked) return getNoteKey().then(function (k) { return decText(k, n.enc); }).then(go).catch(function (e) { if (e && e.message !== 'cancel') toast('ماقدرتش أفتح المذكرة'); });
+  go(n.body);
+}
+/** الوضع الليلي في القراءة: بيتبع شكل التطبيق لحد ما تختار بنفسك */
+function readerNightOn() {
+  var v = null; try { v = localStorage.getItem('readerNight'); } catch (e) {}
+  return v === null ? document.documentElement.getAttribute('data-theme') === 'dark' : v === '1';
+}
+function applyReaderNight() {
+  var on = readerNightOn();
+  $('reader').classList.toggle('night', on);
+  $('rdNight').textContent = on ? '☀️' : '🌙';
+  $('rdNight').setAttribute('aria-label', on ? 'الوضع النهاري' : 'الوضع الليلي');
+}
+function toggleReaderNight() {
+  try { localStorage.setItem('readerNight', readerNightOn() ? '0' : '1'); } catch (e) {}
+  applyReaderNight();
+}
+function closeReader() { $('reader').classList.remove('on'); readerNote = null; readerBody = ''; }
+function readerZoom(d) {
+  readerSize = Math.max(14, Math.min(32, readerSize + d * 2));
+  $('rdText').style.fontSize = readerSize + 'px';
+  try { localStorage.setItem('readerSize', readerSize); } catch (e) {}
+}
+function readerEdit() {
+  var n = readerNote; if (!n) return closeReader();
+  var body = readerBody; closeReader();
+  openEditor(n, body);
+}
+/** «عرض» من جوه التعديل: يعرض اللي مكتوب دلوقتي من غير ما يحفظ */
+function previewNote() {
+  var pressed = $('nColors').querySelector('[aria-pressed="true"]');
+  readerNote = null;
+  showReader($('nTitle').value.trim(), $('nBody').value, pressed ? pressed.dataset.c : NOTE_COLORS[0], 'معاينة، لسه ماتحفظتش');
+}
+function openNote(id) {
+  if (id) return readNote(id);
+  openEditor(null, '');
+}
+function openEditor(n, bodyIn) {
+  var show = function (body) {
+    noteEditing = n;
+    $('nTitle').value = n ? n.title : ''; $('nBody').value = body || '';
+    $('nLocked').checked = !!(n && n.locked); $('nPinned').checked = !!(n && n.pinned);
+    var col = (n && n.color) || NOTE_COLORS[0];
+    $('nColors').innerHTML = NOTE_COLORS.map(function (c) { return '<button type="button" style="background:' + c + '" data-c="' + c + '" aria-pressed="' + (c === col) + '" aria-label="لون"></button>'; }).join('');
+    $('nColors').querySelectorAll('button').forEach(function (b) { b.onclick = function () { $('nColors').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); }; });
+    $('nDel').hidden = !n; $('nHead').textContent = n ? 'تعديل المذكرة' : 'مذكرة جديدة';
+    $('scrim').classList.add('on'); $('nSheet').classList.add('on');
+    if (!n) setTimeout(function () { $('nTitle').focus(); }, 300);
+  };
+  show(bodyIn);
+}
+function saveNote() {
+  var title = $('nTitle').value.trim(), body = $('nBody').value, lock = $('nLocked').checked;
+  if (!title && !body.trim()) { closeSheets(); return; }
+  var pressed = $('nColors').querySelector('[aria-pressed="true"]');
+  var n = noteEditing || { id: nid(), created: new Date().toISOString() };
+  n.title = title; n.color = pressed ? pressed.dataset.c : NOTE_COLORS[0]; n.pinned = $('nPinned').checked; n.updated = new Date().toISOString();
+  var done = function () { if (!noteEditing) S.notes.push(n); noteEditing = null; closeSheets(); commit('اتحفظت المذكرة ✓'); };
+  if (!lock) { n.locked = false; n.body = body; delete n.enc; return done(); }
+  getNoteKey().then(function (k) { return encText(k, body); }).then(function (enc) { n.locked = true; n.enc = enc; n.body = ''; done(); })
+    .catch(function (e) { if (e && e.message !== 'cancel') toast('ماقدرتش أقفل المذكرة'); });
+}
+function deleteNote() {
+  if (!noteEditing) return;
+  var b = $('nDel');
+  if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'متأكد؟'; setTimeout(function () { b.dataset.sure = ''; b.textContent = 'امسح'; }, 3000); return; }
+  b.dataset.sure = ''; b.textContent = 'امسح';
+  var id = noteEditing.id, copy = JSON.parse(JSON.stringify(noteEditing));
+  S.notes = S.notes.filter(function (n) { return n.id !== id; }); noteEditing = null; closeSheets();
+  commit('اتمسحت المذكرة', function () { S.notes.push(copy); commit('رجعت ✓'); });
+}
+/** تغيير الباسورد: بنفتح كل المذكرات المقفولة بالقديم ونقفلها بالجديد */
+function changeNotePass() {
+  noteKeyMem = null;
+  askNotePass(false).then(function (oldK) {
+    var locked = S.notes.filter(function (n) { return n.locked; });
+    return Promise.all(locked.map(function (n) { return decText(oldK, n.enc); })).then(function (bodies) {
+      var oldKey = S.noteKey; S.noteKey = null; noteKeyMem = null;
+      return askNotePass(true).then(function (newK) {
+        return Promise.all(locked.map(function (n, i) { return encText(newK, bodies[i]).then(function (e) { n.enc = e; }); }));
+      }).catch(function (e) { S.noteKey = oldKey; throw e; });
+    });
+  }).then(function () { commit('اتغيّر الباسورد ✓'); }).catch(function (e) { if (e && e.message !== 'cancel') toast('ماتغيّرش الباسورد'); });
+}
+
 // ---------- الصور ----------
 function pickFile(input) {
   var f = input.files[0]; if (!f) return;
@@ -1466,7 +1824,9 @@ function openSheet(id) {
   if (t.photo) dbGet('photos', t.photo).then(function (p) { if (p && editing === t) { $('ePhoto').src = p; $('ePhoto').hidden = false; } });
   $('scrim').classList.add('on'); $('sheet').classList.add('on');
 }
-function closeSheets() { $('scrim').classList.remove('on'); ['sheet', 'rSheet', 'pSheet', 'xSheet', 'eSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
+function closeSheets() {
+  if ($('pwSheet').classList.contains('on') && pwDone) { pwDone(true); }
+  noteEditing = null; $('scrim').classList.remove('on'); ['sheet', 'rSheet', 'pSheet', 'xSheet', 'eSheet', 'nSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
 function saveEdit() {
   var t = editing; if (!t) return;
   var a = num($('eAmount'));
@@ -1485,7 +1845,7 @@ function deleteTx() {
   closeSheets();
   commit('اتمسحت', function () { S.tx.push(copy); commit('رجعت ✓'); });
 }
-document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if ($('viewer').classList.contains('on')) closeViewer(); else closeSheets(); } });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if ($('reader').classList.contains('on')) closeReader(); else if ($('viewer').classList.contains('on')) closeViewer(); else closeSheets(); } });
 
 // ---------- فلتر الصور ----------
 function togglePhotoFilter() {
@@ -1647,6 +2007,48 @@ function setBalance(name) {
   w.opening += v - balances().bal[name];
   commit('رصيد ' + esc(name) + ' بقى ' + (w.cur === '$' ? fmtU(v) + '$' : fmt(v)) + ' ✓');
 }
+function promptWallet() {
+  var n = prompt('اسم المحفظة الجديدة؟ (مثلاً: بنك، فودافون كاش، الخزنة)');
+  if (n === null) return;
+  $('newWallet').value = n; addWallet();
+}
+function renameWallet(old) {
+  var n = prompt('الاسم الجديد لـ «' + old + '»؟', old);
+  if (n === null) return;
+  n = n.trim();
+  if (!n || n === old) return;
+  if (wallet(n)) return toast('فيه محفظة بالاسم ده');
+  wallet(old).name = n;
+  S.tx.forEach(function (x) { if (x.wallet === old) x.wallet = n; });
+  S.debts.forEach(function (x) { if (x.wallet === old) x.wallet = n; });
+  S.transfers.forEach(function (x) { if (x.from === old) x.from = n; if (x.to === old) x.to = n; });
+  S.reminders.forEach(function (x) { if (x.wallet === old) x.wallet = n; });
+  if (S.settings.defaultWallet === old) S.settings.defaultWallet = n;
+  if (pickedWallet === old) pickedWallet = n;
+  commit('اتغيّر الاسم لـ «' + esc(n) + '» ✓');
+}
+function removeWallet(name) {
+  if (S.wallets.length < 2) return toast('لازم تفضل محفظة واحدة على الأقل');
+  var used = S.tx.some(function (x) { return x.wallet === name; }) || S.debts.some(function (x) { return x.wallet === name; }) ||
+    S.transfers.some(function (x) { return x.from === name || x.to === name; });
+  var others = S.wallets.filter(function (w) { return w.name !== name && w.cur === wallet(name).cur; });
+  var target = others.length ? (others.some(function (w) { return w.name === S.settings.defaultWallet; }) ? S.settings.defaultWallet : others[0].name) : '';
+  if (used && !target) return toast('مافيش محفظة تانية بنفس العملة أنقل عليها عملياتها');
+  if (!confirm(used ? 'هتمسح «' + name + '»، وكل عملياتها هتتنقل لـ «' + target + '». متأكد؟' : 'هتمسح محفظة «' + name + '». متأكد؟')) return;
+  var w = wallet(name);
+  if (used) {
+    wallet(target).opening += w.opening;
+    S.tx.forEach(function (x) { if (x.wallet === name) x.wallet = target; });
+    S.debts.forEach(function (x) { if (x.wallet === name) x.wallet = target; });
+    S.transfers = S.transfers.filter(function (x) { return !((x.from === name && x.to === target) || (x.from === target && x.to === name)); });
+    S.transfers.forEach(function (x) { if (x.from === name) x.from = target; if (x.to === name) x.to = target; });
+  }
+  S.reminders.forEach(function (x) { if (x.wallet === name) x.wallet = ''; });
+  S.wallets = S.wallets.filter(function (x) { return x.name !== name; });
+  if (!wallet(S.settings.defaultWallet)) S.settings.defaultWallet = S.wallets[0].name;
+  if (!wallet(pickedWallet)) pickedWallet = S.settings.defaultWallet;
+  commit('اتمسحت المحفظة');
+}
 function addWallet() {
   var n = $('newWallet').value.trim(); if (!n) return toast('اكتب اسم المحفظة');
   if (wallet(n)) return toast('المحفظة دي موجودة');
@@ -1788,7 +2190,9 @@ function saveDataUrl(name, dataUrl) {
 }
 /** رجوع: الأول نقفل اللي مفتوح، وبعدين نرجع لصفحة التسجيل، وبعدين نخرج */
 window.onNativeBack = function () {
+  if ($('reader').classList.contains('on')) { closeReader(); return true; }
   if ($('viewer').classList.contains('on')) { closeViewer(); return true; }
+  if ($('pwSheet').classList.contains('on')) { pwDone && pwDone(true); return true; }
   if (document.querySelector('.sheet.on')) { closeSheets(); return true; }
   if ($('v-add').classList.contains('typing')) { closeTyping(); return true; }
   if (!$('v-add').classList.contains('on')) { go('v-add'); return true; }
@@ -2088,6 +2492,7 @@ dbOpen().then(function () { return dbGet('kv', 'state'); }).then(function (st) {
   var fresh = freshState();
   Object.keys(fresh).forEach(function (k) { if (S[k] === undefined) S[k] = fresh[k]; });
   if (!wallet(S.settings.defaultWallet)) S.settings.defaultWallet = S.wallets[0].name;
+  S.notes = S.notes || []; if (S.noteKey === undefined) S.noteKey = null;
   // سلف الدولار القديمة ← المديونات الخارجية
   var KMAP = { 'استلفت': 'عليّا', 'رجّعتله': 'سدّدت', 'سلّفت': 'ليّا', 'رجّعلي': 'اتسدّدلي' };
   var moved = S.debts.filter(function (d) { return d.cur === '$'; });
