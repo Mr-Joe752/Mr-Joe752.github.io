@@ -555,7 +555,8 @@
     <h2>مذكرات</h2>
     <input class="field" id="noteSearch" placeholder="🔎 دوّر في المذكرات" autocomplete="off" oninput="noteQ = this.value; renderNotes()">
     <div class="notes" id="notesList"></div>
-    <button class="ghost" id="notePassBtn" style="width:100%;margin-top:14px" onclick="changeNotePass()" hidden>🔒 غيّر باسورد المذكرات</button>
+    <button class="ghost" id="trashBtn" style="width:100%;margin-top:14px" onclick="openTrash()" hidden>🗑️ سلة المهملات</button>
+    <button class="ghost" id="notePassBtn" style="width:100%;margin-top:8px" onclick="changeNotePass()" hidden>🔒 غيّر باسورد المذكرات</button>
   </main>
 
   <main class="view" id="v-set">
@@ -748,10 +749,18 @@
   <div class="lockrow"><div class="what">📌 ثبّتها فوق</div><label class="sw"><input type="checkbox" id="nPinned" aria-label="ثبّتها فوق"><span></span></label></div>
   <div class="lockrow"><div class="what">🔒 اقفلها بباسورد<small>بتتشفّر، ومحدش يقدر يقراها من غير الباسورد</small></div><label class="sw"><input type="checkbox" id="nLocked" aria-label="اقفلها بباسورد"><span></span></label></div>
   <div class="acts">
-    <button class="ghost danger" id="nDel" onclick="deleteNote()" hidden>امسح</button>
+    <button class="ghost danger" id="nDel" onclick="deleteNote()" hidden>🗑️ امسح</button>
     <button class="ghost" type="button" onclick="previewNote()">👁 عرض</button>
     <button class="primary" onclick="saveNote()">احفظ</button>
   </div>
+</div>
+
+<div class="sheet" id="tSheet" role="dialog" aria-modal="true" aria-labelledby="tTitle">
+  <div class="grab"></div>
+  <h3 id="tTitle">سلة المهملات</h3>
+  <p class="hint">المذكرات اللي بتمسحها بتفضل هنا 90 يوم، وبعدها بتتمسح لوحدها.</p>
+  <ul class="list" id="tList"></ul>
+  <div class="acts"><button class="ghost danger" id="tEmpty" onclick="emptyTrash()">فضّي السلة</button><button class="primary" onclick="closeSheets()">تمام</button></div>
 </div>
 
 <div class="sheet" id="pwSheet" role="dialog" aria-modal="true" aria-labelledby="pwTitle">
@@ -835,7 +844,7 @@ var GOOGLE_CLIENT_ID = '247280462624-08ukk2snqmf3f7j34csme9noafosapgi.apps.googl
 var AUTH_URL = 'https://hesabaty-auth.onyxgp80.workers.dev';
 // =======================================================================================
 
-var APP_VERSION = '1.8.2';
+var APP_VERSION = '1.8.3';
 var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
 var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
 var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
@@ -1676,7 +1685,7 @@ document.addEventListener('visibilitychange', function () { if (document.visibil
 
 function renderNotes() {
   if (!S) return;
-  var q = key(noteQ), list = (S.notes || []).slice().sort(function (a, b) { return (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.updated < a.updated ? -1 : 1); });
+  var q = key(noteQ), list = (S.notes || []).filter(function (n) { return !n.deleted; }).slice().sort(function (a, b) { return (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.updated < a.updated ? -1 : 1); });
   if (q) list = list.filter(function (n) { return key(n.title).indexOf(q) >= 0 || (!n.locked && key(n.body).indexOf(q) >= 0); });
   $('notesList').innerHTML = list.length ? list.map(function (n) {
     return '<button class="notecard" data-id="' + n.id + '" style="background:' + (n.color || NOTE_COLORS[0]) + '"><b>' + (n.locked ? '🔒 ' : '') + (n.pinned ? '📌 ' : '') + esc(n.title || 'من غير عنوان') + '</b>' +
@@ -1684,6 +1693,9 @@ function renderNotes() {
   }).join('') : '<p class="empty" style="grid-column:1/-1">' + (q ? 'مالقيتش حاجة.' : 'مافيش مذكرات لسه. دوس + عشان تكتب أول واحدة.') + '</p>';
   $('notesList').querySelectorAll('.notecard').forEach(function (b) { b.onclick = function () { openNote(+b.dataset.id); }; });
   $('notePassBtn').hidden = !S.noteKey;
+  var tn = trashed().length;
+  $('trashBtn').hidden = !tn; $('trashBtn').textContent = '🗑️ سلة المهملات (' + tn + ')';
+  if ($('tSheet').classList.contains('on')) renderTrash();
 }
 function noteById(id) { return (S.notes || []).filter(function (n) { return n.id === id; })[0]; }
 var readerNote = null, readerBody = '', readerSize = 18;
@@ -1770,14 +1782,46 @@ function saveNote() {
   getNoteKey().then(function (k) { return encText(k, body); }).then(function (enc) { n.locked = true; n.enc = enc; n.body = ''; done(); })
     .catch(function (e) { if (e && e.message !== 'cancel') toast('ماقدرتش أقفل المذكرة'); });
 }
+var TRASH_DAYS = 90;
+function trashed() { return (S.notes || []).filter(function (n) { return n.deleted; }); }
+function daysLeft(n) { return Math.max(0, TRASH_DAYS - Math.floor((Date.now() - new Date(n.deleted)) / 864e5)); }
+/** المذكرات اللي عدّى عليها 90 يوم في السلة بتتمسح لوحدها */
+function purgeTrash() {
+  var before = S.notes.length;
+  S.notes = S.notes.filter(function (n) { return !n.deleted || daysLeft(n) > 0; });
+  return S.notes.length !== before;
+}
+function openTrash() { renderTrash(); $('scrim').classList.add('on'); $('tSheet').classList.add('on'); }
+function renderTrash() {
+  var list = trashed().sort(function (a, b) { return a.deleted < b.deleted ? 1 : -1; });
+  $('tList').innerHTML = list.length ? list.map(function (n) {
+    var d = daysLeft(n);
+    return '<li><span class="what"><b>' + (n.locked ? '🔒 ' : '') + esc(n.title || 'من غير عنوان') + '</b><small>' +
+      (n.locked ? 'مذكرة مقفولة' : esc((n.body || '').slice(0, 60))) + '</small><small style="display:block;color:var(--out)">هتتمسح نهائي بعد ' + d + ' يوم</small></span>' +
+      '<span class="wacts"><button class="ghost" data-rs="' + n.id + '">رجّعها</button><button class="ghost danger" data-kill="' + n.id + '" aria-label="امسح نهائي">✕</button></span></li>';
+  }).join('') : '<li class="empty">السلة فاضية.</li>';
+  $('tEmpty').hidden = !list.length;
+  $('tList').querySelectorAll('[data-rs]').forEach(function (b) {
+    b.onclick = function () { var n = noteById(+b.dataset.rs); delete n.deleted; n.updated = new Date().toISOString(); commit('رجعت المذكرة ✓'); };
+  });
+  $('tList').querySelectorAll('[data-kill]').forEach(function (b) {
+    b.onclick = function () {
+      if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'متأكد؟'; setTimeout(function () { b.dataset.sure = ''; b.textContent = '✕'; }, 3000); return; }
+      var id = +b.dataset.kill; S.notes = S.notes.filter(function (n) { return n.id !== id; }); commit('اتمسحت نهائي');
+    };
+  });
+}
+function emptyTrash() {
+  var n = trashed().length; if (!n) return;
+  if (!confirm('هتمسح ' + n + ' مذكرة نهائي ومش هترجع تاني. متأكد؟')) return;
+  S.notes = S.notes.filter(function (x) { return !x.deleted; });
+  closeSheets(); commit('السلة اتفضت');
+}
 function deleteNote() {
   if (!noteEditing) return;
-  var b = $('nDel');
-  if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'متأكد؟'; setTimeout(function () { b.dataset.sure = ''; b.textContent = 'امسح'; }, 3000); return; }
-  b.dataset.sure = ''; b.textContent = 'امسح';
-  var id = noteEditing.id, copy = JSON.parse(JSON.stringify(noteEditing));
-  S.notes = S.notes.filter(function (n) { return n.id !== id; }); noteEditing = null; closeSheets();
-  commit('اتمسحت المذكرة', function () { S.notes.push(copy); commit('رجعت ✓'); });
+  var id = noteEditing.id;
+  var n = noteById(id); n.deleted = new Date().toISOString(); noteEditing = null; closeSheets();
+  commit('اتنقلت لسلة المهملات 🗑️<small>بتفضل هناك ' + TRASH_DAYS + ' يوم</small>', function () { delete n.deleted; commit('رجعت ✓'); });
 }
 /** تغيير الباسورد: بنفتح كل المذكرات المقفولة بالقديم ونقفلها بالجديد */
 function changeNotePass() {
@@ -1826,7 +1870,7 @@ function openSheet(id) {
 }
 function closeSheets() {
   if ($('pwSheet').classList.contains('on') && pwDone) { pwDone(true); }
-  noteEditing = null; $('scrim').classList.remove('on'); ['sheet', 'rSheet', 'pSheet', 'xSheet', 'eSheet', 'nSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
+  noteEditing = null; $('scrim').classList.remove('on'); ['sheet', 'rSheet', 'pSheet', 'xSheet', 'eSheet', 'nSheet', 'tSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
 function saveEdit() {
   var t = editing; if (!t) return;
   var a = num($('eAmount'));
@@ -2493,6 +2537,7 @@ dbOpen().then(function () { return dbGet('kv', 'state'); }).then(function (st) {
   Object.keys(fresh).forEach(function (k) { if (S[k] === undefined) S[k] = fresh[k]; });
   if (!wallet(S.settings.defaultWallet)) S.settings.defaultWallet = S.wallets[0].name;
   S.notes = S.notes || []; if (S.noteKey === undefined) S.noteKey = null;
+  purgeTrash();
   // سلف الدولار القديمة ← المديونات الخارجية
   var KMAP = { 'استلفت': 'عليّا', 'رجّعتله': 'سدّدت', 'سلّفت': 'ليّا', 'رجّعلي': 'اتسدّدلي' };
   var moved = S.debts.filter(function (d) { return d.cur === '$'; });
