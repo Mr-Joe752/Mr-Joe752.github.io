@@ -265,8 +265,8 @@
 
   nav.tabs { position: fixed; bottom: 0; inset-inline: 0; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid var(--line); padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); z-index: 20; }
-  nav.tabs .in { position: relative; max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(6, 1fr); }
-  nav.tabs .mark { position: absolute; top: -7px; inset-inline-start: 0; width: calc(100% / 6); height: 3px; display: flex; justify-content: center; transform: translateX(calc(var(--i, 0) * -100%)); transition: transform .35s var(--ease); }
+  nav.tabs .in { position: relative; max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+  nav.tabs .mark { position: absolute; top: -7px; inset-inline-start: 0; width: calc(100% / 4); height: 3px; display: flex; justify-content: center; transform: translateX(calc(var(--i, 0) * -100%)); transition: transform .35s var(--ease); }
   nav.tabs .mark::after { content: ''; width: 28px; height: 3px; border-radius: 0 0 3px 3px; background: var(--ink); }
   nav.tabs button { border: 0; background: none; display: grid; justify-items: center; gap: 2px; padding: 6px 0; color: var(--faint); font-size: 11px; transition: color .25s; white-space: nowrap; }
   nav.tabs button svg { width: 22px; height: 22px; transition: transform .25s var(--ease); }
@@ -325,7 +325,7 @@
   .notecard small { margin-top: auto; font-size: 11px; opacity: .6; }
   .notecard:focus-visible { outline: 2px solid var(--focus); }
   .fab { position: fixed; inset-inline-end: 18px; bottom: calc(86px + env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 18px; border: 0; background: var(--ink); color: var(--bg); font-size: 28px; box-shadow: var(--shadow); z-index: 15; display: none; }
-  body.on-notes .fab { display: block; }
+  body.on-notes #noteFab, body.on-book #bookFab { display: block; }
   .colors { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
   .colors button { width: 30px; height: 30px; border-radius: 50%; border: 2px solid transparent; }
   .colors button[aria-pressed="true"] { border-color: var(--ink); }
@@ -367,6 +367,82 @@
   .gone { margin-top: 12px; color: var(--muted); font-size: 13px; }
   .pclean { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
   input[type=date].field { min-height: 46px; }
+  /* v1.9 */
+  nav.tabs .in.nomark .mark { opacity: 0; }
+  body.solo .note.mini, body.solo #dues { display: none; }
+  .pagehead { display: flex; align-items: center; gap: 10px; margin: 8px 0 6px; }
+  .pagehead h2 { margin: 0; flex: 1; }
+  .pagehead .icon-btn { font-size: 22px; line-height: 1; }
+  .bookbtn { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; gap: 12px; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; transition: transform .15s var(--ease); }
+  .bookbtn:active { transform: scale(.98); }
+  .bookbtn:focus-visible { outline: 2px solid var(--focus); }
+  .bookbtn .bi { font-size: 26px; line-height: 1; }
+  .bookbtn .what { flex: 1; min-width: 0; }
+  .bookbtn b { font-weight: 600; display: block; }
+  .bookbtn small { display: block; color: var(--muted); font-size: 12px; }
+  .bookbtn .chev { color: var(--faint); font-size: 22px; }
+  .mpane { margin-top: 12px; animation: rise .3s var(--ease); }
+  .wmore { flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); font-size: 18px; line-height: 1; color: var(--muted); }
+  details.grp { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; margin-top: 10px; overflow: hidden; }
+  details.grp > summary { list-style: none; display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; }
+  details.grp > summary::-webkit-details-marker { display: none; }
+  details.grp > summary .gi { font-size: 20px; line-height: 1; }
+  details.grp > summary .what { flex: 1; min-width: 0; }
+  details.grp > summary b { font-weight: 600; display: block; }
+  details.grp > summary small { display: block; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  details.grp > summary::after { content: '‹'; color: var(--faint); font-size: 20px; transition: transform .25s var(--ease); }
+  details.grp[open] > summary::after { transform: rotate(-90deg); }
+  details.grp > .gbody { padding: 0 16px 16px; border-top: 1px solid var(--line); animation: rise .3s var(--ease); }
+  .mpane details.grp > .gbody { padding-top: 12px; }
+  .booksum { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .booksum div { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px 14px; }
+  .booksum small { display: block; color: var(--muted); font-size: 12px; }
+  .booksum b { font-size: 18px; font-weight: 600; direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .booksum .on b { color: var(--out); } .booksum .to b { color: var(--in); }
+  #bkSeg { margin-top: 12px; }
+  .dcard { all: unset; box-sizing: border-box; cursor: pointer; display: block; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; margin-top: 10px; animation: rise .3s var(--ease) both; transition: transform .15s var(--ease); }
+  .dcard:active { transform: scale(.98); }
+  .dcard:focus-visible { outline: 2px solid var(--focus); }
+  .dcard .dtop { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .dcard .dtop b { font-weight: 600; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dcard .dtop .amt { font-weight: 600; font-size: 17px; direction: ltr; unicode-bidi: isolate; white-space: nowrap; }
+  .dcard small { color: var(--muted); font-size: 12px; }
+  .dcard .drow { display: flex; justify-content: space-between; margin-top: 4px; }
+  .dcard .dnext { display: inline-block; margin-top: 8px; font-size: 12px; border: 1px solid var(--gold); border-radius: 10px; padding: 3px 10px; }
+  .dcard.closed { opacity: .75; }
+  .fab.wide { width: auto; height: 52px; padding: 0 20px; border-radius: 16px; font-size: 15px; font-weight: 600; }
+  .shead { display: flex; align-items: center; gap: 10px; }
+  .shead h3 { flex: 1; min-width: 0; }
+  .dbig { text-align: center; margin: 12px 0 6px; }
+  .dbig small { display: block; color: var(--muted); font-size: 13px; }
+  .dbig b { font-size: 36px; font-weight: 600; direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .dbig .out { color: var(--out); } .dbig .in { color: var(--in); }
+  #dRow { background: var(--surface-2); border-radius: 14px; padding: 10px 4px; }
+  #dRow b { font-size: 15px; }
+  .payacts { display: flex; gap: 10px; margin-top: 12px; }
+  .payacts > * { flex: 1; margin: 0 !important; }
+  .payacts .primary { font-size: 15px; padding: 13px 8px; white-space: nowrap; }
+  .curin { display: flex; gap: 6px; align-items: center; }
+  .curin .field { flex: 1; min-width: 0; }
+  .linkbtn { border: 0; background: none; color: var(--focus); padding: 0; font-size: inherit; text-decoration: underline; }
+  .menu { display: grid; gap: 8px; margin-top: 12px; }
+  .menu button { text-align: start; border: 1px solid var(--line); background: var(--surface-2); border-radius: 14px; padding: 14px; font-size: 15px; }
+  .menu button:active { transform: scale(.98); }
+  .lockscr { position: fixed; inset: 0; z-index: 80; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 20px 24px calc(20px + env(safe-area-inset-bottom)); }
+  .lockscr .lkico { font-size: 40px; line-height: 1; }
+  .lockscr .brand { font-size: 20px; }
+  .lockscr p { margin: 0; color: var(--muted); text-align: center; }
+  .lockscr .err { min-height: 20px; margin: 0; }
+  .lockscr .dots { display: flex; gap: 16px; direction: ltr; margin: 8px 0 2px; }
+  .lockscr .dots i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); transition: background .15s; }
+  .lockscr .dots i.on { background: var(--ink); }
+  .lockscr .keypad { width: min(300px, 100%); gap: 10px; }
+  .lockscr .keypad button { height: 60px; border-radius: 50%; width: 60px; justify-self: center; }
+  .lockscr .keypad button.nob { background: transparent; }
+  .lockscr .lkx { position: absolute; top: calc(14px + env(safe-area-inset-top)); inset-inline-start: 16px; }
+  .lockscr .lkforgot { border: 0; background: none; color: var(--muted); font-size: 13px; text-decoration: underline; margin-top: 6px; }
+  .lockscr.shake .dots { animation: shake .4s; }
+  @keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
 </style>
 
 </head>
@@ -375,8 +451,9 @@
   <header class="top">
     <div class="brand">حساباتي<span class="month" id="month"></span></div>
     <div style="display:flex;gap:8px">
-      <button class="icon-btn" id="syncBtn" aria-label="النسخة الاحتياطية" onclick="go('v-set'); setTimeout(function(){ $('backupBox').scrollIntoView({behavior:'smooth'}); }, 200)"></button>
-      <button class="icon-btn" id="themeBtn" aria-label="تغيير الشكل" onclick="cycleTheme()"></button>
+      <button class="icon-btn" id="syncBtn" aria-label="النسخة الاحتياطية" onclick="openSet('gBackup')"></button>
+      <button class="icon-btn" id="themeBtn" aria-label="الوضع الليلي" onclick="cycleTheme()"></button>
+      <button class="icon-btn" id="gearBtn" aria-label="الإعدادات" onclick="go('v-set')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </div>
   </header>
 
@@ -469,86 +546,90 @@
 
   <!-- الفلوس -->
   <main class="view" id="v-money">
-    <h2>السلف</h2>
-    <div class="panel"><ul class="list" id="debts"></ul><p class="hint" style="margin-top:6px" id="debtsHint" hidden>دوس على أي حد عشان تشوف كل حركاته وصورها.</p></div>
-
-    <h2>الميزانية</h2>
-    <div class="panel">
-      <ul class="list" id="budgets"></ul>
-      <div class="two" style="margin-top:12px">
-        <input class="field" id="bItem" placeholder="البند" autocomplete="off" aria-label="البند">
-        <input class="field" id="bAmount" placeholder="المبلغ في الشهر" inputmode="decimal" autocomplete="off" aria-label="الميزانية" oninput="cleanAmount(this)">
-      </div>
-      <button class="ghost" style="width:100%;margin-top:10px" onclick="saveBudget()">حط الميزانية</button>
-      <p class="hint" style="margin-top:8px">عشان تشيل ميزانية، حط المبلغ صفر.</p>
+    <h2>الفلوس</h2>
+    <button class="bookbtn" type="button" onclick="openBook()"><span class="bi" aria-hidden="true">📒</span><span class="what"><b>دفتر الديون</b><small>ديون كبيرة بعيد عن حساب الشهر</small></span><span class="chev" aria-hidden="true">‹</span></button>
+    <div class="seg small" id="moneySeg" style="--n:4;--i:0;margin-top:14px" role="group" aria-label="القسم">
+      <span class="pill" aria-hidden="true"></span>
+      <button aria-pressed="true" data-v="w">محافظ</button>
+      <button aria-pressed="false" data-v="d">سلف</button>
+      <button aria-pressed="false" data-v="b">ميزانية</button>
+      <button aria-pressed="false" data-v="r">تذكيرات</button>
     </div>
 
-    <h2>المحافظ</h2>
-    <div class="panel">
-      <ul class="list" id="wallets"></ul>
-      <button class="ghost" style="width:100%;margin-top:10px" onclick="promptWallet()">+ محفظة جديدة</button>
-      <label class="f">حوّل بين المحافظ</label>
-      <div class="two">
-        <select class="field" id="trFrom" aria-label="من"></select>
-        <select class="field" id="trTo" aria-label="إلى"></select>
+    <section class="mpane" id="mp-w">
+      <div class="panel">
+        <ul class="list" id="wallets"></ul>
+        <button class="ghost" style="width:100%;margin-top:10px" onclick="promptWallet()">+ محفظة جديدة</button>
       </div>
-      <div class="two" style="margin-top:10px">
-        <input class="field" id="trAmount" placeholder="المبلغ" inputmode="decimal" autocomplete="off" aria-label="مبلغ التحويل" oninput="cleanAmount(this)">
-        <button class="ghost" onclick="doTransfer()">حوّل</button>
-      </div>
-    </div>
+      <details class="grp" id="trBox"><summary><span class="gi" aria-hidden="true">🔁</span><span class="what"><b>حوّل بين المحافظ</b></span></summary><div class="gbody">
+        <div class="two">
+          <select class="field" id="trFrom" aria-label="من"></select>
+          <select class="field" id="trTo" aria-label="إلى"></select>
+        </div>
+        <div class="two" style="margin-top:10px">
+          <input class="field" id="trAmount" placeholder="المبلغ" inputmode="decimal" autocomplete="off" aria-label="مبلغ التحويل" oninput="cleanAmount(this)">
+          <button class="ghost" onclick="doTransfer()">حوّل</button>
+        </div>
+      </div></details>
+      <details class="grp" id="exBox"><summary><span class="gi" aria-hidden="true">💱</span><span class="what"><b>تصريف دولار</b></span></summary><div class="gbody">
+        <div class="seg small" id="exSeg" style="--n:2;--i:0" role="group" aria-label="نوع التصريف">
+          <span class="pill" aria-hidden="true"></span>
+          <button aria-pressed="true" data-v="sell">بعت دولار</button>
+          <button aria-pressed="false" data-v="buy">اشتريت دولار</button>
+        </div>
+        <div class="two" style="margin-top:10px">
+          <div><label class="f" for="exUsd">بالدولار</label><input class="field" id="exUsd" inputmode="decimal" autocomplete="off" placeholder="$" oninput="cleanAmount(this); exHint()"></div>
+          <div><label class="f" for="exEgp">بالجنيه</label><input class="field" id="exEgp" inputmode="decimal" autocomplete="off" oninput="cleanAmount(this)"></div>
+        </div>
+        <div class="two" style="margin-top:10px">
+          <select class="field" id="exWallet" aria-label="محفظة الجنيه"></select>
+          <button class="ghost" onclick="doExchange()">سجّل التصريف</button>
+        </div>
+        <p class="hint" style="margin-top:8px" id="exHintTxt"></p>
+      </div></details>
+    </section>
 
-    <h2>تصريف دولار</h2>
-    <div class="panel">
-      <div class="seg small" id="exSeg" style="--n:2;--i:0" role="group" aria-label="نوع التصريف">
-        <span class="pill" aria-hidden="true"></span>
-        <button aria-pressed="true" data-v="sell">بعت دولار</button>
-        <button aria-pressed="false" data-v="buy">اشتريت دولار</button>
+    <section class="mpane" id="mp-d" hidden>
+      <div class="panel"><ul class="list" id="debts"></ul><p class="hint" style="margin-top:6px" id="debtsHint" hidden>دوس على أي حد عشان تشوف كل حركاته وصورها.</p></div>
+    </section>
+
+    <section class="mpane" id="mp-b" hidden>
+      <div class="panel">
+        <ul class="list" id="budgets"></ul>
+        <div class="two" style="margin-top:12px">
+          <input class="field" id="bItem" placeholder="البند" autocomplete="off" aria-label="البند">
+          <input class="field" id="bAmount" placeholder="المبلغ في الشهر" inputmode="decimal" autocomplete="off" aria-label="الميزانية" oninput="cleanAmount(this)">
+        </div>
+        <button class="ghost" style="width:100%;margin-top:10px" onclick="saveBudget()">حط الميزانية</button>
+        <p class="hint" style="margin-top:8px">عشان تشيل ميزانية، حط المبلغ صفر.</p>
       </div>
-      <div class="two" style="margin-top:10px">
-        <div><label class="f" for="exUsd">بالدولار</label><input class="field" id="exUsd" inputmode="decimal" autocomplete="off" placeholder="$" oninput="cleanAmount(this); exHint()"></div>
-        <div><label class="f" for="exEgp">بالجنيه</label><input class="field" id="exEgp" inputmode="decimal" autocomplete="off" oninput="cleanAmount(this)"></div>
+    </section>
+
+    <section class="mpane" id="mp-r" hidden>
+      <div class="panel">
+        <p class="hint">أقساط وفواتير ومواعيد. لما ييجي ميعادها تظهر فوق، ولو سمحت بالإشعارات بيوصلك إشعار لما تفتح التطبيق.</p>
+        <ul class="list" id="reminders"></ul>
+        <button class="ghost" style="width:100%;margin-top:10px" onclick="openReminder()">+ تذكير جديد</button>
+        <button class="ghost" id="notifBtn" style="width:100%;margin-top:8px" onclick="askNotify()">اسمح بالإشعارات</button>
       </div>
-      <div class="two" style="margin-top:10px">
-        <select class="field" id="exWallet" aria-label="محفظة الجنيه"></select>
-        <button class="ghost" onclick="doExchange()">سجّل التصريف</button>
-      </div>
-      <p class="hint" style="margin-top:8px" id="exHintTxt"></p>
-    </div>
+    </section>
   </main>
 
-  <!-- الإعدادات -->
+  <!-- دفتر الديون -->
   <main class="view" id="v-ext">
-    <h2>مديونات خارجية</h2>
-    <p class="hint">دفتر لوحده لفلوس عليك أو ليك عند ناس، بالجنيه أو بالدولار. مالوش علاقة بالصرف ولا الدخل ولا السلف ولا المحافظ.</p>
-    <div class="panel">
-      <div class="seg small" id="xKindSeg" style="--n:4;--i:0" role="group" aria-label="نوع الحركة">
-        <span class="pill" aria-hidden="true"></span>
-        <button aria-pressed="true" data-v="عليّا">عليّا</button>
-        <button aria-pressed="false" data-v="سدّدت">سدّدت</button>
-        <button aria-pressed="false" data-v="ليّا">ليّا</button>
-        <button aria-pressed="false" data-v="اتسدّدلي">اتسدّدلي</button>
-      </div>
-      <p class="hint" id="xKindHint" style="margin:8px 2px 0"></p>
-      <div class="amount" style="margin:10px 0 4px">
-        <input id="xAmount" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="0" aria-label="المبلغ" oninput="cleanAmount(this)">
-        <button class="cur" id="xCurBtn" type="button" onclick="toggleXCur()" aria-label="العملة">ج.م</button>
-      </div>
-      <div class="amount-line"></div>
-      <label class="f" for="xPerson">مين؟</label>
-      <input class="field" id="xPerson" autocomplete="off" placeholder="اسم الشخص أو الجهة" enterkeyhint="next">
-      <div class="chips" id="xPeople"></div>
-      <label class="f" for="xNote">ملاحظة (لو حابب)</label>
-      <input class="field" id="xNote" autocomplete="off" enterkeyhint="done">
-      <div class="err" id="xErr"></div>
-      <button class="primary" id="xSaveBtn" onclick="saveExt()">سجّل</button>
+    <div class="pagehead">
+      <button class="icon-btn" type="button" onclick="go('v-money')" aria-label="رجوع">›</button>
+      <h2>📒 دفتر الديون <span id="bkLockIco" hidden>🔒</span></h2>
+      <button class="icon-btn" type="button" onclick="openBookSet()" aria-label="إعدادات الدفتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
     </div>
-
-    <h2>الإجمالي</h2>
-    <div class="panel"><div class="row3" id="xTotals"></div></div>
-
-    <h2>الناس</h2>
-    <div class="panel"><ul class="list" id="xList"></ul><p class="hint" style="margin-top:6px" id="xListHint" hidden>دوس على أي حد عشان تشوف كل حركاته.</p></div>
+    <div class="booksum" id="bkSum"></div>
+    <div class="seg small" id="bkSeg" style="--n:3;--i:0" role="group" aria-label="الديون">
+      <span class="pill" aria-hidden="true"></span>
+      <button class="out" aria-pressed="true" data-v="on">عليّا</button>
+      <button class="in" aria-pressed="false" data-v="to">ليّا</button>
+      <button aria-pressed="false" data-v="done">خلصت ✓</button>
+    </div>
+    <div id="bkList"></div>
   </main>
 
   <main class="view" id="v-notes">
@@ -560,9 +641,27 @@
   </main>
 
   <main class="view" id="v-set">
-    <h2>النسخة الاحتياطية</h2>
-    <div class="panel" id="backupBox">
-      <p class="hint" id="backupState"></p>
+    <div class="pagehead">
+      <button class="icon-btn" type="button" onclick="go('v-add')" aria-label="رجوع">›</button>
+      <h2>الإعدادات</h2>
+    </div>
+
+    <details class="grp" id="gLock"><summary><span class="gi" aria-hidden="true">🔐</span><span class="what"><b>قفل التطبيق</b><small id="gLockSub"></small></span></summary><div class="gbody">
+      <div id="lkNone">
+        <p class="hint" style="margin-top:12px">اعمل PIN من 4 أرقام، وبعدها تقدر تقفل بيه التطبيق ودفتر الديون، وتفتح بالبصمة لو موبايلك بيدعمها.</p>
+        <button class="primary" onclick="setAppLock(true)">🔐 اقفل التطبيق</button>
+      </div>
+      <div id="lkHas" hidden>
+        <div class="setrow"><div class="what">اقفل التطبيق لما أخرج منه<small>يطلب الـ PIN أو البصمة</small></div><label class="sw"><input type="checkbox" id="lkApp" onchange="setAppLock(this.checked)" aria-label="اقفل التطبيق لما أخرج منه"><span></span></label></div>
+        <div class="setrow" id="lkDelayRow"><div class="what">يتقفل بعد ما أخرج بـ</div><select class="field" id="lkDelay" onchange="setLockDelay(this.value)" aria-label="المدة"><option value="0">على طول</option><option value="60">دقيقة</option><option value="300">5 دقايق</option><option value="900">ربع ساعة</option></select></div>
+        <div class="setrow" id="lkBioRow"><div class="what">افتح بالبصمة</div><label class="sw"><input type="checkbox" id="lkBioT" onchange="setBio(this.checked)" aria-label="افتح بالبصمة"><span></span></label></div>
+        <div class="two" style="margin-top:12px"><button class="ghost" onclick="changePin()">غيّر الـ PIN</button><button class="ghost danger" onclick="removePin()">امسح الـ PIN</button></div>
+        <p class="hint" style="margin-top:10px" id="lkForgotHint"></p>
+      </div>
+    </div></details>
+
+    <details class="grp" id="gBackup"><summary><span class="gi" aria-hidden="true">☁️</span><span class="what"><b>النسخة الاحتياطية</b><small id="gBackupSub"></small></span></summary><div class="gbody" id="backupBox">
+      <p class="hint" id="backupState" style="margin-top:12px"></p>
       <button class="primary" id="driveBtn" style="margin-top:10px">اربط Google Drive</button>
       <button class="ghost danger" id="unlinkBtn" style="width:100%;margin-top:8px" onclick="unlinkDrive()" hidden>افصل الحساب عن الموبايل ده</button>
       <div class="two" style="margin-top:10px">
@@ -573,53 +672,20 @@
         <button class="ghost" onclick="downloadBackup()">نزّل نسخة ملف</button>
         <label class="ghost" style="text-align:center;cursor:pointer">رجّع من ملف<input type="file" accept=".json,application/json" hidden onchange="restoreFile(this)"></label>
       </div>
-    </div>
+    </div></details>
 
-    <h2>التذكيرات</h2>
-    <div class="panel">
-      <p class="hint">أقساط وفواتير ومواعيد. لما ييجي ميعادها تظهر فوق، ولو سمحت بالإشعارات بيوصلك إشعار لما تفتح التطبيق.</p>
-      <ul class="list" id="reminders"></ul>
-      <button class="ghost" style="width:100%;margin-top:10px" onclick="openReminder()">+ تذكير جديد</button>
-      <button class="ghost" id="notifBtn" style="width:100%;margin-top:8px" onclick="askNotify()">اسمح بالإشعارات</button>
-    </div>
-
-    <h2>التسجيل السريع</h2>
-    <div class="panel">
+    <details class="grp" id="gRec"><summary><span class="gi" aria-hidden="true">✍️</span><span class="what"><b>التسجيل</b><small id="gRecSub"></small></span></summary><div class="gbody">
       <div class="setrow">
         <div class="what">سجّل أول ما أختار البند<small>تكتب المبلغ وتدوس البند، ويتسجل على طول من غير زرار «سجّل»</small></div>
         <label class="sw"><input type="checkbox" id="quickSave" onchange="S.settings.quickSave=this.checked; commit('اتحفظ ✓')" aria-label="سجّل أول ما أختار البند"><span></span></label>
       </div>
-    </div>
-
-    <h2>الفلوس بتطلع منين</h2>
-    <div class="panel">
-      <label class="f" style="margin-top:0">المحفظة الأساسية</label>
+      <label class="f">المحفظة الأساسية</label>
       <div class="chips" id="defWalletChips"></div>
-      <div class="setrow" style="margin-top:8px">
+      <div class="setrow" id="askWalletRow" style="margin-top:8px">
         <div class="what">اسألني على المحفظة كل مرة<small>لو مقفولة، كل حاجة بتتسجل على المحفظة الأساسية</small></div>
         <label class="sw"><input type="checkbox" id="askWallet" onchange="S.settings.askWallet=this.checked; commit('اتحفظ ✓')" aria-label="اسألني على المحفظة كل مرة"><span></span></label>
       </div>
-      <div class="two" style="margin-top:10px">
-        <input class="field" id="newWallet" placeholder="محفظة جديدة" autocomplete="off" aria-label="اسم المحفظة الجديدة">
-        <button class="ghost" onclick="addWallet()">ضيفها</button>
-      </div>
-    </div>
-
-    <h2>سعر الدولار</h2>
-    <div class="panel">
-      <p class="hint" id="rateNow"></p>
-      <div class="two" style="margin-top:8px">
-        <input class="field" id="rateManual" inputmode="decimal" autocomplete="off" placeholder="سعر ثابت من عندك" aria-label="سعر الدولار اليدوي" oninput="cleanAmount(this)">
-        <button class="ghost" onclick="setRate($('rateManual').value)">ثبّت السعر</button>
-      </div>
-      <div class="two" style="margin-top:10px">
-        <button class="ghost" id="rateAuto" onclick="setRate('')">رجّعه تلقائي</button>
-        <button class="ghost" onclick="fetchRate(true)">حدّث السعر</button>
-      </div>
-    </div>
-
-    <h2>ترتيب البنود</h2>
-    <div class="panel">
+      <label class="f">ادمج بندين</label>
       <p class="hint">لو بند اتكتب بأكتر من اسم (زي «نور» و«كهرباء»)، ادمجهم في اسم واحد.</p>
       <div class="two" style="margin-top:8px">
         <input class="field" id="mergeFrom" placeholder="الاسم الغلط" autocomplete="off" aria-label="الاسم الغلط" list="itemsList">
@@ -627,10 +693,37 @@
       </div>
       <datalist id="itemsList"></datalist>
       <button class="ghost" style="width:100%;margin-top:10px" onclick="mergeItems()">ادمج</button>
-    </div>
+    </div></details>
 
-    <h2>تفريغ مساحة</h2>
-    <div class="panel">
+    <details class="grp" id="gUsd"><summary><span class="gi" aria-hidden="true">💵</span><span class="what"><b>الدولار</b><small id="gUsdSub"></small></span></summary><div class="gbody">
+      <div class="setrow">
+        <div class="what">بتتعامل بالدولار؟<small>بيظهر زرار $ في التسجيل، ورصيد الدولار، وتصريف الدولار</small></div>
+        <label class="sw"><input type="checkbox" id="useUsd" onchange="setUseUsd(this.checked)" aria-label="بتتعامل بالدولار"><span></span></label>
+      </div>
+      <div id="rateBox">
+        <p class="hint" id="rateNow" style="margin-top:10px"></p>
+        <div class="two" style="margin-top:8px">
+          <input class="field" id="rateManual" inputmode="decimal" autocomplete="off" placeholder="سعر ثابت من عندك" aria-label="سعر الدولار اليدوي" oninput="cleanAmount(this)">
+          <button class="ghost" onclick="setRate($('rateManual').value)">ثبّت السعر</button>
+        </div>
+        <div class="two" style="margin-top:10px">
+          <button class="ghost" id="rateAuto" onclick="setRate('')">رجّعه تلقائي</button>
+          <button class="ghost" onclick="fetchRate(true)">حدّث السعر</button>
+        </div>
+      </div>
+    </div></details>
+
+    <details class="grp" id="gLook"><summary><span class="gi" aria-hidden="true">🎨</span><span class="what"><b>الشكل</b><small id="gLookSub"></small></span></summary><div class="gbody">
+      <div class="seg" id="themeSeg" style="--n:3;--i:0;margin-top:12px" role="group" aria-label="الشكل">
+        <span class="pill" aria-hidden="true"></span>
+        <button aria-pressed="true" data-v="auto">زي الموبايل</button>
+        <button aria-pressed="false" data-v="light">نهاري</button>
+        <button aria-pressed="false" data-v="dark">ليلي</button>
+      </div>
+    </div></details>
+
+    <details class="grp" id="gAdv"><summary><span class="gi" aria-hidden="true">🛠️</span><span class="what"><b>متقدم</b><small id="gAdvSub"></small></span></summary><div class="gbody">
+      <h3 class="sub" style="margin-top:12px">تفريغ مساحة</h3>
       <p class="hint" id="spaceNow">بيحسب المساحة…</p>
       <label class="f">امسح صور العمليات والسلف اللي عدّى عليها أكتر من</label>
       <div class="pclean">
@@ -640,23 +733,11 @@
       <p class="hint" style="margin-top:8px" id="cleanPreview"></p>
       <button class="ghost danger" style="width:100%;margin-top:6px" id="cleanBtn" onclick="cleanPhotos()">امسح الصور دي</button>
       <p class="hint" style="margin-top:8px">العمليات نفسها مش بتتمسح، الصور بس. والصور اللي بتتمسح من هنا مش بترجع، فلو عاوز تحتفظ بيها نزّل نسخة ملف الأول.</p>
-    </div>
-
-    <h2>التحديث</h2>
-    <div class="panel">
+      <h3 class="sub" style="margin-top:18px">التحديث</h3>
       <p class="hint" id="updNow">النسخة اللي عندك: <span id="ver2"></span></p>
       <button class="ghost" style="width:100%;margin-top:8px" id="updBtn" onclick="updateApp()">حدّث التطبيق دلوقتي</button>
-    </div>
+    </div></details>
 
-    <h2>الشكل</h2>
-    <div class="panel">
-      <div class="seg" id="themeSeg" style="--n:3;--i:0" role="group" aria-label="الشكل">
-        <span class="pill" aria-hidden="true"></span>
-        <button aria-pressed="true" data-v="auto">زي الموبايل</button>
-        <button aria-pressed="false" data-v="light">نهاري</button>
-        <button aria-pressed="false" data-v="dark">ليلي</button>
-      </div>
-    </div>
     <p class="hint" style="text-align:center;margin:20px 0 0">بياناتك على الموبايل ده بس، ومحدش يقدر يشوفها غيرك.<br><span id="ver"></span></p>
   </main>
 </div>
@@ -667,9 +748,7 @@
     <button role="tab" aria-selected="true" data-v="v-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>تسجيل</button>
     <button role="tab" aria-selected="false" data-v="v-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h9"/></svg>العمليات</button>
     <button role="tab" aria-selected="false" data-v="v-money"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 15h2"/></svg>الفلوس</button>
-    <button role="tab" aria-selected="false" data-v="v-ext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10a2 2 0 0 1 2 2v14l-3-2-2 2-2-2-2 2-2-2-3 2V6a2 2 0 0 1 2-2z"/><path d="M9 9h6M9 13h4"/></svg>مديونات</button>
     <button role="tab" aria-selected="false" data-v="v-notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h5"/></svg>مذكرات</button>
-    <button role="tab" aria-selected="false" data-v="v-set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>الإعدادات</button>
   </div>
 </nav>
 
@@ -720,7 +799,8 @@
   </div>
 </div>
 
-<button class="fab" type="button" aria-label="مذكرة جديدة" onclick="openNote(0)">+</button>
+<button class="fab" id="noteFab" type="button" aria-label="مذكرة جديدة" onclick="openNote(0)">+</button>
+<button class="fab wide" id="bookFab" type="button" onclick="openDebtForm()">+ دين جديد</button>
 
 <div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="rdTitle">
   <div class="rbar">
@@ -774,14 +854,6 @@
   <div class="acts"><button class="ghost" onclick="pwDone && pwDone(true)">إلغاء</button><button class="primary" onclick="pwDone && pwDone()">تمام</button></div>
 </div>
 
-<div class="sheet" id="eSheet" role="dialog" aria-modal="true" aria-labelledby="eTitle">
-  <div class="grab"></div>
-  <h3 id="eTitle"></h3>
-  <p class="hint" id="eSub"></p>
-  <ul class="list" id="eList"></ul>
-  <div class="acts"><button class="primary" onclick="closeSheets()">تمام</button></div>
-</div>
-
 <div class="sheet" id="pSheet" role="dialog" aria-modal="true" aria-labelledby="pTitle">
   <div class="grab"></div>
   <h3 id="pTitle"></h3>
@@ -832,6 +904,101 @@
   </div>
 </div>
 
+<div class="sheet" id="wSheet" role="dialog" aria-modal="true" aria-labelledby="wTitle">
+  <div class="grab"></div>
+  <h3 id="wTitle"></h3>
+  <p class="hint" id="wSub"></p>
+  <div class="menu">
+    <button type="button" onclick="wAct('bal')">✏️ ظبّط الرصيد</button>
+    <button type="button" onclick="wAct('ren')">🏷️ غيّر الاسم</button>
+    <button type="button" id="wDef" onclick="wAct('def')">⭐ خلّيها الأساسية</button>
+    <button type="button" class="danger" id="wDel" onclick="wAct('del')">🗑️ امسح المحفظة</button>
+  </div>
+</div>
+
+<div class="sheet" id="dSheet" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+  <div class="grab"></div>
+  <div class="shead"><h3 id="dTitle"></h3><button class="ghost" type="button" style="padding:6px 12px;font-size:13px" onclick="openDebtForm(curDebt.id)">✏️ تعديل</button></div>
+  <div class="dbig" id="dBig"></div>
+  <div class="row3" id="dRow"></div>
+  <p class="hint" id="dInfo" style="text-align:center;margin-top:10px"></p>
+  <p class="hint dnote" id="dNote" hidden></p>
+  <div class="payacts"><button class="primary" id="dPayInst" type="button" onclick="openPay(curDebt, Math.min(curDebt.inst, dRemain(curDebt)))"></button><button class="ghost" id="dPayOther" type="button" onclick="openPay(curDebt, 0)"></button></div>
+  <h3 style="margin-top:18px;font-size:15px">الدفعات</h3>
+  <ul class="list" id="dPays"></ul>
+  <div class="acts"><button class="primary" onclick="closeSheets()">تمام</button></div>
+</div>
+
+<div class="sheet" id="dfSheet" role="dialog" aria-modal="true" aria-labelledby="dfHead">
+  <div class="grab"></div>
+  <h3 id="dfHead">دين جديد</h3>
+  <div class="seg small" id="dfDirSeg" style="--n:2;--i:0;margin-top:10px" role="group" aria-label="نوع الدين">
+    <span class="pill" aria-hidden="true"></span>
+    <button class="out" aria-pressed="true" data-v="on">عليّا (أنا مديون)</button>
+    <button class="in" aria-pressed="false" data-v="to">ليّا (حد مديونلي)</button>
+  </div>
+  <label class="f" for="dfTitle">اسم الدين</label>
+  <input class="field" id="dfTitle" placeholder="مثلاً قرض البنك، جمعية، خالد" autocomplete="off">
+  <div class="two">
+    <div><label class="f" for="dfTotal">المبلغ كله</label><div class="curin"><input class="field" id="dfTotal" inputmode="decimal" autocomplete="off" oninput="cleanAmount(this)"><button class="cur" id="dfCurBtn" type="button" onclick="toggleDfCur()" aria-label="العملة">ج.م</button></div></div>
+    <div id="dfPaidBox"><label class="f" for="dfPaid">اتسدّد منه قبل كده</label><input class="field" id="dfPaid" inputmode="decimal" autocomplete="off" placeholder="اختياري" oninput="cleanAmount(this)"></div>
+  </div>
+  <div class="two">
+    <div><label class="f" for="dfInst">القسط (لو فيه)</label><input class="field" id="dfInst" inputmode="decimal" autocomplete="off" placeholder="اختياري" oninput="cleanAmount(this)"></div>
+    <div><label class="f" for="dfDay">ميعاده كل شهر</label><select class="field" id="dfDay"></select></div>
+  </div>
+  <label class="f" for="dfStart">بدأ من</label>
+  <input class="field" id="dfStart" type="date">
+  <label class="f" for="dfNote">ملاحظة</label>
+  <input class="field" id="dfNote" autocomplete="off" placeholder="اختياري">
+  <div class="err" id="dfErr"></div>
+  <div class="acts">
+    <button class="ghost danger" id="dfDel" onclick="deleteDebt()" hidden>امسح</button>
+    <button class="primary" onclick="saveDebtForm()">احفظ</button>
+  </div>
+</div>
+
+<div class="sheet" id="paySheet" role="dialog" aria-modal="true" aria-labelledby="payTitle">
+  <div class="grab"></div>
+  <h3 id="payTitle"></h3>
+  <p class="hint" id="paySub"></p>
+  <div class="amount" style="margin:10px 0 4px"><input id="payAmount" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="المبلغ" oninput="cleanAmount(this)"><span id="payCur">ج.م</span></div>
+  <div class="amount-line"></div>
+  <div class="two">
+    <div><label class="f" for="payDate">التاريخ</label><input class="field" id="payDate" type="date"></div>
+    <div><label class="f" for="payNote">ملاحظة</label><input class="field" id="payNote" placeholder="اختياري" autocomplete="off"></div>
+  </div>
+  <div class="ask" id="payAsk" hidden>
+    <span id="payQ"></span>
+    <div class="chips" id="payChips"></div>
+    <div class="lockrow"><div class="what">افتكر اختياري ومتسألنيش تاني</div><label class="sw"><input type="checkbox" id="payRemember" aria-label="افتكر اختياري"><span></span></label></div>
+  </div>
+  <p class="hint" id="payAuto" hidden style="margin-top:12px"><span id="payAutoTxt"></span> · <button class="linkbtn" type="button" onclick="payReset()">غيّر</button></p>
+  <div class="err" id="payErr"></div>
+  <div class="acts"><button class="ghost" onclick="openDebt(payCtx.d.id)">رجوع</button><button class="primary" onclick="savePay()">سجّل الدفعة</button></div>
+</div>
+
+<div class="sheet" id="bsSheet" role="dialog" aria-modal="true" aria-labelledby="bsTitle">
+  <div class="grab"></div>
+  <h3 id="bsTitle">إعدادات دفتر الديون</h3>
+  <div class="setrow"><div class="what">اسألني أسجّل الدفعة صرف من محفظتي<small>لو مقفولة، الدفتر منفصل تماماً عن محافظك</small></div><label class="sw"><input type="checkbox" id="bsAsk" onchange="setBookAsk(this.checked)" aria-label="اسألني أسجّل الدفعة صرف"><span></span></label></div>
+  <p class="hint" id="bsRemembered" hidden></p>
+  <div class="setrow"><div class="what">فكّرني بالأقساط<small>القسط المستحق يظهر فوق في الرئيسية، وإشعار قبل ميعاده بيوم</small></div><label class="sw"><input type="checkbox" id="bsRemind" onchange="S.book.cfg.remind=this.checked; commit('اتحفظ ✓')" aria-label="فكّرني بالأقساط"><span></span></label></div>
+  <div class="setrow"><div class="what">اقفل الدفتر<small>يتفتح بالـ PIN أو البصمة</small></div><label class="sw"><input type="checkbox" id="bsLock" onchange="setBookLock(this.checked)" aria-label="اقفل الدفتر"><span></span></label></div>
+  <div class="acts"><button class="primary" onclick="closeSheets()">تمام</button></div>
+</div>
+
+<div class="lockscr" id="lockScr" hidden role="dialog" aria-modal="true" aria-labelledby="lkTitle">
+  <button class="icon-btn lkx" id="lkCancel" type="button" onclick="lockCancel()" aria-label="إلغاء" hidden>✕</button>
+  <div class="lkico" aria-hidden="true">🔐</div>
+  <div class="brand">حساباتي</div>
+  <p id="lkTitle">اكتب الـ PIN</p>
+  <div class="dots" id="lkDots" aria-hidden="true"></div>
+  <p class="err" id="lkErr" role="alert"></p>
+  <div class="keypad" id="lkPad"></div>
+  <button class="lkforgot" id="lkForgot" type="button" onclick="forgotPin()">نسيت الـ PIN؟</button>
+</div>
+
 <script>
 // =====================================================================
 //  حساباتي — نسخة محلية. كل البيانات على الموبايل (IndexedDB)،
@@ -844,7 +1011,7 @@ var GOOGLE_CLIENT_ID = '247280462624-08ukk2snqmf3f7j34csme9noafosapgi.apps.googl
 var AUTH_URL = 'https://hesabaty-auth.onyxgp80.workers.dev';
 // =======================================================================================
 
-var APP_VERSION = '1.8.3';
+var APP_VERSION = '1.9.0';
 var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
 var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
 var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
@@ -882,14 +1049,16 @@ function dbClear(store) {
 }
 
 // ---------- الحالة ----------
+function bookCfg() { return { askExpense: false, remind: true, lock: false, payWallet: '' }; }
 function freshState() {
   return {
     v: 1, nextId: 1,
     tx: [], debts: [], transfers: [], reminders: [], ext: [],
+    book: { debts: [], cfg: bookCfg() },
     wallets: [{ name: 'كاش', opening: 0, cur: 'ج' }],
     notes: [], noteKey: null,
     budgets: {},
-    settings: { defaultWallet: 'كاش', askWallet: false },
+    settings: { defaultWallet: 'كاش', askWallet: false, useUsd: false },
     rate: { manual: 0, auto: 0, autoAt: '' },
     backup: { folderId: '', fileId: '', last: '', lastDaily: '', dirtyAt: '' }
   };
@@ -1069,6 +1238,7 @@ function applyTheme() {
   $('themeBtn').innerHTML = dark ? SUN : MOON;
   var m = document.querySelector('meta[name=theme-color]'); if (m) m.content = dark ? '#0b1615' : '#1e6b57';
   setSeg('themeSeg', themePref);
+  if ($('gLookSub')) $('gLookSub').textContent = { auto: 'زي الموبايل', light: 'نهاري', dark: 'ليلي' }[themePref] || '';
 }
 function setThemePref(p) { themePref = p; try { localStorage.setItem('theme', p); } catch (e) {} applyTheme(); }
 function cycleTheme() { setThemePref(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); }
@@ -1107,18 +1277,30 @@ function countTo(id, to) {
 }
 
 // ---------- التنقل ----------
+var TAB_OF = { 'v-ext': 'v-money', 'v-set': '' };
 function go(v) {
-  var idx = 0;
-  $('tabs').querySelectorAll('button').forEach(function (b, i) { var on = b.dataset.v === v; b.setAttribute('aria-selected', on); if (on) idx = i; });
-  $('tabs').querySelector('.mark').style.setProperty('--i', idx);
+  if (v === 'v-ext' && S && needBookPin()) return openBook();
+  var tv = v in TAB_OF ? TAB_OF[v] : v, idx = -1;
+  $('tabs').querySelectorAll('button').forEach(function (b, i) { var on = b.dataset.v === tv; b.setAttribute('aria-selected', on); if (on) idx = i; });
+  $('tabs').classList.toggle('nomark', idx < 0);
+  $('tabs').querySelector('.mark').style.setProperty('--i', Math.max(0, idx));
   document.querySelectorAll('.view').forEach(function (x) { x.classList.toggle('on', x.id === v); });
   window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
   if (v === 'v-list') renderList();
   if (v === 'v-money') renderBars();
   if (v === 'v-set') renderSpace();
+  document.body.classList.toggle('solo', v === 'v-ext' || v === 'v-set' || v === 'v-notes');
   document.body.classList.toggle('on-notes', v === 'v-notes');
+  document.body.classList.toggle('on-book', v === 'v-ext');
   if (v === 'v-notes') renderNotes();
+  if (v === 'v-ext') renderBook();
 }
+function openSet(id) {
+  go('v-set');
+  var d = $(id); d.open = true;
+  setTimeout(function () { d.scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' }); }, 150);
+}
+function askW() { return !!S.settings.askWallet && S.wallets.length > 1; }
 $('tabs').querySelectorAll('button').forEach(function (b) { b.onclick = function () { go(b.dataset.v); }; });
 
 // ---------- الرسم ----------
@@ -1133,7 +1315,7 @@ function render() {
   var hot = Object.keys(S.budgets).map(function (n) { return { name: n, b: S.budgets[n], s: spentOn(n, st) }; }).filter(function (x) { return x.s >= .8 * x.b; });
   $('noteAlert').hidden = !hot.length;
   $('noteAlert').textContent = hot.map(function (x) { return (x.s > x.b ? 'عدّيت ميزانية ' : 'قرّبت تخلّص ميزانية ') + x.name; }).join('، ');
-  renderTiles(); renderDues(); renderForm(); renderMoney(); renderSettings(); renderBackupState(); renderExt(); renderNotes();
+  renderTiles(); renderDues(); renderForm(); renderMoney(); renderSettings(); renderBackupState(); renderBook(); renderNotes();
   if ($('v-list').classList.contains('on')) renderList();
 }
 
@@ -1143,22 +1325,29 @@ function renderTiles() {
   var uw = usdWallet(false), total = b.total, usd = uw ? b.bal[uw] : null;
   var net = toMe - onMe, dbu = debtBalances('$'), netU = 0;
   Object.keys(dbu).forEach(function (p) { netU += dbu[p]; });
-  var ext = extTotals();
   var debtTxt = net > 0 ? '+' + fmt(net) : net < 0 ? '−' + fmt(-net) : '0';
   $('tiles').innerHTML =
     '<div><span>كل فلوسك</span><b class="' + (total < 0 ? 'neg' : '') + '">' + (total < 0 ? '−' + fmt(-total) : fmt(total)) + '</b></div>' +
     '<div><span>السلف</span><b class="' + (net > 0 ? 'pos' : net < 0 ? 'neg' : '') + '">' + debtTxt + '</b></div>' +
-    (ext.any ? '<div><span>مديونات</span><b>' + ext.short + '</b></div>' : '') +
-    (usd !== null ? '<div><span>الدولار</span><b class="' + (usd < 0 ? 'neg' : '') + '">' + (usd < 0 ? '−' + fmtU(-usd) : fmtU(usd)) + '$</b></div>' : '');
+    (usd !== null && S.settings.useUsd ? '<div><span>الدولار</span><b class="' + (usd < 0 ? 'neg' : '') + '">' + (usd < 0 ? '−' + fmtU(-usd) : fmtU(usd)) + '$</b></div>' : '');
 }
 
 function renderDues() {
-  $('dues').innerHTML = S.reminders.map(function (r) { var i = remInfo(r); return i.due ? { r: r, i: i } : null; }).filter(Boolean).map(function (x) {
+  var html = S.reminders.map(function (r) { var i = remInfo(r); return i.due ? { r: r, i: i } : null; }).filter(Boolean).map(function (x) {
     return '<div class="due"><div class="t">⏰ ' + esc(x.r.title) + (x.r.amount ? '، ' + fmt(x.r.amount) : '') + '<small>' + esc(x.i.label) + '</small></div>' +
       '<button class="pay" data-id="' + x.r.id + '" data-m="pay">' + (x.r.amount ? 'اتدفع، سجّله' : 'خلصت') + '</button>' +
       '<button class="skip" data-id="' + x.r.id + '" data-m="skip">مش الفترة دي</button></div>';
   }).join('');
-  $('dues').querySelectorAll('button').forEach(function (b) { b.onclick = function () { reminderAction(+b.dataset.id, b.dataset.m); }; });
+  var bd = bookDues();
+  if (bd.length && bookLocked()) html += '<div class="due"><div class="t">📒 ' + (bd.length === 1 ? 'فيه قسط مستحق' : 'فيه ' + bd.length + ' أقساط مستحقة') + ' في دفتر الديون</div><button class="pay" data-bk="open">افتح الدفتر</button></div>';
+  else bd.forEach(function (x) {
+    var d = x.d, on = d.dir === 'on';
+    html += '<div class="due"><div class="t">📒 قسط ' + esc(d.title) + '، ' + fmtC(Math.min(d.inst, dRemain(d)), d.cur) + '</div>' +
+      '<button class="pay" data-bk="' + d.id + '" data-m="pay">' + (on ? 'سدّدته' : 'اتحصّل') + '</button><button class="skip" data-bk="' + d.id + '" data-m="skip">مش الشهر ده</button></div>';
+  });
+  $('dues').innerHTML = html;
+  $('dues').querySelectorAll('button[data-id]').forEach(function (b) { b.onclick = function () { reminderAction(+b.dataset.id, b.dataset.m); }; });
+  $('dues').querySelectorAll('button[data-bk]').forEach(function (b) { b.onclick = function () { bookDueAction(b.dataset.bk, b.dataset.m); }; });
 }
 
 function walletOpts(sel, onlyEgp) {
@@ -1171,11 +1360,11 @@ function renderForm() {
   $('debtBox').classList.toggle('closed', !isDebt);
   setSeg('kindSeg', debtKind);
   $('itemBox').hidden = isDebt; $('personBox').hidden = !isDebt;
-  $('curBtn').hidden = isDebt; if (isDebt && cur === '$') toggleCur();
+  $('curBtn').hidden = isDebt || !S.settings.useUsd; if ((isDebt || !S.settings.useUsd) && cur === '$') toggleCur();
   $('itemLabel').textContent = mode === 'دخل' ? 'جاي منين' : 'اتصرف في إيه';
   $('save').textContent = saveLabel();
   $('addTitle').textContent = isDebt ? 'سجّل سلفة' : 'سجّل عملية';
-  var ask = S.settings.askWallet;
+  var ask = askW();
   $('walletAsk').hidden = !ask; $('walletPick').hidden = ask;
   if (!pickedWallet || !wallet(pickedWallet)) pickedWallet = S.settings.defaultWallet;
   $('wallet').innerHTML = walletOpts(pickedWallet);
@@ -1369,12 +1558,13 @@ function renderMoney() {
   $('wallets').innerHTML = S.wallets.map(function (w) {
     var usd = w.cur === '$';
     return '<li><span class="what"><b>' + esc(w.name) + '</b><small>' + (w.name === S.settings.defaultWallet ? 'الأساسية' : '') + (usd && r ? '≈ ' + fmt(bl.bal[w.name] * r) + ' ج' : '') + '</small></span>' +
-      '<span class="amt">' + (usd ? fmtU(bl.bal[w.name]) + '$' : fmt(bl.bal[w.name])) + '</span><span class="wacts"><button class="ghost" data-w="' + esc(w.name) + '">ظبّط</button>' +
-      '<button class="ghost" data-rn="' + esc(w.name) + '" aria-label="غيّر الاسم">✏️</button>' + (S.wallets.length > 1 ? '<button class="ghost danger" data-rm="' + esc(w.name) + '" aria-label="امسح">✕</button>' : '') + '</span></li>';
-  }).join('') + '<li><span class="what"><b>الإجمالي</b><small>بالجنيه</small></span><span class="amt">' + fmt(bl.total) + '</span></li>';
-  $('wallets').querySelectorAll('button[data-w]').forEach(function (b) { b.onclick = function () { setBalance(b.dataset.w); }; });
-  $('wallets').querySelectorAll('button[data-rn]').forEach(function (b) { b.onclick = function () { renameWallet(b.dataset.rn); }; });
-  $('wallets').querySelectorAll('button[data-rm]').forEach(function (b) { b.onclick = function () { removeWallet(b.dataset.rm); }; });
+      '<span class="amt">' + (usd ? fmtU(bl.bal[w.name]) + '$' : fmt(bl.bal[w.name])) + '</span><button class="wmore" type="button" data-w="' + esc(w.name) + '" aria-label="خيارات ' + esc(w.name) + '">⋯</button></li>';
+  }).join('') + (S.wallets.length > 1 ? '<li><span class="what"><b>الإجمالي</b><small>بالجنيه</small></span><span class="amt">' + fmt(bl.total) + '</span></li>' : '');
+  $('wallets').querySelectorAll('button[data-w]').forEach(function (b) { b.onclick = function () { openWalletMenu(b.dataset.w); }; });
+  $('trBox').hidden = S.wallets.length < 2;
+  $('exBox').hidden = !S.settings.useUsd;
+  setSeg('moneySeg', moneyTab);
+  ['w', 'd', 'b', 'r'].forEach(function (k) { $('mp-' + k).hidden = k !== moneyTab; });
   ['trFrom', 'trTo', 'eWallet', 'rWallet'].forEach(function (id) { var v = $(id).value; $(id).innerHTML = walletOpts(v); if (v && wallet(v)) $(id).value = v; });
   if (S.wallets[1] && $('trFrom').value === $('trTo').value) $('trTo').value = S.wallets[1].name;
   $('exWallet').innerHTML = walletOpts(S.settings.defaultWallet, true);
@@ -1405,6 +1595,12 @@ function renderSettings() {
   $('notifBtn').hidden = !('Notification' in window) || Notification.permission === 'granted';
   $('itemsList').innerHTML = allItems('صرف').map(function (x) { return '<option value="' + esc(x) + '">'; }).join('');
   $('ver').textContent = 'نسخة ' + APP_VERSION; $('ver2').textContent = APP_VERSION;
+  $('askWalletRow').hidden = S.wallets.length < 2;
+  $('gRecSub').textContent = 'المحفظة الأساسية: ' + S.settings.defaultWallet + (S.settings.quickSave ? ' · تسجيل سريع' : '');
+  $('useUsd').checked = !!S.settings.useUsd; $('rateBox').hidden = !S.settings.useUsd;
+  $('gUsdSub').textContent = !S.settings.useUsd ? 'مقفول، شغّله لو بتصرف أو بتقبض بالدولار' : r ? 'الدولار بـ ' + fmtU(r) + ' جنيه' : 'شغّال، والسعر مش معروف لسه';
+  $('gAdvSub').textContent = 'تفريغ مساحة · التحديث · نسخة ' + APP_VERSION;
+  renderLockSet();
 }
 
 // ---------- التسجيل ----------
@@ -1439,7 +1635,7 @@ function showConv() {
 }
 function currentWallet() {
   if (cur === '$' && !walletTouched) return usdWallet(true);
-  return S.settings.askWallet ? pickedWallet : $('wallet').value;
+  return askW() ? pickedWallet : $('wallet').value;
 }
 function trySave() {
   $('err').textContent = '';
@@ -1502,7 +1698,7 @@ function saveDebt(amount) {
   if (!person) { $('err').textContent = 'اختار الشخص'; return; }
   person = knownPerson(person);
   var dc = '';
-  var w = S.settings.askWallet ? pickedWallet : $('wallet').value;
+  var w = askW() ? pickedWallet : $('wallet').value;
   if (dc === '$') w = '';
   else if (wallet(w) && wallet(w).cur === '$') w = S.settings.defaultWallet;
   var d = { id: nid(), date: $('date').value || todayKey(), person: person, kind: debtKind, amount: amount, cur: dc, note: $('note').value.trim(), wallet: w, photo: '' };
@@ -1520,109 +1716,449 @@ function removeTx(id) {
   S.tx = S.tx.filter(function (x) { return x.id !== id; });
 }
 
-// ---------- المديونات الخارجية ----------
-var xKind = 'عليّا', xCur = '';
-var X_SIGN = { 'ليّا': 1, 'اتسدّدلي': -1, 'عليّا': -1, 'سدّدت': 1 };   // موجب = ليك، سالب = عليك
-var X_HINT = { 'عليّا': 'إنت بقيت مديون للشخص ده بالمبلغ', 'سدّدت': 'إنت دفعتله جزء أو كل اللي عليك', 'ليّا': 'هو بقى مديون لك بالمبلغ', 'اتسدّدلي': 'هو رجّعلك جزء أو كل اللي عليه' };
+// ---------- صفحة الفلوس ----------
+var moneyTab = 'w';
+try { moneyTab = localStorage.getItem('moneyTab') || 'w'; } catch (e) {}
+function setMoneyTab(t) {
+  moneyTab = t; try { localStorage.setItem('moneyTab', t); } catch (e) {}
+  setSeg('moneySeg', t);
+  ['w', 'd', 'b', 'r'].forEach(function (k) { $('mp-' + k).hidden = k !== t; });
+  renderBars();
+}
+bindSeg('moneySeg', setMoneyTab);
+var wMenuFor = null;
+function openWalletMenu(name) {
+  var w = wallet(name); if (!w) return; wMenuFor = name;
+  var bl = balances().bal[name];
+  $('wTitle').textContent = name;
+  $('wSub').textContent = 'الرصيد ' + (w.cur === '$' ? fmtU(bl) + '$' : fmt(bl) + ' ج') + (name === S.settings.defaultWallet ? ' · المحفظة الأساسية' : '');
+  $('wDef').hidden = name === S.settings.defaultWallet || w.cur === '$';
+  $('wDel').hidden = S.wallets.length < 2;
+  showSheet('wSheet');
+}
+function wAct(a) {
+  var n = wMenuFor; closeSheets(); if (!n) return;
+  if (a === 'bal') setBalance(n);
+  else if (a === 'ren') renameWallet(n);
+  else if (a === 'def') { S.settings.defaultWallet = n; pickedWallet = n; commit('«' + esc(n) + '» بقت المحفظة الأساسية ⭐'); }
+  else if (a === 'del') removeWallet(n);
+}
+function showSheet(id) {
+  document.querySelectorAll('.sheet.on').forEach(function (x) { x.classList.remove('on'); });
+  $('scrim').classList.add('on'); $(id).classList.add('on');
+}
+function setUseUsd(on) {
+  S.settings.useUsd = on;
+  if (on && !rate()) fetchRate(false);
+  commit(on ? '💵 الدولار اشتغل' : 'الدولار اتقفل');
+}
+
+// ---------- دفتر الديون ----------
+var bookTab = 'on', bookOpenOK = false, dfDir = 'on', dfCur = '', dfEditing = null, curDebt = null, payCtx = null;
 function fmtC(n, c) { return c === '$' ? fmtU(n) + '$' : fmt(n); }
-function extBalances() {
-  var b = {};
-  (S.ext || []).forEach(function (x) {
-    var k = x.person, c = x.cur || '';
-    b[k] = b[k] || { '': 0, '$': 0, has: {} };
-    b[k][c] += X_SIGN[x.kind] * x.amount; b[k].has[c] = 1;
+function dPaid(d) { return d.payments.reduce(function (s, p) { return s + p.amount; }, 0); }
+function dRemain(d) { return Math.max(0, Math.round((d.total - dPaid(d)) * 100) / 100); }
+function dClosed(d) { return dRemain(d) <= 0.004; }
+function debtById(id) { return S.book.debts.filter(function (d) { return d.id === id; })[0]; }
+function daysTxt(n) { return n === 1 ? 'يوم' : n === 2 ? 'يومين' : n <= 10 ? n + ' أيام' : n + ' يوم'; }
+function lastPay(d) { return d.payments.reduce(function (m, p) { return p.date > m ? p.date : m; }, ''); }
+/** حالة القسط: مستحق؟ قرّب؟ */
+function instInfo(d) {
+  if (!d.inst || !d.day || dClosed(d)) return null;
+  var today = todayKey(), o = occurrences({ repeat: 'شهري', day: d.day }, today);
+  var occ = o.last && o.last >= (d.start || '') ? o.last : null;
+  var paidSince = occ && d.payments.some(function (p) { return p.date >= addDays(occ, -10); });
+  var due = !!occ && !paidSince && d.skip !== occ;
+  var daysTo = Math.round((new Date(o.next + 'T12:00:00Z') - new Date(today + 'T12:00:00Z')) / 864e5);
+  var paidNext = d.payments.some(function (p) { return p.date >= addDays(o.next, -10); });
+  return { occ: occ, due: due, next: o.next, daysTo: daysTo, soon: !due && !paidNext && daysTo > 0 && daysTo <= 7 };
+}
+function bookDues() {
+  if (!S.book || !S.book.cfg.remind) return [];
+  return S.book.debts.map(function (d) { return { d: d, i: instInfo(d) }; }).filter(function (x) { return x.i && x.i.due; });
+}
+function bookLocked() { return !!(S.book.cfg.lock && lockData); }
+function needBookPin() { return bookLocked() && !bookOpenOK; }
+function openBook() {
+  if (needBookPin()) return askPin({ title: 'اكتب الـ PIN عشان تفتح الدفتر', cancel: true }).then(function () { bookOpenOK = true; go('v-ext'); }).catch(function () {});
+  go('v-ext');
+}
+function bookDueAction(id, m) {
+  if (id === 'open') return openBook();
+  var d = debtById(+id), i = d && instInfo(d); if (!i || !i.due) return;
+  if (m === 'skip') { d.skip = i.occ; return commit('👌 القسط ده اتعدّى'); }
+  openPay(d, Math.min(d.inst, dRemain(d)));
+}
+function renderBook() {
+  if (!S || !S.book) return;
+  var t = { on: { '': 0, '$': 0 }, to: { '': 0, '$': 0 } };
+  S.book.debts.forEach(function (d) { if (!dClosed(d)) t[d.dir][d.cur || ''] += dRemain(d); });
+  var f = function (x) { var p = []; if (x['']) p.push(fmt(x[''])); if (x['$']) p.push(fmtU(x['$']) + '$'); return p.length ? p.join(' + ') : '—'; };
+  $('bkSum').innerHTML = '<div class="on"><small>عليك</small><b>' + f(t.on) + '</b></div><div class="to"><small>ليك</small><b>' + f(t.to) + '</b></div>';
+  $('bkLockIco').hidden = !bookLocked();
+  setSeg('bkSeg', bookTab);
+  var list = S.book.debts.filter(function (d) { return bookTab === 'done' ? dClosed(d) : !dClosed(d) && d.dir === bookTab; });
+  if (bookTab === 'done') list.sort(function (a, b) { return lastPay(a) < lastPay(b) ? 1 : -1; });
+  else list.sort(function (a, b) {
+    var ia = instInfo(a), ib = instInfo(b), sa = ia ? (ia.due ? 0 : ia.daysTo) : 99, sb = ib ? (ib.due ? 0 : ib.daysTo) : 99;
+    return sa - sb || b.id - a.id;
   });
-  return b;
+  $('bkList').innerHTML = list.length ? list.map(debtCard).join('') :
+    '<p class="empty" style="margin-top:16px;text-align:center">' + (bookTab === 'on' ? 'مافيش ديون عليك متسجلة.<br>دوس «+ دين جديد» تضيف واحد.' : bookTab === 'to' ? 'مافيش ديون ليك عند حد.' : 'لسه مافيش ديون خلصت.') + '</p>';
+  $('bkList').querySelectorAll('.dcard').forEach(function (b) { b.onclick = function () { openDebt(+b.dataset.id); }; });
+  renderBookSet();
+  if ($('v-ext').classList.contains('on')) renderBars();
 }
-function extTotals() {
-  var b = extBalances(), t = { '': { toMe: 0, onMe: 0 }, '$': { toMe: 0, onMe: 0 } }, any = false;
-  Object.keys(b).forEach(function (p) { ['', '$'].forEach(function (c) {
-    if (!b[p].has[c]) return; any = true;
-    if (b[p][c] > 0) t[c].toMe += b[p][c]; else t[c].onMe -= b[p][c];
-  }); });
-  var parts = [];
-  ['', '$'].forEach(function (c) { var n = t[c].toMe - t[c].onMe; if (n) parts.push((n > 0 ? '+' : '−') + fmtC(Math.abs(n), c)); });
-  return { any: any, t: t, short: parts.length ? parts.join(' · ') : '0' };
+function debtCard(d) {
+  var c = d.cur || '', paid = dPaid(d), pct = d.total ? Math.min(100, Math.round(paid * 100 / d.total)) : 0, ii = instInfo(d), done = dClosed(d), on = d.dir === 'on';
+  var sub = done ? (on ? 'كان عليك ' : 'كان ليك ') + fmtC(d.total, c) + (lastPay(d) ? ' · خلص ' + dShort(lastPay(d)) + '/' + lastPay(d).slice(0, 4) : '')
+    : d.inst ? 'قسط ' + fmtC(d.inst, c) + (d.day ? ' · يوم ' + d.day : '') : 'من غير ميعاد';
+  var nx = ii && (ii.due || ii.soon) ? '<div class="dnext">⏰ ' + (ii.due ? (ii.occ === todayKey() ? 'القسط النهارده' : 'القسط متأخر من ' + dShort(ii.occ)) : 'القسط الجاي بعد ' + daysTxt(ii.daysTo)) + '</div>' : '';
+  return '<button class="dcard' + (done ? ' closed' : '') + '" type="button" data-id="' + d.id + '"><div class="dtop"><b>' + esc(d.title) + '</b><span class="amt ' + (done ? 'in' : on ? 'out' : 'in') + '">' + (done ? '✓' : fmtC(dRemain(d), c)) + '</span></div>' +
+    '<small>' + sub + '</small>' +
+    '<div class="bar" role="progressbar" aria-label="' + esc(d.title) + '" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100"><i data-w="' + pct + '"></i></div>' +
+    '<div class="drow"><small>' + (on ? 'اتسدّد ' : 'اتحصّل ') + fmtC(paid, c) + ' من ' + fmtC(d.total, c) + '</small><small>' + pct + '٪</small></div>' + nx + '</button>';
 }
-function extPeople() {
-  var c = {};
-  (S.ext || []).forEach(function (x) { c[x.person] = (c[x.person] || 0) + 1; });
-  return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; });
+function openDebt(id) {
+  var d = debtById(id); if (!d) return closeSheets();
+  curDebt = d; fillDebt(d); showSheet('dSheet');
 }
-function setXKind(k) {
-  xKind = k; setSeg('xKindSeg', k);
-  $('xKindHint').textContent = X_HINT[k];
-  $('xSaveBtn').textContent = 'سجّل «' + k + '»';
-}
-function toggleXCur() {
-  xCur = xCur === '$' ? '' : '$';
-  $('xCurBtn').textContent = xCur === '$' ? '$' : 'ج.م';
-  $('xCurBtn').classList.toggle('usd', xCur === '$');
-}
-function renderExt() {
-  if (!S) return;
-  setXKind(xKind);
-  var ps = extPeople();
-  $('xPeople').innerHTML = ps.slice(0, 10).map(function (p) { return '<button class="chip" type="button" data-v="' + esc(p) + '">' + esc(p) + '</button>'; }).join('');
-  $('xPeople').querySelectorAll('.chip').forEach(function (b) { b.onclick = function () { $('xPerson').value = b.dataset.v; }; });
-  var tt = extTotals().t, cell = function (lbl, c) {
-    var n = tt[c].toMe - tt[c].onMe;
-    return '<div><small>' + lbl + '</small><b class="' + (n > 0 ? 'in' : n < 0 ? 'out' : '') + '">' + (n < 0 ? '−' : n > 0 ? '+' : '') + fmtC(Math.abs(n), c) + '</b>' +
-      '<small>ليك ' + fmtC(tt[c].toMe, c) + ' · عليك ' + fmtC(tt[c].onMe, c) + '</small></div>';
-  };
-  $('xTotals').style.gridTemplateColumns = 'repeat(2, 1fr)';
-  $('xTotals').innerHTML = cell('بالجنيه', '') + cell('بالدولار', '$');
-  var b = extBalances();
-  $('xList').innerHTML = ps.length ? ps.map(function (p) {
-    var parts = [];
-    ['', '$'].forEach(function (c) { if (b[p].has[c]) { var n = b[p][c]; parts.push('<span class="amt ' + (n > 0 ? 'in' : n < 0 ? 'out' : '') + '">' + (n < 0 ? '−' : n > 0 ? '+' : '') + fmtC(Math.abs(n), c) + '</span>'); } });
-    var sum = ['', '$'].map(function (c) { return b[p].has[c] ? b[p][c] : 0; });
-    var lbl = sum.every(function (n) { return n === 0; }) ? 'خالصين ✓' : sum.some(function (n) { return n < 0; }) && sum.some(function (n) { return n > 0; }) ? 'ليك وعليك' : sum.some(function (n) { return n < 0; }) ? 'إنت عليك ليه' : 'عليه ليك';
-    return '<li><button class="rowbtn" data-p="' + esc(p) + '"><span class="what"><b>' + esc(p) + '</b><small>' + lbl + '</small></span><span style="display:grid;justify-items:end;gap:2px">' + parts.join('') + '</span></button></li>';
-  }).join('') : '<li class="empty">مافيش مديونات متسجلة.</li>';
-  $('xListHint').hidden = !ps.length;
-  $('xList').querySelectorAll('.rowbtn').forEach(function (bt) { bt.onclick = function () { openExtPerson(bt.dataset.p); }; });
-}
-function saveExt() {
-  $('xErr').textContent = '';
-  var a = num($('xAmount')), p = $('xPerson').value.trim();
-  if (!a) { $('xErr').textContent = 'اكتب المبلغ'; $('xAmount').focus(); return; }
-  if (!p) { $('xErr').textContent = 'اكتب مين'; $('xPerson').focus(); return; }
-  var k = key(p); extPeople().forEach(function (q) { if (key(q) === k) p = q; });
-  var x = { id: nid(), date: todayKey(), person: p, kind: xKind, amount: a, cur: xCur, note: $('xNote').value.trim() };
-  S.ext = S.ext || []; S.ext.push(x);
-  $('xAmount').value = ''; $('xNote').value = ''; $('xPerson').value = '';
-  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-  var n = extBalances()[p][xCur];
-  commit('✓ ' + xKind + ' ' + esc(p) + ' ' + fmtC(a, xCur) + '<small>' + esc(p) + ': ' + (n > 0 ? 'عليه ليك ' + fmtC(n, xCur) : n < 0 ? 'إنت عليك ليه ' + fmtC(-n, xCur) : 'خالصين ✓') + '</small>',
-    function () { S.ext = S.ext.filter(function (y) { return y.id !== x.id; }); commit('اتمسحت الحركة'); });
-}
-function openExtPerson(p) {
-  var rows = (S.ext || []).filter(function (x) { return x.person === p; }).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.id - a.id; });
-  var b = extBalances()[p] || { '': 0, '$': 0, has: {} };
-  $('eTitle').textContent = p;
-  $('eSub').textContent = ['', '$'].filter(function (c) { return b.has[c]; }).map(function (c) {
-    var n = b[c]; return (c === '$' ? 'بالدولار: ' : 'بالجنيه: ') + (n > 0 ? 'عليه ليك ' + fmtC(n, c) : n < 0 ? 'إنت عليك ليه ' + fmtC(-n, c) : 'خالصين ✓');
-  }).join(' · ');
-  $('eList').innerHTML = rows.map(function (x) {
-    return '<li><span class="what"><b>' + esc(x.kind) + '</b><small>' + dShort(x.date) + '/' + x.date.slice(0, 4) + '</small>' + (x.note ? '<small class="dnote">📝 ' + esc(x.note) + '</small>' : '') + '</span>' +
-      '<span class="amt">' + fmtC(x.amount, x.cur) + '</span><button class="ghost danger" style="padding:6px 10px;font-size:13px" data-del="' + x.id + '" aria-label="امسح">✕</button></li>';
-  }).join('');
-  $('eList').querySelectorAll('[data-del]').forEach(function (bt) {
+function fillDebt(d) {
+  var c = d.cur || '', paid = dPaid(d), rem = dRemain(d), on = d.dir === 'on', done = dClosed(d);
+  $('dTitle').textContent = (on ? '' : '') + d.title;
+  $('dBig').innerHTML = done ? '<small>الدين ده خلص</small><b class="in">🎉 ✓</b>' : '<small>' + (on ? 'فاضل عليك' : 'فاضل ليك') + '</small><b class="' + (on ? 'out' : 'in') + '">' + fmtC(rem, c) + '</b>';
+  $('dRow').innerHTML = '<div><small>الأصل</small><b>' + fmtC(d.total, c) + '</b></div><div><small>' + (on ? 'اتسدّد' : 'اتحصّل') + '</small><b class="in">' + fmtC(paid, c) + '</b></div><div><small>بدأ</small><b>' + (d.start ? d.start.slice(5, 7) + '/' + d.start.slice(0, 4) : '—') + '</b></div>';
+  $('dInfo').textContent = d.inst ? 'قسط ' + fmtC(d.inst, c) + (d.day ? ' كل شهر يوم ' + d.day : '') + (!done ? ' · فاضل حوالي ' + Math.ceil(rem / d.inst) + ' قسط' : '') : (on ? 'عليك' : 'ليك') + ' من غير أقساط ثابتة';
+  $('dNote').hidden = !d.note; $('dNote').textContent = '📝 ' + (d.note || '');
+  $('dPayInst').hidden = !d.inst || done;
+  $('dPayInst').textContent = (on ? 'سدّدت القسط (' : 'اتحصّل القسط (') + fmtC(Math.min(d.inst || 0, rem), c) + ')';
+  $('dPayOther').hidden = done;
+  $('dPayOther').textContent = d.inst ? 'مبلغ تاني' : on ? 'سدّدت مبلغ' : 'اتحصّل مبلغ';
+  var ps = d.payments.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.id - a.id; });
+  $('dPays').innerHTML = ps.length ? ps.map(function (p) {
+    var t = p.txId ? txById(p.txId) : null;
+    return '<li><span class="what"><b>' + dShort(p.date) + '/' + p.date.slice(0, 4) + '</b><small>' + [p.note ? esc(p.note) : '', t ? (on ? 'صرف من ' : 'دخل في ') + esc(t.wallet) : ''].filter(Boolean).join(' · ') + '</small></span>' +
+      '<span class="amt">' + fmtC(p.amount, c) + '</span><button class="ghost danger" style="padding:6px 10px;font-size:13px" data-del="' + p.id + '" aria-label="امسح الدفعة">✕</button></li>';
+  }).join('') : '<li class="empty">لسه مافيش دفعات.</li>';
+  $('dPays').querySelectorAll('[data-del]').forEach(function (bt) {
     bt.onclick = function () {
       if (bt.dataset.sure !== '1') { bt.dataset.sure = '1'; bt.textContent = 'متأكد؟'; setTimeout(function () { bt.dataset.sure = ''; bt.textContent = '✕'; }, 3000); return; }
-      var id = +bt.dataset.del;
-      S.ext = S.ext.filter(function (y) { return y.id !== id; });
-      commit('اتمسحت الحركة').then(function () { if (extPeople().indexOf(p) >= 0) openExtPerson(p); else closeSheets(); });
+      delPayment(d, +bt.dataset.del);
     };
   });
-  $('scrim').classList.add('on'); $('eSheet').classList.add('on');
 }
-bindSeg('xKindSeg', setXKind);
-['xAmount', 'xPerson'].forEach(function (id, i) {
-  $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); (i === 0 ? $('xPerson') : $('xNote')).focus(); } });
+function delPayment(d, pid) {
+  var p = d.payments.filter(function (x) { return x.id === pid; })[0]; if (!p) return;
+  var t = p.txId ? txById(p.txId) : null, tCopy = t ? JSON.parse(JSON.stringify(t)) : null;
+  d.payments = d.payments.filter(function (x) { return x.id !== pid; });
+  if (t) S.tx = S.tx.filter(function (x) { return x.id !== t.id; });
+  commit('اتمسحت الدفعة' + (t ? '<small>واتشالت كمان من محفظة ' + esc(t.wallet) + '</small>' : ''), function () {
+    d.payments.push(p); if (tCopy) S.tx.push(tCopy); commit('رجعت ✓');
+  }).then(function () { if ($('dSheet').classList.contains('on')) fillDebt(d); });
+}
+function setDfCur() { $('dfCurBtn').textContent = dfCur === '$' ? '$' : 'ج.م'; $('dfCurBtn').classList.toggle('usd', dfCur === '$'); }
+function toggleDfCur() { dfCur = dfCur === '$' ? '' : '$'; setDfCur(); }
+bindSeg('dfDirSeg', function (v) { dfDir = v; setSeg('dfDirSeg', v); $('dfPaidBox').querySelector('label').textContent = v === 'on' ? 'اتسدّد منه قبل كده' : 'اتحصّل منه قبل كده'; });
+function openDebtForm(id) {
+  var d = id ? debtById(id) : null; dfEditing = d;
+  if (!$('dfDay').options.length) { var o = '<option value="0">من غير ميعاد</option>'; for (var i = 1; i <= 31; i++) o += '<option value="' + i + '">يوم ' + i + '</option>'; $('dfDay').innerHTML = o; }
+  dfDir = d ? d.dir : (bookTab === 'to' ? 'to' : 'on'); dfCur = d ? d.cur || '' : '';
+  setSeg('dfDirSeg', dfDir); setDfCur();
+  $('dfHead').textContent = d ? 'تعديل الدين' : 'دين جديد';
+  $('dfTitle').value = d ? d.title : ''; $('dfTotal').value = d ? d.total : '';
+  $('dfPaidBox').hidden = !!d; $('dfPaid').value = '';
+  $('dfPaidBox').querySelector('label').textContent = dfDir === 'on' ? 'اتسدّد منه قبل كده' : 'اتحصّل منه قبل كده';
+  $('dfStart').value = d ? d.start || '' : todayKey();
+  $('dfInst').value = d && d.inst ? d.inst : ''; $('dfDay').value = String(d ? d.day || 0 : 0);
+  $('dfNote').value = d ? d.note || '' : ''; $('dfErr').textContent = ''; $('dfDel').hidden = !d;
+  showSheet('dfSheet');
+  if (!d) setTimeout(function () { $('dfTitle').focus(); }, 350);
+}
+function saveDebtForm() {
+  var title = $('dfTitle').value.trim(), total = num($('dfTotal')), paid = num($('dfPaid')), d = dfEditing;
+  $('dfErr').textContent = '';
+  if (!title) { $('dfErr').textContent = 'اكتب اسم الدين'; return; }
+  if (!total) { $('dfErr').textContent = 'اكتب المبلغ كله'; return; }
+  if (d && dPaid(d) > total + 0.004) { $('dfErr').textContent = 'المبلغ أقل من اللي اتسدّد فعلاً (' + fmtC(dPaid(d), dfCur) + ')'; return; }
+  if (!d && paid > total) { $('dfErr').textContent = 'اللي اتسدّد أكبر من المبلغ كله'; return; }
+  var fields = { title: title, dir: dfDir, cur: dfCur, total: total, start: $('dfStart').value || todayKey(), inst: num($('dfInst')), day: +$('dfDay').value || 0, note: $('dfNote').value.trim() };
+  if (d) { Object.keys(fields).forEach(function (k) { d[k] = fields[k]; }); }
+  else {
+    d = fields; d.id = nid(); d.payments = []; d.skip = ''; d.created = new Date().toISOString();
+    if (paid) d.payments.push({ id: nid(), date: d.start, amount: paid, note: 'قبل التسجيل', txId: 0 });
+    S.book.debts.push(d);
+  }
+  bookTab = dClosed(d) ? 'done' : d.dir;
+  var isNew = !dfEditing; dfEditing = null;
+  closeSheets();
+  commit(isNew ? '📒 اتضاف «' + esc(title) + '»' : 'اتعدّل ✓').then(function () { if (!isNew) openDebt(d.id); });
+}
+function deleteDebt() {
+  var d = dfEditing; if (!d) return;
+  var b = $('dfDel');
+  if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'متأكد؟ دوس تاني'; setTimeout(function () { b.dataset.sure = ''; b.textContent = 'امسح'; }, 3000); return; }
+  b.dataset.sure = ''; b.textContent = 'امسح';
+  var idx = S.book.debts.indexOf(d);
+  S.book.debts.splice(idx, 1); dfEditing = null; closeSheets();
+  commit('اتمسح «' + esc(d.title) + '»' + (d.payments.some(function (p) { return p.txId; }) ? '<small>الدفعات اللي اتسجلت في محافظك زي ما هي</small>' : ''), function () { S.book.debts.splice(idx, 0, d); commit('رجع ✓'); });
+}
+function openPay(d, amount) {
+  if (!d) return;
+  payCtx = { d: d, choice: payCtx && payCtx.d === d ? payCtx.choice : null };
+  var on = d.dir === 'on';
+  $('payTitle').textContent = (on ? 'سدّدت من «' : 'اتحصّل من «') + d.title + '»';
+  $('paySub').textContent = (on ? 'فاضل عليك ' : 'فاضل ليك ') + fmtC(dRemain(d), d.cur);
+  $('payAmount').value = amount ? Math.round(amount * 100) / 100 : ''; $('payCur').textContent = d.cur === '$' ? '$' : 'ج.م';
+  $('payDate').value = todayKey(); $('payNote').value = ''; $('payErr').textContent = ''; $('payRemember').checked = false;
+  renderPayAsk();
+  showSheet('paySheet');
+  if (!amount) setTimeout(function () { $('payAmount').focus(); }, 350);
+}
+function renderPayAsk() {
+  if (!payCtx) return;
+  var cfg = S.book.cfg, d = payCtx.d, on = d.dir === 'on';
+  if (!cfg.askExpense) { $('payAsk').hidden = true; $('payAuto').hidden = true; return; }
+  if (cfg.payWallet && (cfg.payWallet === '-' || wallet(cfg.payWallet))) {
+    $('payAsk').hidden = true; $('payAuto').hidden = false;
+    $('payAutoTxt').textContent = cfg.payWallet === '-' ? 'مش هتتسجل في محافظك' : 'هتتسجل ' + (on ? 'صرف من «' : 'دخل في «') + cfg.payWallet + '»';
+    return;
+  }
+  $('payAuto').hidden = true; $('payAsk').hidden = false;
+  $('payQ').textContent = on ? 'تحب تسجّلها صرف من محفظتك كمان؟' : 'تحب تسجّلها دخل في محفظتك كمان؟';
+  var ch = payCtx.choice || '-';
+  $('payChips').innerHTML = '<button class="chip" type="button" data-v="-" aria-pressed="' + (ch === '-') + '">لا</button>' + S.wallets.map(function (w) {
+    return '<button class="chip" type="button" data-v="' + esc(w.name) + '" aria-pressed="' + (ch === w.name) + '">أيوه، ' + (on ? 'من ' : 'في ') + esc(w.name) + '</button>';
+  }).join('');
+  $('payChips').querySelectorAll('.chip').forEach(function (b) { b.onclick = function () { payCtx.choice = b.dataset.v; renderPayAsk(); }; });
+}
+function payReset() { S.book.cfg.payWallet = ''; save(); renderPayAsk(); renderBookSet(); }
+function savePay() {
+  var d = payCtx && payCtx.d; if (!d) return;
+  var a = num($('payAmount')), rem = dRemain(d), c = d.cur || '', on = d.dir === 'on', cfg = S.book.cfg;
+  $('payErr').textContent = '';
+  if (!a) { $('payErr').textContent = 'اكتب المبلغ'; return; }
+  if (a > rem + 0.004) { $('payErr').textContent = 'المبلغ أكبر من اللي فاضل (' + fmtC(rem, c) + ')'; return; }
+  var remembered = cfg.payWallet && (cfg.payWallet === '-' || wallet(cfg.payWallet));
+  var w = !cfg.askExpense ? '-' : remembered ? cfg.payWallet : (payCtx.choice || '-');
+  if (w !== '-' && !wallet(w)) w = '-';
+  if (w !== '-' && c === '$' && !rate()) { $('payErr').textContent = 'سعر الدولار مش معروف، اكتبه من الإعدادات أو اختار «لا»'; return; }
+  if (cfg.askExpense && !remembered && $('payRemember').checked) cfg.payWallet = w;
+  var date = $('payDate').value || todayKey(), p = { id: nid(), date: date, amount: a, note: $('payNote').value.trim(), txId: 0 }, t = null;
+  if (w !== '-') {
+    t = { id: nid(), date: date, type: on ? 'صرف' : 'دخل', item: on ? 'سداد ديون' : 'تحصيل ديون', note: d.title + (p.note ? ' — ' + p.note : ''), wallet: w, photo: '' };
+    if (c === '$') { t.usd = a; t.rate = rate(); t.amount = Math.round(a * t.rate * 100) / 100; } else t.amount = a;
+    S.tx.push(t); p.txId = t.id;
+  }
+  d.payments.push(p);
+  var done = dClosed(d);
+  if (done) bookTab = 'done';
+  closeSheets();
+  commit((done ? '🎉 «' + esc(d.title) + '» خلص خالص!' : '✓ اتسجلت الدفعة ' + fmtC(a, c)) +
+    '<small>' + [done ? '' : (on ? 'فاضل عليك ' : 'فاضل ليك ') + fmtC(dRemain(d), c), t ? 'واتسجلت ' + (on ? 'صرف من ' : 'دخل في ') + esc(w) : ''].filter(Boolean).join(' · ') + '</small>',
+    function () { d.payments = d.payments.filter(function (x) { return x.id !== p.id; }); if (t) S.tx = S.tx.filter(function (x) { return x.id !== t.id; }); commit('اتلغت الدفعة'); });
+}
+function openBookSet() { renderBookSet(); showSheet('bsSheet'); }
+function renderBookSet() {
+  if (!S || !S.book) return;
+  var cfg = S.book.cfg;
+  $('bsAsk').checked = !!cfg.askExpense; $('bsRemind').checked = !!cfg.remind; $('bsLock').checked = bookLocked();
+  var pw = cfg.askExpense && cfg.payWallet;
+  $('bsRemembered').hidden = !pw;
+  if (pw) $('bsRemembered').innerHTML = 'اختيارك المحفوظ: ' + (cfg.payWallet === '-' ? 'متسجلهاش في المحافظ' : 'من «' + esc(cfg.payWallet) + '»') + ' · <button class="linkbtn" type="button" onclick="payReset()">اسألني تاني</button>';
+}
+function setBookAsk(on) { S.book.cfg.askExpense = on; if (!on) S.book.cfg.payWallet = ''; commit(on ? 'هسألك مع كل دفعة ✓' : 'الدفتر منفصل عن محافظك ✓'); }
+function setBookLock(on) {
+  if (on) ensurePin().then(function () { S.book.cfg.lock = true; bookOpenOK = true; commit('🔒 الدفتر بقى مقفول بالـ PIN'); }).catch(function () { renderBookSet(); });
+  else askPin({ title: 'اكتب الـ PIN عشان تشيل قفل الدفتر', cancel: true }).then(function () { S.book.cfg.lock = false; commit('الدفتر بقى مفتوح'); }).catch(function () { renderBookSet(); });
+}
+bindSeg('bkSeg', function (v) { bookTab = v; renderBook(); });
+/** المديونات القديمة ← دفتر الديون (مرة واحدة) */
+function migrateBook() {
+  if (S.book) return;
+  S.book = { debts: [], cfg: bookCfg() };
+  var ext = S.ext || [], groups = {};
+  ext.forEach(function (x) { var g = x.person + '|' + (x.cur || ''); (groups[g] = groups[g] || []).push(x); });
+  Object.keys(groups).forEach(function (g) {
+    var xs = groups[g].sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : a.id - b.id; });
+    [['on', 'عليّا', 'سدّدت'], ['to', 'ليّا', 'اتسدّدلي']].forEach(function (m) {
+      var base = xs.filter(function (x) { return x.kind === m[1]; }), pays = xs.filter(function (x) { return x.kind === m[2]; });
+      if (!base.length && !pays.length) return;
+      var d = { id: nid(), title: xs[0].person, dir: m[0], cur: xs[0].cur || '', total: base.reduce(function (s, x) { return s + x.amount; }, 0),
+        start: (base[0] || pays[0]).date, inst: 0, day: 0, note: base.map(function (x) { return x.note; }).filter(Boolean).join('، '),
+        payments: pays.map(function (x) { return { id: nid(), date: x.date, amount: x.amount, note: x.note || '', txId: 0 }; }), skip: '', created: new Date().toISOString() };
+      if (dPaid(d) > d.total) d.total = dPaid(d);
+      S.book.debts.push(d);
+    });
+  });
+  if (ext.length) S.extOld = ext;
+  S.ext = [];
+}
+
+// ---------- قفل التطبيق ----------
+var lockData = null, lockHiddenAt = 0, lockCtx = null, pinBuf = '', pinFails = 0, pinWaitUntil = 0, bioAvail = false, bioWait = null, recoverWait = null;
+function loadLock() { return dbGet('kv', 'lock').then(function (l) { lockData = l || null; }).catch(function () {}); }
+function saveLock() { return lockData ? dbPut('kv', 'lock', lockData) : dbDel('kv', 'lock'); }
+function pinHash(pin, salt) {
+  return crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']).then(function (k) {
+    return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: salt, iterations: 120000, hash: 'SHA-256' }, k, 256);
+  }).then(b64e);
+}
+(function () {
+  var keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'bio', '0', 'del'];
+  $('lkPad').innerHTML = keys.map(function (k) {
+    return k === 'bio' ? '<button type="button" class="nob" id="lkBio" aria-label="البصمة">👆</button>' : k === 'del' ? '<button type="button" class="k-del nob" data-k="del" aria-label="امسح">⌫</button>' : '<button type="button" data-k="' + k + '">' + k + '</button>';
+  }).join('');
+  $('lkPad').querySelectorAll('button[data-k]').forEach(function (b) { b.onclick = function () { pinKey(b.dataset.k); }; });
+  $('lkBio').onclick = function () { bioUnlock(); };
+  document.addEventListener('keydown', function (e) {
+    if ($('lockScr').hidden) return;
+    if (/^[0-9]$/.test(e.key)) pinKey(e.key); else if (e.key === 'Backspace') pinKey('del');
+  });
+})();
+function drawPin() { var h = ''; for (var i = 0; i < 4; i++) h += '<i' + (i < pinBuf.length ? ' class="on"' : '') + '></i>'; $('lkDots').innerHTML = h; }
+function askPin(o) {
+  if (lockCtx) { var old = lockCtx; lockCtx = null; old.bad(new Error('cancel')); }
+  return new Promise(function (ok, bad) {
+    lockCtx = { o: o, ok: ok, bad: bad, step: 1, first: '' };
+    pinBuf = ''; drawPin();
+    var bio = o.mode !== 'setup' && lockData && lockData.bio;
+    $('lkTitle').textContent = o.title || ('اكتب الـ PIN' + (bio ? ' أو استخدم البصمة' : ''));
+    $('lkCancel').hidden = !o.cancel;
+    $('lkForgot').hidden = o.mode === 'setup';
+    $('lkBio').style.visibility = bio ? 'visible' : 'hidden';
+    $('lkErr').textContent = o.mode === 'setup' ? '' : $('lkErr').textContent;
+    if (!o.keepErr) $('lkErr').textContent = '';
+    $('lockScr').hidden = false;
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    if (bio && !o.cancel) setTimeout(bioUnlock, 350);
+  });
+}
+function pinKey(k) {
+  if (!lockCtx) return;
+  if (Date.now() < pinWaitUntil) { $('lkErr').textContent = 'استنى ' + Math.ceil((pinWaitUntil - Date.now()) / 1000) + ' ثانية'; return; }
+  if (k === 'del') pinBuf = pinBuf.slice(0, -1); else if (pinBuf.length < 4) pinBuf += k;
+  drawPin();
+  if (pinBuf.length === 4) pinDone();
+}
+function pinDone() {
+  var c = lockCtx, p = pinBuf; if (!c || p.length !== 4) return;
+  if (c.o.mode === 'setup') {
+    if (c.step === 1) { c.first = p; c.step = 2; pinBuf = ''; $('lkTitle').textContent = 'اكتبه تاني للتأكيد'; $('lkErr').textContent = ''; drawPin(); return; }
+    if (p !== c.first) { c.step = 1; c.first = ''; pinBuf = ''; $('lkTitle').textContent = c.o.title; shake('مش زي بعض، ابدأ تاني'); return; }
+    var salt = crypto.getRandomValues(new Uint8Array(16));
+    return pinHash(p, salt).then(function (h) { lockEnd(); c.ok({ salt: b64e(salt), hash: h }); });
+  }
+  if (!lockData) { lockEnd(); return c.ok(); }
+  pinHash(p, b64d(lockData.salt)).then(function (h) {
+    if (lockCtx !== c) return;
+    if (h === lockData.hash) { pinFails = 0; lockEnd(); c.ok(); return; }
+    pinFails++; pinBuf = '';
+    if (pinFails >= 5) { pinWaitUntil = Date.now() + 30000; pinFails = 0; shake('غلط كتير، استنى 30 ثانية'); } else shake('الـ PIN غلط');
+  });
+}
+function shake(msg) { $('lkErr').textContent = msg; drawPin(); var s = $('lockScr'); s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake'); }
+function lockEnd() { $('lockScr').hidden = true; lockCtx = null; pinBuf = ''; }
+function lockCancel() { var c = lockCtx; if (!c || !c.o.cancel) return; lockEnd(); c.bad(new Error('cancel')); }
+function appLock() {
+  if (!lockData || !lockData.app) return;
+  if (lockCtx && !lockCtx.o.cancel) return;
+  closeReader && $('reader').classList.contains('on') && closeReader();
+  askPin({ mode: 'check' }).then(function () { bookOpenOK = false; }, function () {});
+}
+function ensurePin() {
+  if (lockData) return Promise.resolve();
+  return askPin({ mode: 'setup', title: 'اختار PIN من 4 أرقام', cancel: true }).then(function (h) {
+    lockData = { salt: h.salt, hash: h.hash, app: false, delay: 60, bio: '' };
+    return saveLock();
+  });
+}
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'hidden') { lockHiddenAt = Date.now(); return; }
+  if (!lockData || !lockHiddenAt) return;
+  var away = Date.now() - lockHiddenAt; lockHiddenAt = 0;
+  if (away < (lockData.delay || 0) * 1000) return;
+  bookOpenOK = false;
+  if (lockData.app) appLock();
+  else if ($('v-ext').classList.contains('on') && bookLocked()) { closeSheets(); go('v-money'); }
 });
-$('xNote').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); saveExt(); } });
+function renderLockSet() {
+  var has = !!lockData;
+  $('lkNone').hidden = has; $('lkHas').hidden = !has;
+  $('gLockSub').textContent = !has ? 'مش مفعّل' : [lockData.app ? 'التطبيق مقفول' : 'التطبيق مفتوح', S.book.cfg.lock ? 'الدفتر مقفول' : '', lockData.bio ? 'البصمة' : 'PIN'].filter(Boolean).join(' · ');
+  if (!has) return;
+  $('lkApp').checked = !!lockData.app; $('lkDelay').value = String(lockData.delay || 0); $('lkDelayRow').hidden = !lockData.app;
+  $('lkBioRow').hidden = !bioAvail && !lockData.bio; $('lkBioT').checked = !!lockData.bio;
+  $('lkForgotHint').innerHTML = S.backup.email ? 'لو نسيت الـ PIN، ترجّعه بحساب جوجل المربوط (' + esc(S.backup.email) + ').' : '⚠️ اربط Google Drive من «النسخة الاحتياطية»، عشان لو نسيت الـ PIN تقدر تفتح بحسابك.';
+}
+function setAppLock(on) {
+  if (on) ensurePin().then(function () { lockData.app = true; return saveLock(); }).then(function () { renderLockSet(); toast('🔐 التطبيق هيتقفل لما تخرج منه'); }).catch(function () { renderLockSet(); });
+  else askPin({ title: 'اكتب الـ PIN عشان تلغي قفل التطبيق', cancel: true }).then(function () { lockData.app = false; return saveLock(); }).then(function () { renderLockSet(); toast('قفل التطبيق اتلغى'); }).catch(function () { renderLockSet(); });
+}
+function setLockDelay(v) { lockData.delay = +v; saveLock(); renderLockSet(); }
+function changePin() {
+  askPin({ title: 'اكتب الـ PIN القديم', cancel: true }).then(function () { return askPin({ mode: 'setup', title: 'اكتب الـ PIN الجديد', cancel: true }); })
+    .then(function (h) { lockData.salt = h.salt; lockData.hash = h.hash; return saveLock(); }).then(function () { toast('اتغيّر الـ PIN ✓'); }).catch(function () {});
+}
+function removePin() {
+  askPin({ title: 'اكتب الـ PIN عشان تمسحه', cancel: true }).then(function () { lockData = null; return saveLock(); })
+    .then(function () { S.book.cfg.lock = false; commit('اتمسح الـ PIN واتلغى القفل'); }).catch(function () {});
+}
+function bioCheck() {
+  if (NATIVE && window.Android.bioAuth) { bioAvail = true; return; }
+  if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable && window.isSecureContext)
+    PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(function (v) { bioAvail = !!v; if (S) renderLockSet(); }).catch(function () {});
+}
+function nativeBio() { return new Promise(function (ok, bad) { bioWait = { ok: ok, bad: bad }; window.Android.bioAuth('افتح حساباتي'); }); }
+window.onNativeBio = function (r) { var w = bioWait; bioWait = null; if (!w) return; if (r === 'ok') w.ok(); else w.bad(new Error(r || 'fail')); };
+function setBio(on) {
+  if (!on) { lockData.bio = ''; saveLock(); return renderLockSet(); }
+  var p = NATIVE && window.Android.bioAuth ? nativeBio().then(function () { return 'native'; }) :
+    navigator.credentials.create({ publicKey: {
+      challenge: crypto.getRandomValues(new Uint8Array(32)), rp: { name: 'حساباتي' },
+      user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'hesabaty', displayName: 'حساباتي' },
+      pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+      authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' }, timeout: 60000
+    } }).then(function (c) { return b64e(c.rawId); });
+  p.then(function (id) { lockData.bio = id; return saveLock(); }).then(function () { renderLockSet(); toast('👆 البصمة اتفعّلت'); })
+    .catch(function () { renderLockSet(); toast('ماتفعّلتش البصمة'); });
+}
+function bioUnlock() {
+  var c = lockCtx; if (!c || !lockData || !lockData.bio) return;
+  var p = lockData.bio === 'native' ? (window.Android && window.Android.bioAuth ? nativeBio() : Promise.reject(new Error('x'))) :
+    navigator.credentials.get({ publicKey: { challenge: crypto.getRandomValues(new Uint8Array(32)), allowCredentials: [{ type: 'public-key', id: b64d(lockData.bio) }], userVerification: 'required', timeout: 60000 } });
+  p.then(function () { if (lockCtx !== c) return; pinFails = 0; lockEnd(); c.ok(); }).catch(function () {});
+}
+function forgotPin() {
+  var em = S && S.backup.email;
+  if (!em || !GOOGLE_CLIENT_ID) { $('lkErr').textContent = 'محتاج يكون التطبيق مربوط بجوجل عشان ترجّع الـ PIN. لو مش مربوط، مافيش غير مسح بيانات التطبيق.'; return; }
+  if (!confirm('هتدخل بحساب جوجل (' + em + ') عشان نتأكد إنه إنت، وبعدها الـ PIN هيتمسح وتعمل واحد جديد. نكمّل؟')) return;
+  verifyGoogle().then(function (email) {
+    if (String(email).toLowerCase() !== em.toLowerCase()) throw new Error('ده مش نفس الحساب المربوط');
+    var c = lockCtx; lockData = null; saveLock(); S.book.cfg.lock = false; bookOpenOK = false;
+    lockEnd(); if (c) c.ok();
+    commit('✓ اتمسح الـ PIN<small>اعمل واحد جديد من الإعدادات ← قفل التطبيق</small>');
+  }).catch(function (e) { $('lkErr').textContent = e.message; });
+}
+function verifyGoogle() {
+  if (NATIVE) {
+    if (!AUTH_URL) return Promise.reject(new Error('ماينفعش من هنا'));
+    return new Promise(function (ok, bad) { recoverWait = { ok: ok, bad: bad }; window.Android.openAuth(AUTH_URL.replace(/\/$/, '') + '/start?state=r' + Math.random().toString(36).slice(2)); });
+  }
+  return gisLoad().then(function () {
+    return new Promise(function (ok, bad) {
+      var tc = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID, scope: 'openid email',
+        callback: function (r) {
+          if (r.error || !r.access_token) return bad(new Error('ماتمّتش الموافقة'));
+          fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + r.access_token } })
+            .then(function (x) { return x.json(); }).then(function (j) { ok(j.email || ''); }).catch(function () { bad(new Error('ماقدرتش أتأكد من الحساب')); });
+        },
+        error_callback: function () { bad(new Error('اتقفلت شاشة جوجل')); }
+      });
+      tc.requestAccessToken({ prompt: 'select_account' });
+    });
+  });
+}
 
 // ---------- التحديث ----------
 function updateApp() {
@@ -1870,7 +2406,7 @@ function openSheet(id) {
 }
 function closeSheets() {
   if ($('pwSheet').classList.contains('on') && pwDone) { pwDone(true); }
-  noteEditing = null; $('scrim').classList.remove('on'); ['sheet', 'rSheet', 'pSheet', 'xSheet', 'eSheet', 'nSheet', 'tSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
+  noteEditing = null; $('scrim').classList.remove('on'); ['sheet', 'rSheet', 'pSheet', 'xSheet', 'nSheet', 'tSheet', 'wSheet', 'dSheet', 'dfSheet', 'paySheet', 'bsSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
 function saveEdit() {
   var t = editing; if (!t) return;
   var a = num($('eAmount'));
@@ -1889,7 +2425,7 @@ function deleteTx() {
   closeSheets();
   commit('اتمسحت', function () { S.tx.push(copy); commit('رجعت ✓'); });
 }
-document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if ($('reader').classList.contains('on')) closeReader(); else if ($('viewer').classList.contains('on')) closeViewer(); else closeSheets(); } });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (!$('lockScr').hidden) lockCancel(); else if ($('reader').classList.contains('on')) closeReader(); else if ($('viewer').classList.contains('on')) closeViewer(); else closeSheets(); } });
 
 // ---------- فلتر الصور ----------
 function togglePhotoFilter() {
@@ -2054,7 +2590,7 @@ function setBalance(name) {
 function promptWallet() {
   var n = prompt('اسم المحفظة الجديدة؟ (مثلاً: بنك، فودافون كاش، الخزنة)');
   if (n === null) return;
-  $('newWallet').value = n; addWallet();
+  addWallet(n);
 }
 function renameWallet(old) {
   var n = prompt('الاسم الجديد لـ «' + old + '»؟', old);
@@ -2067,6 +2603,7 @@ function renameWallet(old) {
   S.debts.forEach(function (x) { if (x.wallet === old) x.wallet = n; });
   S.transfers.forEach(function (x) { if (x.from === old) x.from = n; if (x.to === old) x.to = n; });
   S.reminders.forEach(function (x) { if (x.wallet === old) x.wallet = n; });
+  if (S.book.cfg.payWallet === old) S.book.cfg.payWallet = n;
   if (S.settings.defaultWallet === old) S.settings.defaultWallet = n;
   if (pickedWallet === old) pickedWallet = n;
   commit('اتغيّر الاسم لـ «' + esc(n) + '» ✓');
@@ -2093,10 +2630,10 @@ function removeWallet(name) {
   if (!wallet(pickedWallet)) pickedWallet = S.settings.defaultWallet;
   commit('اتمسحت المحفظة');
 }
-function addWallet() {
-  var n = $('newWallet').value.trim(); if (!n) return toast('اكتب اسم المحفظة');
+function addWallet(n) {
+  n = String(n || '').trim(); if (!n) return toast('اكتب اسم المحفظة');
   if (wallet(n)) return toast('المحفظة دي موجودة');
-  S.wallets.push({ name: n, opening: 0, cur: 'ج' }); $('newWallet').value = '';
+  S.wallets.push({ name: n, opening: 0, cur: 'ج' });
   commit('اتضافت محفظة «' + esc(n) + '»');
 }
 function doTransfer() {
@@ -2212,6 +2749,15 @@ function notifyDues() {
     if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.ready.then(function (reg) { reg.showNotification('⏰ ' + r.title, { body: body, icon: 'icon-192.png', tag: 'r' + r.id }); });
     else new Notification('⏰ ' + r.title, { body: body });
   });
+  if (S.book.cfg.remind) S.book.debts.forEach(function (d) {
+    var i = instInfo(d);
+    if (!i || !(i.due || i.daysTo === 1) || d.lastNotified === today) return;
+    d.lastNotified = today; any = true;
+    var title = bookLocked() ? '📒 قسط ' + (i.due ? 'مستحق' : 'بكرة') + ' في دفتر الديون' : '📒 قسط ' + d.title + (i.due ? '' : ' بكرة');
+    var body = bookLocked() ? 'افتح الدفتر عشان تشوفه' : fmtC(Math.min(d.inst, dRemain(d)), d.cur) + (d.cur === '$' ? '' : ' ج');
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.ready.then(function (reg) { reg.showNotification(title, { body: body, icon: 'icon-192.png', tag: 'd' + d.id }); });
+    else new Notification(title, { body: body });
+  });
   if (any) save();
 }
 
@@ -2234,11 +2780,13 @@ function saveDataUrl(name, dataUrl) {
 }
 /** رجوع: الأول نقفل اللي مفتوح، وبعدين نرجع لصفحة التسجيل، وبعدين نخرج */
 window.onNativeBack = function () {
+  if (!$('lockScr').hidden) { if (lockCtx && lockCtx.o.cancel) { lockCancel(); return true; } return false; }
   if ($('reader').classList.contains('on')) { closeReader(); return true; }
   if ($('viewer').classList.contains('on')) { closeViewer(); return true; }
   if ($('pwSheet').classList.contains('on')) { pwDone && pwDone(true); return true; }
   if (document.querySelector('.sheet.on')) { closeSheets(); return true; }
   if ($('v-add').classList.contains('typing')) { closeTyping(); return true; }
+  if ($('v-ext').classList.contains('on')) { go('v-money'); return true; }
   if (!$('v-add').classList.contains('on')) { go('v-add'); return true; }
   return false;
 };
@@ -2247,6 +2795,12 @@ var nativeWait = null;
 window.onNativeLink = function (raw) {
   var j = {}; try { j = JSON.parse(raw || '{}'); } catch (e) {}
   if (!j.device_key && !j.error) return;
+  if (recoverWait) {
+    var rw = recoverWait; recoverWait = null;
+    if (j.error || !j.device_key) return rw.bad(new Error('ماتمّش الدخول'));
+    if (String(j.email || '').toLowerCase() === String(S.backup.email || '').toLowerCase()) { S.backup.deviceKey = j.device_key; gToken = null; gTokenExp = 0; save(); return rw.ok(j.email); }
+    return rw.bad(new Error('ده مش نفس الحساب المربوط'));
+  }
   var w = nativeWait; nativeWait = null;
   if (j.error || !j.device_key) {
     var msg = j.error === 'no_refresh_token' ? 'جوجل ماادتش إذن دايم. ادخل myaccount.google.com/permissions وشيل «حساباتي»، وبعدين اربط تاني.' : 'ماتمّش الربط (' + (j.error || '؟') + ')';
@@ -2286,6 +2840,7 @@ function applyBackup(text) {
   if (!j || j.app !== 'hesabaty' || !j.state) throw new Error('الملف ده مش نسخة من حساباتي');
   var keep = S.backup;
   S = j.state; S.backup = Object.assign({}, S.backup || {}, { folderId: keep.folderId, fileId: keep.fileId, deviceKey: keep.deviceKey, email: keep.email, linked: keep.linked, last: keep.last, lastDaily: keep.lastDaily });
+  migrate();
   return dbClear('photos').then(function () {
     return Object.keys(j.photos || {}).reduce(function (p, k) { return p.then(function () { return dbPut('photos', k, j.photos[k]); }); }, Promise.resolve());
   }).then(save).then(render);
@@ -2305,8 +2860,10 @@ function exportCsv() {
   S.tx.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }).forEach(function (t) { rows.push([t.date, t.type, t.amount, t.usd || '', t.rate || '', t.item, t.wallet, t.note || '']); });
   rows.push([]); rows.push(['السلف']); rows.push(['التاريخ', 'الشخص', 'الحركة', 'المبلغ', 'العملة', 'المحفظة', 'ملاحظة']);
   S.debts.forEach(function (d) { rows.push([d.date, d.person, d.kind, d.amount, d.cur === '$' ? 'دولار' : 'جنيه', d.wallet, d.note || '']); });
-  rows.push([]); rows.push(['مديونات خارجية']); rows.push(['التاريخ', 'الشخص', 'الحركة', 'المبلغ', 'العملة', 'ملاحظة']);
-  (S.ext || []).forEach(function (x) { rows.push([x.date, x.person, x.kind, x.amount, x.cur === '$' ? 'دولار' : 'جنيه', x.note || '']); });
+  rows.push([]); rows.push(['دفتر الديون']); rows.push(['الدين', 'النوع', 'العملة', 'الأصل', 'اتسدّد', 'فاضل', 'القسط', 'يوم القسط', 'بدأ', 'ملاحظة']);
+  S.book.debts.forEach(function (d) { rows.push([d.title, d.dir === 'on' ? 'عليّا' : 'ليّا', d.cur === '$' ? 'دولار' : 'جنيه', d.total, dPaid(d), dRemain(d), d.inst || '', d.day || '', d.start || '', d.note || '']); });
+  rows.push([]); rows.push(['دفعات الديون']); rows.push(['التاريخ', 'الدين', 'المبلغ', 'ملاحظة']);
+  S.book.debts.forEach(function (d) { d.payments.forEach(function (p) { rows.push([p.date, d.title, p.amount, p.note || '']); }); });
   var csv = '\ufeff' + rows.map(function (r) { return r.map(function (c) { c = String(c); return /[",\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(','); }).join('\r\n');
   saveText('hesabaty-' + todayKey() + '.csv', 'text/csv', csv);
   if (!NATIVE) toast('اتنزل الملف ✓ افتحه بإكسيل أو جوجل شيت');
@@ -2503,6 +3060,7 @@ function renderBackupState() {
     : auto ? '✓ مربوط بـ <b>' + esc(b.email || 'حسابك') + '</b>. أي تعديل بيتاخدله نسخة لوحده. ' + lastTxt
     : !b.linked ? 'اربط Google Drive مرة واحدة، والتطبيق ياخد نسخة لوحده بعد كل تعديل. ولو غيّرت الموبايل، اربط نفس الإيميل وترجع كل حاجة.'
     : lastTxt + (linkedNow ? ' النسخ بتتاخد لوحدها دلوقتي ✓' : ' جوجل بيطلب دوسة كل فترة عشان يجدد الإذن.');
+  $('gBackupSub').textContent = auto ? '✓ مربوط · ' + (last ? 'آخر نسخة ' + dShort(last.toISOString().slice(0, 10)) : 'لسه مااتاخدتش نسخة') : b.linked ? 'مربوط، محتاج دوسة' : 'مش مربوط';
   var upgrade = AUTH_URL && b.linked && !b.deviceKey;
   $('driveBtn').textContent = upgrade ? 'فعّل النسخ التلقائي (مرة واحدة)' : (auto || b.linked) ? 'خد نسخة دلوقتي' : 'اربط Google Drive';
   $('driveBtn').onclick = upgrade ? function () { link().then(function () { return driveBackup(true); }).catch(function (e) { toast(esc(e.message)); }); }
@@ -2530,14 +3088,9 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
 }
 
 // ---------- البداية ----------
-applyTheme();
-dbOpen().then(function () { return dbGet('kv', 'state'); }).then(function (st) {
-  S = st || freshState();
-  var fresh = freshState();
-  Object.keys(fresh).forEach(function (k) { if (S[k] === undefined) S[k] = fresh[k]; });
-  if (!wallet(S.settings.defaultWallet)) S.settings.defaultWallet = S.wallets[0].name;
-  S.notes = S.notes || []; if (S.noteKey === undefined) S.noteKey = null;
-  purgeTrash();
+/** ترقية البيانات القديمة لشكل النسخة الحالية */
+function migrate() {
+  S.ext = S.ext || []; S.debts = S.debts || [];
   // سلف الدولار القديمة ← المديونات الخارجية
   var KMAP = { 'استلفت': 'عليّا', 'رجّعتله': 'سدّدت', 'سلّفت': 'ليّا', 'رجّعلي': 'اتسدّدلي' };
   var moved = S.debts.filter(function (d) { return d.cur === '$'; });
@@ -2545,9 +3098,27 @@ dbOpen().then(function () { return dbGet('kv', 'state'); }).then(function (st) {
     moved.forEach(function (d) { S.ext.push({ id: d.id, date: d.date, person: d.person, kind: KMAP[d.kind], amount: d.amount, cur: '$', note: d.note || '' }); });
     S.debts = S.debts.filter(function (d) { return d.cur !== '$'; });
   }
+  S.nextId = S.nextId || 1;
+  migrateBook();
+  var fresh = freshState();
+  Object.keys(fresh).forEach(function (k) { if (S[k] === undefined) S[k] = fresh[k]; });
+  var cfg = bookCfg(); Object.keys(cfg).forEach(function (k) { if (S.book.cfg[k] === undefined) S.book.cfg[k] = cfg[k]; });
+  if (S.settings.useUsd === undefined) S.settings.useUsd = S.wallets.some(function (w) { return w.cur === '$'; }) || S.tx.some(function (t) { return t.usd; });
+  if (!wallet(S.settings.defaultWallet)) S.settings.defaultWallet = S.wallets[0].name;
+  S.notes = S.notes || []; if (S.noteKey === undefined) S.noteKey = null;
+  purgeTrash();
+}
+applyTheme();
+dbOpen().then(loadLock).then(function () {
+  if (lockData && lockData.app) appLock();
+  return dbGet('kv', 'state');
+}).then(function (st) {
+  S = st || freshState();
+  migrate();
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   return save();
 }).then(function () {
+  bioCheck();
   render(); notifyDues(); checkPendingNativeLink();
   if (!S.rate.autoAt || S.rate.autoAt !== todayKey()) fetchRate(false);
 }).catch(function (e) {
