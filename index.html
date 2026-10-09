@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>حساباتي</title>
 <meta name="description" content="حساباتك الشخصية: الدخل والصرف والسلف والمحافظ، على موبايلك.">
+<meta name="author" content="Yousef Eraqy">
 <meta name="theme-color" content="#1e6b57">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
@@ -452,6 +453,86 @@
   .lockscr .lkforgot { border: 0; background: none; color: var(--muted); font-size: 13px; text-decoration: underline; margin-top: 6px; }
   .lockscr.shake .dots { animation: shake .4s; }
   @keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+  /* v1.13 */
+  [dir=ltr] .seg .pill { transform: translateX(calc(var(--i) * 100%)); }
+  [dir=ltr] nav.tabs .mark { transform: translateX(calc(var(--i, 0) * 100%)); }
+  [dir=ltr] .sw input:checked + span::after { transform: translateX(18px); }
+  [dir=ltr] .monthnav .icon-btn, [dir=ltr] .pagehead > .icon-btn:first-child, [dir=ltr] .bookbtn .chev, [dir=ltr] details.grp > summary::after { transform: scaleX(-1); }
+  [dir=ltr] details.grp[open] > summary::after { transform: rotate(-90deg); }
+  .about { text-align: center; margin: 22px 0 0; padding: 18px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
+  .about .logo { width: 46px; height: 46px; margin: 0 auto 6px; border-radius: 14px; background: var(--note); color: var(--note-ink); display: grid; place-items: center; font-size: 22px; font-weight: 600; }
+  .about b.n { display: block; font-size: 17px; }
+  .about .v { color: var(--muted); font-size: 12px; }
+  .about .by { margin: 10px 0 0; font-size: 14px; }
+  .about .by b { color: var(--focus); }
+  .about .hint { margin: 8px 0 0; }
+  .lockscr .credit { position: absolute; bottom: calc(14px + env(safe-area-inset-bottom)); inset-inline: 0; text-align: center; font-size: 11px; color: var(--faint); }
+  .chg { display: inline-block; font-size: 11px; font-weight: 600; border-radius: 8px; padding: 0 6px; line-height: 1.6; white-space: nowrap; direction: ltr; unicode-bidi: isolate; }
+  .chg.bad { color: var(--out); background: color-mix(in srgb, var(--out) 12%, transparent); }
+  .chg.good { color: var(--in); background: color-mix(in srgb, var(--in) 13%, transparent); }
+  .chg.same, .chg.new { color: var(--muted); font-weight: 400; background: transparent; }
+  .row4 .chg { margin-top: 2px; }
+  .cmpnote { text-align: center; font-size: 11px; color: var(--muted); margin: 6px 0 0; }
+  .irow .rowbtn .chg { flex: none; }
+  .fc .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .fc .top b { font-size: 14px; }
+  .fc .top span, .fc .sub { font-size: 12px; color: var(--muted); }
+  .fc p { margin: 6px 0 0; font-size: 13px; }
+  .fc p b { direction: ltr; unicode-bidi: isolate; }
+  .fc .track { position: relative; height: 10px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); margin-top: 8px; overflow: hidden; }
+  .fc .track i { position: absolute; inset-block: 0; inset-inline-start: 0; background: var(--out); border-radius: 8px; }
+  .fc .track em { position: absolute; inset-block: 0; width: 2px; background: var(--ink); }
+  .fc .sub { display: flex; justify-content: space-between; margin-top: 4px; }
+  .fc .warn { margin-top: 8px; font-size: 12px; border: 1px solid var(--gold); background: color-mix(in srgb, var(--gold) 12%, transparent); border-radius: 10px; padding: 6px 8px; }
+  .fc .ok { margin-top: 8px; font-size: 12px; border: 1px solid var(--in); background: color-mix(in srgb, var(--in) 10%, transparent); border-radius: 10px; padding: 6px 8px; }
+  .opsbtns { display: flex; gap: 8px; margin-top: 10px; }
+  .opsbtns .ghost { flex: 1; font-size: 13px; padding: 9px 6px; }
+  .savebar { all: unset; box-sizing: border-box; cursor: pointer; display: block; width: 100%; margin-top: 8px; background: var(--surface); border: 1px solid var(--focus); border-radius: 12px; padding: 7px 12px; font-size: 13px; animation: rise .35s var(--ease) both; }
+  .savebar .l { display: flex; align-items: baseline; gap: 6px; }
+  .savebar .l b { font-size: 17px; color: var(--focus); direction: ltr; unicode-bidi: isolate; }
+  .savebar .l .g { flex: 1; }
+  .savebar .l small { color: var(--muted); font-size: 12px; }
+  .savebar .l small b { font-size: 12px; color: var(--ink); }
+  .savebar .l small b.out { color: var(--out); }
+  .savebar .t { height: 6px; border-radius: 6px; background: var(--surface-2); margin-top: 6px; overflow: hidden; }
+  .savebar .t i { display: block; height: 100%; background: var(--focus); border-radius: 6px; transition: width .6s var(--ease); }
+  .savebar.over { border-color: var(--out); } .savebar.over .t i { background: var(--out); }
+  body.solo .savebar, body.solo #autoBar { display: none; }
+  .svcalc { background: var(--surface-2); border-radius: 14px; padding: 8px 12px; margin-top: 12px; font-size: 13px; line-height: 1.9; }
+  .svcalc div { display: flex; justify-content: space-between; gap: 8px; }
+  .svcalc span { color: var(--muted); }
+  .svcalc b { direction: ltr; unicode-bidi: isolate; font-weight: 600; }
+  .svcalc .tot { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 4px; }
+  .svcalc .tot span { color: var(--ink); }
+  .svcalc .per { color: var(--focus); font-weight: 600; } .svcalc .per span { color: var(--focus); } .svcalc .per b { font-size: 16px; }
+  .rcp { text-align: center; }
+  .rcp .ico { font-size: 30px; line-height: 1.2; }
+  .rcp b.t { font-size: 18px; display: block; }
+  .rcpgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center; background: var(--surface-2); border-radius: 14px; padding: 10px 4px; margin-top: 12px; }
+  .rcpgrid small { display: block; color: var(--muted); font-size: 11px; }
+  .rcpgrid b { font-size: 17px; direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .rcptip { font-size: 12px; margin-top: 10px; border-radius: 10px; padding: 8px 10px; background: color-mix(in srgb, var(--in) 11%, transparent); }
+  #pdfStage { position: fixed; top: 0; left: -10000px; width: 794px; z-index: -1; }
+  .pdfpage { width: 794px; height: 1123px; box-sizing: border-box; padding: 48px 46px 40px; background: #fff; color: #13302a; font-family: 'Readex Pro', Tahoma, sans-serif; font-size: 13px; position: relative; display: flex; flex-direction: column; }
+  .pdfpage .ph { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1e6b57; padding-bottom: 10px; }
+  .pdfpage .ph b { font-size: 26px; color: #1e6b57; }
+  .pdfpage .ph span { color: #5f7670; font-size: 15px; }
+  .pdfpage .boxes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
+  .pdfpage .boxes div { border: 1px solid #dbe3df; border-radius: 10px; padding: 10px; text-align: center; }
+  .pdfpage .boxes small { display: block; color: #5f7670; font-size: 12px; }
+  .pdfpage .boxes b { font-size: 22px; }
+  .pdfpage h4 { margin: 14px 0 8px; font-size: 15px; }
+  .pdfpage .bars div.r { display: flex; align-items: center; gap: 8px; margin: 5px 0; }
+  .pdfpage .bars .n { width: 170px; flex: none; }
+  .pdfpage .bars .b { flex: 1; height: 12px; background: #eef2ef; border-radius: 6px; overflow: hidden; }
+  .pdfpage .bars .b i { display: block; height: 100%; background: #b4234a; border-radius: 6px; }
+  .pdfpage .bars .v { width: 90px; text-align: end; font-weight: 600; }
+  .pdfpage table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .pdfpage th { background: #f4f7f5; text-align: start; padding: 6px; font-weight: 600; }
+  .pdfpage td { padding: 6px; border-top: 1px solid #eef2ef; }
+  .pdfpage td.a { text-align: end; font-weight: 600; white-space: nowrap; direction: ltr; }
+  .pdfpage .in { color: #1e7a4f; } .pdfpage .out { color: #b4234a; } .pdfpage .debt { color: #3c6fb4; }
+  .pdfpage .pf { margin-top: auto; padding-top: 10px; border-top: 1px solid #dbe3df; display: flex; justify-content: space-between; color: #5f7670; font-size: 11px; }
   /* v1.12 */
   .ic .emo { font-size: 18px; line-height: 1; font-weight: 400; }
   .vhead .ic { border: 0; cursor: pointer; }
@@ -507,6 +588,7 @@
   .kv span { color: var(--muted); flex: none; } .kv b { font-weight: 500; text-align: end; word-break: break-word; }
   .nudge { display: flex; align-items: center; gap: 8px; margin-top: 8px; background: var(--surface); border: 1px solid var(--focus); border-radius: 12px; padding: 6px 10px; font-size: 13px; animation: rise .35s var(--ease) both; }
   .nudge .t { flex: 1; min-width: 0; }
+  .nudge .t b { direction: ltr; unicode-bidi: isolate; }
   .nudge button { border: 0; border-radius: 10px; padding: 6px 10px; font-size: 12px; }
   .nudge .go { background: var(--ink); color: var(--bg); } .nudge .x { background: transparent; color: var(--muted); }
   body.solo #nudgeBar { display: none; }
@@ -540,6 +622,8 @@
   </section>
   <div class="dues" id="dues"></div>
   <div class="nudge" id="nudgeBar" hidden></div>
+  <div class="nudge" id="autoBar" hidden></div>
+  <button class="savebar" id="saveBar" type="button" onclick="openSave()" hidden></button>
 
   <!-- تسجيل -->
   <main class="view on" id="v-add">
@@ -603,6 +687,8 @@
       <button class="icon-btn" onclick="shiftMonth(1)" aria-label="الشهر الجاي">‹</button>
     </div>
     <div class="panel" id="monthSum" style="margin-top:12px"></div>
+    <div class="panel fc" id="forecast" style="margin-top:10px" hidden></div>
+    <div class="opsbtns"><button class="ghost" type="button" onclick="openRecap(viewYM)">📅 ملخص الشهر</button><button class="ghost" type="button" onclick="makePdf(viewYM)">📄 تقرير PDF</button></div>
     <div class="panel" id="donutBox" style="margin-top:10px"></div>
     <div class="seg small" id="opsViewSeg" style="--n:2;--i:0;margin-top:12px" role="group" aria-label="طريقة العرض">
       <span class="pill" aria-hidden="true"></span>
@@ -665,6 +751,7 @@
     </section>
 
     <section class="mpane" id="mp-b" hidden>
+      <button class="bookbtn" type="button" onclick="openSave()" style="margin-bottom:10px"><span class="bi" aria-hidden="true">🎯</span><span class="what"><b>هدف التوفير</b><small id="svSub">حدد مبلغ تحوّشه، ونقولك تصرف قد إيه في اليوم</small></span><span class="chev" aria-hidden="true">‹</span></button>
       <div class="panel">
         <ul class="list" id="budgets"></ul>
         <div class="two" style="margin-top:12px">
@@ -799,8 +886,16 @@
       </div>
     </div></details>
 
-    <details class="grp" id="gLook"><summary><span class="gi" aria-hidden="true">🎨</span><span class="what"><b>الشكل</b><small id="gLookSub"></small></span></summary><div class="gbody">
-      <div class="seg small" id="themeSeg" style="--n:4;--i:0;margin-top:12px" role="group" aria-label="الشكل">
+    <details class="grp" id="gLook"><summary><span class="gi" aria-hidden="true">🎨</span><span class="what"><b>الشكل واللغة</b><small id="gLookSub"></small></span></summary><div class="gbody">
+      <label class="f">اللغة</label>
+      <div class="seg small" id="langSeg" style="--n:3;--i:0" role="group" aria-label="اللغة" data-notr="1">
+        <span class="pill" aria-hidden="true"></span>
+        <button aria-pressed="true" data-v="eg">مصري</button>
+        <button aria-pressed="false" data-v="fus">العربية الفصحى</button>
+        <button aria-pressed="false" data-v="en">English</button>
+      </div>
+      <label class="f">الشكل</label>
+      <div class="seg small" id="themeSeg" style="--n:4;--i:0" role="group" aria-label="الشكل">
         <span class="pill" aria-hidden="true"></span>
         <button aria-pressed="true" data-v="auto">زي الموبايل</button>
         <button aria-pressed="false" data-v="light">نهاري</button>
@@ -826,7 +921,13 @@
       <button class="ghost" style="width:100%;margin-top:8px" id="updBtn" onclick="updateApp()">حدّث التطبيق دلوقتي</button>
     </div></details>
 
-    <p class="hint" style="text-align:center;margin:20px 0 0">بياناتك على الموبايل ده بس، ومحدش يقدر يشوفها غيرك.<br><span id="ver"></span></p>
+    <div class="about">
+      <div class="logo" aria-hidden="true">ح</div>
+      <b class="n">حساباتي</b>
+      <span class="v" id="ver"></span>
+      <p class="by">تم إعداد وتصميم التطبيق بواسطة <b class="ud" dir="ltr">Yousef Eraqy</b></p>
+      <p class="hint">بياناتك على الموبايل ده بس، ومحدش يقدر يشوفها غيرك.</p>
+    </div>
   </main>
 </div>
 
@@ -864,6 +965,41 @@
 </div>
 
 <div class="scrim" id="scrim" onclick="closeSheets()"></div>
+
+<div class="sheet" id="svSheet" role="dialog" aria-modal="true" aria-labelledby="svTitle">
+  <div class="grab"></div>
+  <div class="shead"><h3 id="svTitle">🎯 هدف التوفير</h3><label class="sw"><input type="checkbox" id="svOn" onchange="svCalc()" aria-label="تشغيل هدف التوفير"><span></span></label></div>
+  <label class="f" for="svAmount">عاوز يفضل معاك آخر الشهر</label>
+  <div class="amount" style="margin:4px 0"><input id="svAmount" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="مبلغ التوفير" oninput="cleanAmount(this); svCalc()"><span>ج.م</span></div>
+  <div class="amount-line"></div>
+  <label class="f">بنحسب من</label>
+  <div class="seg small" id="svBase" style="--n:2;--i:0" role="group" aria-label="بنحسب من">
+    <span class="pill" aria-hidden="true"></span>
+    <button aria-pressed="true" data-v="income">دخل الشهر ده</button>
+    <button aria-pressed="false" data-v="all">كل فلوسك دلوقتي</button>
+  </div>
+  <div class="svcalc" id="svCalc"></div>
+  <div class="setrow"><div class="what">🔔 نبّهني لو عدّيت مصروف اليوم<small>ولو وفّرت يوم، الفرق بيتوزع على باقي الأيام</small></div><label class="sw"><input type="checkbox" id="svAlert" aria-label="نبّهني لو عدّيت مصروف اليوم"><span></span></label></div>
+  <div class="acts"><button class="ghost" type="button" onclick="closeSheets()">إلغاء</button><button class="primary" type="button" onclick="saveSave()">احفظ</button></div>
+</div>
+
+<div class="sheet" id="rcSheet" role="dialog" aria-modal="true" aria-labelledby="rcTitle">
+  <div class="grab"></div>
+  <div class="rcp"><div class="ico" aria-hidden="true">📅</div><b class="t" id="rcTitle"></b><div class="hint" id="rcSub"></div></div>
+  <div class="rcpgrid" id="rcGrid"></div>
+  <h3 style="font-size:14px;margin:14px 0 4px" id="rcTopT">أكتر حاجات صرفت عليها</h3>
+  <ul class="list" id="rcTop"></ul>
+  <div class="rcptip" id="rcTip" hidden></div>
+  <div class="acts"><button class="ghost" type="button" id="rcPdf">📄 نزّل PDF</button><button class="primary" type="button" onclick="closeSheets()">تمام</button></div>
+</div>
+
+<div class="sheet" id="pdfSheet" role="dialog" aria-modal="true" aria-labelledby="pdfTitle">
+  <div class="grab"></div>
+  <h3 id="pdfTitle">📄 التقرير</h3>
+  <p class="hint" id="pdfMsg"></p>
+  <div class="acts"><button class="ghost" type="button" id="pdfShare">📤 ابعته</button><button class="primary" type="button" id="pdfSave">⬇ احفظه</button></div>
+</div>
+<div id="pdfStage" aria-hidden="true"></div>
 
 <div class="sheet" id="icSheet" role="dialog" aria-modal="true" aria-labelledby="icTitle">
   <div class="grab"></div>
@@ -987,6 +1123,12 @@
   <h3 id="rTitle">تذكير جديد</h3>
   <label class="f" for="rName">اسمه</label>
   <input class="field" id="rName" placeholder="مثلاً قسط العربية" autocomplete="off">
+  <label class="f">النوع</label>
+  <div class="seg small" id="rTypeSeg" style="--n:2;--i:0" role="group" aria-label="النوع">
+    <span class="pill" aria-hidden="true"></span>
+    <button class="out" aria-pressed="true" data-v="صرف">صرف</button>
+    <button class="in" aria-pressed="false" data-v="دخل">دخل</button>
+  </div>
   <label class="f">بيتكرر</label>
   <div class="seg small" id="repSeg" style="--n:3;--i:0" role="group" aria-label="التكرار">
     <span class="pill" aria-hidden="true"></span>
@@ -1005,6 +1147,10 @@
   <div class="two">
     <div><label class="f" for="rItem">يتسجل تحت بند</label><input class="field" id="rItem" placeholder="لو فاضي باسم التذكير" autocomplete="off"></div>
     <div><label class="f" for="rWallet">من محفظة</label><select class="field" id="rWallet"></select></div>
+  </div>
+  <div class="setrow" style="margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:10px 12px">
+    <div class="what">🔁 سجّلها لوحدها في ميعادها<small>من غير ما تدوس «اتدفع». لو مقفولة: بيظهرلك تذكير بس</small></div>
+    <label class="sw"><input type="checkbox" id="rAuto" aria-label="سجّلها لوحدها في ميعادها"><span></span></label>
   </div>
   <div class="err" id="rErr"></div>
   <div class="acts">
@@ -1106,6 +1252,7 @@
   <p class="err" id="lkErr" role="alert"></p>
   <div class="keypad" id="lkPad"></div>
   <button class="lkforgot" id="lkForgot" type="button" onclick="forgotPin()">نسيت الـ PIN؟</button>
+  <div class="credit">تصميم <span class="ud" dir="ltr">Yousef Eraqy</span></div>
 </div>
 
 <script>
@@ -1120,7 +1267,7 @@ var GOOGLE_CLIENT_ID = '247280462624-08ukk2snqmf3f7j34csme9noafosapgi.apps.googl
 var AUTH_URL = 'https://hesabaty-auth.onyxgp80.workers.dev';
 // =======================================================================================
 
-var APP_VERSION = '1.12.0';
+var APP_VERSION = '1.13.0';
 var KINDS = ['سلّفت', 'استلفت', 'رجّعلي', 'رجّعتله'];
 var PALETTE = ['#1e6b57', '#b4234a', '#c9a227', '#3c6fb4', '#7a4bb0', '#2a9d8f', '#c76b2b', '#6b7f7a'];
 var WEEK = [['الاتنين', 1], ['التلات', 2], ['الأربع', 3], ['الخميس', 4], ['الجمعة', 5], ['السبت', 6], ['الحد', 7]];
@@ -1158,6 +1305,7 @@ function dbClear(store) {
 }
 
 // ---------- الحالة ----------
+function saveGoalCfg() { return { on: false, amount: 0, base: 'income', alert: true }; }
 function nudgeCfg() { return { on: false, every: 4, from: 10, to: 23, daily: false }; }
 function bookCfg() { return { askExpense: false, remind: true, lock: false, payWallet: '' }; }
 function freshState() {
@@ -1178,7 +1326,7 @@ function nid() { return S.nextId++; }
 function save() { return dbPut('kv', 'state', S); }
 var undoStack = null;
 function commit(msg, undo) {
-  S.backup.dirtyAt = new Date().toISOString();
+  S.backup.dirtyAt = new Date().toISOString(); trUser = null;
   return save().then(function () { render(); if (msg) toast(msg, undo); scheduleBackup(); nativeSchedule(); });
 }
 
@@ -1349,7 +1497,7 @@ function applyTheme() {
   $('themeBtn').innerHTML = dark ? SUN : MOON;
   var m = document.querySelector('meta[name=theme-color]'); if (m) m.content = dark ? (night === 'black' ? '#000000' : '#0b1615') : '#1e6b57';
   setSeg('themeSeg', themePref);
-  if ($('gLookSub')) $('gLookSub').textContent = ({ auto: 'زي الموبايل', light: 'نهاري', dark: 'ليلي أخضر', black: 'ليلي أسود' }[themePref] || '') + (themePref === 'auto' ? ' · الليلي ' + (nightStyle === 'black' ? 'أسود' : 'أخضر') : '');
+  if ($('gLookSub')) $('gLookSub').textContent = ({ eg: 'مصري', fus: 'فصحى', en: 'English' }[LANG] || '') + ' · ' + ({ auto: 'زي الموبايل', light: 'نهاري', dark: 'ليلي أخضر', black: 'ليلي أسود' }[themePref] || '') + (themePref === 'auto' ? ' · الليلي ' + (nightStyle === 'black' ? 'أسود' : 'أخضر') : '');
 }
 var nightStyle = 'dark';
 function setThemePref(p) {
@@ -1432,7 +1580,7 @@ function render() {
   var hot = Object.keys(S.budgets).map(function (n) { return { name: n, b: S.budgets[n], s: spentOn(n, st) }; }).filter(function (x) { return x.s >= .8 * x.b; });
   $('noteAlert').hidden = !hot.length;
   $('noteAlert').textContent = hot.map(function (x) { return (x.s > x.b ? 'عدّيت ميزانية ' : 'قرّبت تخلّص ميزانية ') + x.name; }).join('، ');
-  renderTiles(); renderDues(); checkNudge(); renderForm(); renderMoney(); renderSettings(); renderBackupState(); renderBook(); renderNotes();
+  renderTiles(); renderDues(); checkNudge(); renderSaveBar(); renderForm(); renderMoney(); renderSettings(); renderBackupState(); renderBook(); renderNotes();
   if ($('v-list').classList.contains('on')) renderList();
 }
 
@@ -1452,7 +1600,7 @@ function renderTiles() {
 function renderDues() {
   var html = S.reminders.map(function (r) { var i = remInfo(r); return i.due ? { r: r, i: i } : null; }).filter(Boolean).map(function (x) {
     return '<div class="due"><div class="t">⏰ ' + esc(x.r.title) + (x.r.amount ? '، ' + fmt(x.r.amount) : '') + '<small>' + esc(x.i.label) + '</small></div>' +
-      '<button class="pay" data-id="' + x.r.id + '" data-m="pay">' + (x.r.amount ? 'اتدفع، سجّله' : 'خلصت') + '</button>' +
+      '<button class="pay" data-id="' + x.r.id + '" data-m="pay">' + (x.r.amount ? (x.r.type === 'دخل' ? 'وصل، سجّله' : 'اتدفع، سجّله') : 'خلصت') + '</button>' +
       '<button class="skip" data-id="' + x.r.id + '" data-m="skip">مش الفترة دي</button></div>';
   }).join('');
   var bd = bookDues();
@@ -1575,9 +1723,11 @@ function renderList() {
   Object.keys(db).forEach(function (k) { if (db[k] > 0) toMe += db[k]; else onMe -= db[k]; });
   var rem = st.income - st.expense, dn = toMe - onMe;
   $('listMonth').textContent = st.label;
-  var cell = function (m, cls, v) { return '<button type="button" aria-pressed="' + (chartMode === m) + '" onclick="setChart(\'' + m + '\')"><small>' + m + '</small><b class="' + cls + '">' + v + '</b></button>'; };
-  var html = '<div class="row4">' + cell('دخل', 'in', fmt(st.income)) + cell('صرف', 'out', fmt(st.expense)) +
-    cell('سلف', 'debt', (dn < 0 ? '−' : dn > 0 ? '+' : '') + fmt(Math.abs(dn))) + cell('المتبقي', rem < 0 ? 'out' : '', (rem < 0 ? '−' : '') + fmt(Math.abs(rem))) + '</div>';
+  var cmp = compareStats(viewYM), pv = cmp.prev, hasPrev = pv.count > 0;
+  var cell = function (m, cls, v, c) { return '<button type="button" aria-pressed="' + (chartMode === m) + '" onclick="setChart(\'' + m + '\')"><small>' + m + '</small><b class="' + cls + '">' + v + '</b>' + (hasPrev && c !== undefined ? '<br>' + c : '') + '</button>'; };
+  var html = '<div class="row4">' + cell('دخل', 'in', fmt(st.income), chg(cmp.cur.income, pv.income, true)) + cell('صرف', 'out', fmt(st.expense), chg(cmp.cur.expense, pv.expense, false)) +
+    cell('سلف', 'debt', (dn < 0 ? '−' : dn > 0 ? '+' : '') + fmt(Math.abs(dn))) + cell('المتبقي', rem < 0 ? 'out' : '', (rem < 0 ? '−' : '') + fmt(Math.abs(rem)), chg(cmp.cur.income - cmp.cur.expense, pv.income - pv.expense, true)) + '</div>';
+  if (hasPrev) html += '<p class="cmpnote">مقارنة بـ ' + MONTHS[cmp.pym.m - 1] + (cmp.day ? ' (أول ' + cmp.day + ' ' + (cmp.day <= 10 ? 'أيام' : 'يوم') + ')' : '') + '</p>';
   if (S.debts.some(function (d) { return !d.cur; })) {
     var ml = monthLoans(mk);
     html += '<div class="loanstrip"><div class="lent"><small>🤝 سلّفت الشهر ده</small><b>' + fmt(ml['سلّفت']) + '</b> <span>· رجعلك ' + fmt(ml['رجّعلي']) + '</span></div>' +
@@ -1585,6 +1735,7 @@ function renderList() {
       '<p class="lsum">ليك عند الناس <b class="in">' + fmt(toMe) + '</b> · عليك للناس <b class="out">' + fmt(onMe) + '</b></p>';
   }
   $('monthSum').innerHTML = html;
+  renderForecast();
   renderDonut(st, db); renderOps();
 }
 function chartParts(st, db) {
@@ -1716,13 +1867,13 @@ function dayLabel(k, wide) {
 function txRowHtml(t) {
   var inc = t.type === 'دخل';
   return '<li><button class="rowbtn" data-tx="' + t.id + '"><span class="ic ' + (inc ? 't-in' : 't-out') + '">' + initial(t.item) + '</span><span class="what"><b>' + esc(t.item) + (t.photo ? ' 📎' : '') + '</b><small>' + esc(t.wallet) +
-    (t.note ? ' · ' + esc(t.note) : '') + (t.usd ? ' · ≈ ' + fmt(t.amount) + ' ج' : '') + '</small></span><span class="amt ' + (inc ? 'in">+' : 'out">−') +
+    (t.note ? ' · <bdi class="ud">' + esc(t.note) + '</bdi>' : '') + (t.usd ? ' · ≈ ' + fmt(t.amount) + ' ج' : '') + '</small></span><span class="amt ' + (inc ? 'in">+' : 'out">−') +
     (t.usd ? fmtU(t.usd) + '$' : fmt(t.amount)) + '</span></button></li>';
 }
 function debtRowHtml(d) {
   var sg = KSIGN[d.kind];
   return '<li><button class="rowbtn" data-p="' + esc(d.person) + '"><span class="ic t-debt">🤝</span><span class="what"><b>' + esc(d.kind) + ' ' + esc(d.person) + (d.photo ? ' 📎' : '') + '</b><small>' + esc(d.wallet || '') +
-    (d.note ? ' · ' + esc(d.note) : '') + '</small></span><span class="amt debt">' + (sg < 0 ? '−' : '+') + fmt(d.amount) + '</span></button></li>';
+    (d.note ? ' · <bdi class="ud">' + esc(d.note) + '</bdi>' : '') + '</small></span><span class="amt debt">' + (sg < 0 ? '−' : '+') + fmt(d.amount) + '</span></button></li>';
 }
 function bindRows(box) {
   box.querySelectorAll('.rowbtn[data-tx]').forEach(function (b) { b.onclick = function () { openView(+b.dataset.tx); }; });
@@ -1772,7 +1923,7 @@ function renderItems() {
     });
     $('recent').innerHTML = html; bindRows($('recent')); return;
   }
-  var types = opsType === 'all' ? ['صرف', 'دخل'] : [opsType];
+  var types = opsType === 'all' ? ['صرف', 'دخل'] : [opsType], cmpI = compareStats(viewYM), prevHas = cmpI.prev.count > 0;
   types.forEach(function (type) {
     var g = {}, total = 0;
     S.tx.forEach(function (t) {
@@ -1787,6 +1938,7 @@ function renderItems() {
       var x = g[k], p = total ? Math.round(x.sum * 100 / total) : 0, open = opsOpen === type + '|' + k, inc = type === 'دخل', n = x.list.length;
       html += '<li class="irow' + (inc ? ' inc' : '') + (open ? ' open' : '') + '"><button class="rowbtn" data-g="' + esc(type + '|' + k) + '" aria-expanded="' + open + '"><span class="ic ' + (inc ? 't-in' : 't-out') + '">' + initial(x.name) + '</span>' +
         '<span class="what"><b>' + esc(x.name) + '</b><small>' + (n === 1 ? 'مرة واحدة' : n === 2 ? 'مرتين' : n + (n <= 10 ? ' مرات' : ' مرة')) + '</small></span>' +
+        (prevHas ? chg(cmpI.cur[inc ? 'inc' : 'exp'][k] || 0, cmpI.prev[inc ? 'inc' : 'exp'][k] || 0, inc) : '') +
         '<span class="amt ' + (inc ? 'in' : 'out') + '">' + fmt(x.sum) + '</span><span class="pct">' + p + '%</span><span class="chev">⌄</span></button>' +
         '<div class="bar"><i data-w="' + p + '"></i></div>';
       if (open) {
@@ -1854,6 +2006,242 @@ function viewDelete() {
   commit('اتمسحت', function () { S.tx.push(copy); commit('رجعت ✓'); });
 }
 
+
+// ----- مقارنة بالشهر اللي فات -----
+function prevYM(ym) { return ym.m === 1 ? { y: ym.y - 1, m: 12 } : { y: ym.y, m: ym.m - 1 }; }
+function statsRange(ym, upto) {
+  var mk = monthKey(ym.y, ym.m), r = { income: 0, expense: 0, exp: {}, inc: {}, count: 0 };
+  S.tx.forEach(function (t) {
+    if (t.date.slice(0, 7) !== mk) return;
+    if (upto && +t.date.slice(8, 10) > upto) return;
+    r.count++; var k = key(t.item);
+    if (t.type === 'دخل') { r.income += t.amount; r.inc[k] = (r.inc[k] || 0) + t.amount; }
+    else { r.expense += t.amount; r.exp[k] = (r.exp[k] || 0) + t.amount; }
+  });
+  return r;
+}
+/** لو الشهر الحالي، بنقارن بنفس عدد الأيام من الشهر اللي فات */
+function compareStats(ym) {
+  var c = curYM(), day = (ym.y === c.y && ym.m === c.m) ? new Date().getDate() : 0, p = prevYM(ym);
+  return { cur: statsRange(ym, day), prev: statsRange(p, day), day: day, pym: p };
+}
+function chg(a, b, upGood) {
+  if (!a && !b) return '';
+  if (!b) return '<span class="chg new">جديد</span>';
+  var p = Math.round((a - b) * 100 / Math.abs(b));
+  if (!p) return '<span class="chg same">زيه</span>';
+  var good = upGood ? p > 0 : p < 0;
+  return '<span class="chg ' + (good ? 'good' : 'bad') + '">' + (p > 0 ? '⬆' : '⬇') + ' ' + Math.min(999, Math.abs(p)) + '%</span>';
+}
+
+// ----- توقّع آخر الشهر -----
+function renderForecast() {
+  var box = $('forecast'), c = curYM();
+  if (!viewYM || viewYM.y !== c.y || viewYM.m !== c.m) { box.hidden = true; return; }
+  var d = new Date().getDate(), D = dim(c.y, c.m), left = D - d, st = monthStats(c), db = dailyBudget();
+  if (!st.expense && !st.income && !db) { box.hidden = true; return; }
+  var html = '<div class="top"><b>📈 توقّع آخر الشهر</b><span>' + (left ? 'فاضل ' + left + ' ' + (left <= 10 ? 'أيام' : 'يوم') : 'آخر يوم في الشهر') + '</span></div>';
+  if (d < 3 && !db) html += '<p>التوقّع بيبقى أدق بعد كام يوم من أول الشهر.</p>';
+  else {
+    var proj = st.expense / d * D, rem = st.income - proj;
+    html += '<p>بالمعدل ده هتصرف حوالي <b class="out">' + fmt(proj) + '</b>' + (st.income ? '، وهيفضلك <b class="' + (rem < 0 ? 'out' : 'in') + '">' + (rem < 0 ? '−' : '') + fmt(Math.abs(rem)) + '</b>' : '') + '</p>';
+  }
+  if (st.income) {
+    var pct = Math.min(100, st.expense * 100 / st.income), mark = d * 100 / D;
+    html += '<div class="track"><i style="width:' + pct + '%"></i><em style="inset-inline-start:' + mark + '%"></em></div>' +
+      '<div class="sub"><span>صرفت ' + fmt(st.expense) + ' من ' + fmt(st.income) + '</span><span>النهارده يوم ' + d + '</span></div>';
+  }
+  var rate = d ? st.expense / d : 0;
+  if (db) {
+    html += db.per > 0 ? (rate > db.per && d >= 3 ? '<div class="warn">⚠️ عشان توفّر ' + fmt(S.settings.save.amount) + '، خليك تحت <b>' + fmt(db.per) + ' في اليوم</b> (بتصرف دلوقتي ' + fmt(rate) + ')</div>'
+      : '<div class="ok">🎯 ماشي كويس. عشان توفّر ' + fmt(S.settings.save.amount) + ' تقدر تصرف ' + fmt(db.per) + ' في اليوم</div>')
+      : '<div class="warn">⚠️ بالفلوس اللي فاضلة مش هتقدر توفّر ' + fmt(S.settings.save.amount) + ' الشهر ده</div>';
+  } else if (st.income && d >= 3 && st.income - st.expense / d * D < 0 && left > 0) {
+    html += '<div class="warn">⚠️ عشان متدخلش في عجز، خليك تحت <b>' + fmt(Math.max(0, (st.income - st.expense) / (left + 1))) + ' في اليوم</b> (بتصرف دلوقتي ' + fmt(rate) + ')</div>';
+  }
+  box.innerHTML = html; box.hidden = false;
+}
+
+// ----- هدف التوفير -----
+function dailyBudget(cfgIn) {
+  var cfg = cfgIn || S.settings.save; if (!cfg || !cfg.on) return null;
+  var c = curYM(), today = todayKey(), d = +today.slice(8, 10), daysLeft = dim(c.y, c.m) - d + 1, mk = today.slice(0, 7);
+  var inc = 0, before = 0, todaySp = 0;
+  S.tx.forEach(function (t) {
+    if (t.date.slice(0, 7) !== mk) return;
+    if (t.type === 'دخل') inc += t.amount; else if (t.date === today) todaySp += t.amount; else if (t.date < today) before += t.amount;
+  });
+  var base = cfg.base === 'all' ? balances().total + todaySp : inc - before, avail = base - (cfg.amount || 0), per = Math.max(0, avail / daysLeft);
+  return { per: per, today: todaySp, left: per - todaySp, avail: avail, base: base, inc: inc, before: before, daysLeft: daysLeft, total: balances().total };
+}
+function renderSaveBar() {
+  var bar = $('saveBar'), db = dailyBudget();
+  $('svSub').textContent = S.settings.save.on ? 'هدفك ' + fmt(S.settings.save.amount) + (db ? ' · مصروف اليوم ' + fmt(db.per) : '') : 'حدد مبلغ تحوّشه، ونقولك تصرف قد إيه في اليوم';
+  if (!db) { bar.hidden = true; return; }
+  var over = db.left < 0;
+  bar.classList.toggle('over', over || db.per <= 0);
+  bar.innerHTML = db.per <= 0 ? '<div class="l"><span class="g">⚠️ عشان توفّر ' + fmt(S.settings.save.amount) + '، مفيش مصروف متاح لباقي الشهر</span></div>'
+    : '<div class="l"><span>🎯 تقدر تصرف النهارده</span><b>' + fmt(db.per) + '</b><span class="g"></span><small>صرفت ' + fmt(db.today) + ' · ' + (over ? 'عدّيت بـ <b class="out">' + fmt(-db.left) + '</b>' : 'فاضل <b>' + fmt(db.left) + '</b>') + '</small></div>' +
+      '<div class="t"><i style="width:' + Math.min(100, db.today * 100 / (db.per || 1)) + '%"></i></div>';
+  bar.hidden = false;
+}
+var svBaseV = 'income';
+bindSeg('svBase', function (v) { svBaseV = v; setSeg('svBase', v); svCalc(); });
+function openSave() {
+  var cfg = S.settings.save;
+  $('svOn').checked = cfg.on || !cfg.amount; $('svAmount').value = cfg.amount || ''; svBaseV = cfg.base || 'income'; setSeg('svBase', svBaseV); $('svAlert').checked = cfg.alert !== false;
+  svCalc(); showSheet('svSheet');
+}
+function svCalc() {
+  var cfg = { on: true, amount: num($('svAmount')), base: svBaseV }, db = dailyBudget(cfg), row = function (l, v, cls) { return '<div' + (cls ? ' class="' + cls + '"' : '') + '><span>' + l + '</span><b>' + v + '</b></div>'; };
+  $('svCalc').innerHTML = (cfg.base === 'all' ? row('كل فلوسك دلوقتي', fmt(db.total)) + (db.today ? row('صرف النهارده', '+ ' + fmt(db.today)) : '')
+    : row('دخلك الشهر ده', fmt(db.inc)) + row('صرفت لحد امبارح', '− ' + fmt(db.before))) +
+    row('هدف التوفير', '− ' + fmt(cfg.amount)) + row('فاضل تصرفه على ' + db.daysLeft + ' ' + (db.daysLeft <= 10 ? 'أيام' : 'يوم'), (db.avail < 0 ? '−' : '') + fmt(Math.abs(db.avail)), 'tot') +
+    row('يعني في اليوم', fmt(db.per), 'per');
+  $('svCalc').style.opacity = $('svOn').checked ? 1 : .5;
+}
+function saveSave() {
+  var a = num($('svAmount')), on = $('svOn').checked;
+  if (on && !a) { toast('اكتب المبلغ اللي عاوز توفّره'); return; }
+  S.settings.save = { on: on, amount: a, base: svBaseV, alert: $('svAlert').checked };
+  closeSheets();
+  commit(on ? '🎯 هدفك توفّر ' + fmt(a) + '<small>تقدر تصرف ' + fmt(dailyBudget().per) + ' في اليوم</small>' : 'هدف التوفير اتقفل');
+}
+
+// ----- عمليات بتتسجل لوحدها -----
+var remType = 'صرف';
+bindSeg('rTypeSeg', function (v) { remType = v; setSeg('rTypeSeg', v); });
+function runAuto() {
+  if (!S) return;
+  var done = [];
+  S.reminders.forEach(function (r) {
+    if (!r.active || !r.auto || !r.amount) return;
+    var i = remInfo(r); if (!i.due) return;
+    var t = { id: nid(), date: i.occ, type: r.type || 'صرف', amount: r.amount, item: r.item || r.title, note: 'تلقائي: ' + r.title, wallet: wallet(r.wallet) ? r.wallet : S.settings.defaultWallet, photo: '', auto: true };
+    S.tx.push(t); done.push({ r: r, t: t, prev: r.lastPaid || '' }); r.lastPaid = i.occ;
+  });
+  if (!done.length) return;
+  S.lastEntryAt = Date.now();
+  commit('');
+  var bar = $('autoBar');
+  bar.innerHTML = '<span class="t">🔁 اتسجل لوحده: ' + done.map(function (x) { return esc(x.t.item) + ' <b class="' + (x.t.type === 'دخل' ? 'in">+' : 'out">−') + fmt(x.t.amount) + '</b>'; }).join('، ') + (done.length === 1 ? ' في ' + esc(done[0].t.wallet) : '') + '</span>' +
+    '<button class="x" type="button">تراجع</button><button class="x" type="button" aria-label="اقفل">✕</button>';
+  var bs = bar.querySelectorAll('button');
+  bs[0].onclick = function () {
+    var ids = done.map(function (x) { return x.t.id; });
+    S.tx = S.tx.filter(function (t) { return ids.indexOf(t.id) < 0; });
+    done.forEach(function (x) { x.r.lastPaid = x.prev; x.r.auto = false; });
+    bar.hidden = true; commit('اتلغى التسجيل<small>وقفت التسجيل التلقائي للتذكير ده، شغّله تاني من التذكيرات</small>');
+  };
+  bs[1].onclick = function () { bar.hidden = true; };
+  bar.hidden = false;
+}
+
+// ----- ملخص الشهر -----
+function checkRecap() {
+  if (!S) return;
+  var p = prevYM(curYM()), pk = monthKey(p.y, p.m);
+  if (S.lastRecap === pk) return;
+  S.lastRecap = pk; save();
+  if (S.tx.some(function (t) { return t.date.slice(0, 7) === pk; }) && !document.querySelector('.sheet.on') && $('lockScr').hidden) openRecap(p);
+}
+function openRecap(ym) {
+  ym = ym || viewYM || curYM();
+  var cur = statsRange(ym, 0), pv = statsRange(prevYM(ym), 0), pn = MONTHS[prevYM(ym).m - 1], has = pv.count > 0, c = curYM(), isCur = ym.y === c.y && ym.m === c.m;
+  $('rcTitle').textContent = 'ملخص ' + MONTHS[ym.m - 1] + (ym.y !== c.y ? ' ' + ym.y : '');
+  $('rcSub').textContent = isCur ? 'لحد النهارده' : 'الشهر خلص، ده اللي حصل فيه';
+  var saved = cur.income - cur.expense, cell = function (l, v, cls, ch) { return '<div><small>' + l + '</small><b class="' + cls + '">' + v + '</b>' + (has && ch ? '<br>' + ch : '') + '</div>'; };
+  $('rcGrid').innerHTML = cell('دخل', fmt(cur.income), 'in', chg(cur.income, pv.income, true)) + cell('صرف', fmt(cur.expense), 'out', chg(cur.expense, pv.expense, false)) +
+    cell(saved >= 0 ? 'حوّشت' : 'عجز', (saved < 0 ? '−' : '') + fmt(Math.abs(saved)), saved < 0 ? 'out' : '', chg(saved, pv.income - pv.expense, true));
+  var names = {}; S.tx.forEach(function (t) { if (t.type !== 'دخل') names[key(t.item)] = names[key(t.item)] || t.item; });
+  var ks = Object.keys(cur.exp).sort(function (a, b) { return cur.exp[b] - cur.exp[a]; });
+  $('rcTopT').hidden = !ks.length;
+  $('rcTop').innerHTML = ks.slice(0, 3).map(function (k) {
+    return '<li><span class="ic t-out">' + initial(names[k]) + '</span><span class="what"><b>' + esc(names[k]) + '</b></span>' + (has ? chg(cur.exp[k], pv.exp[k] || 0, false) : '') + '<span class="amt out">' + fmt(cur.exp[k]) + '</span></li>';
+  }).join('') || '<li class="empty">مافيش صرف في الشهر ده.</li>';
+  var best = null, worst = null;
+  if (has) Object.keys(cur.exp).forEach(function (k) {
+    var b = pv.exp[k]; if (!b || b < 50) return;
+    var p = (cur.exp[k] - b) * 100 / b;
+    if (p <= -5 && (!best || p < best.p)) best = { k: k, p: p };
+    if (p >= 10 && (!worst || p > worst.p)) worst = { k: k, p: p };
+  });
+  var tip = (best ? '👏 أحسن حاجة: ' + esc(names[best.k]) + ' قلّ ' + Math.round(-best.p) + '%.' : '') + (worst ? (best ? ' ' : '') + 'وانتبه لـ ' + esc(names[worst.k]) + '، زاد ' + Math.round(worst.p) + '% عن ' + pn + '.' : '');
+  $('rcTip').hidden = !tip; $('rcTip').innerHTML = tip;
+  $('rcPdf').onclick = function () { makePdf(ym); };
+  showSheet('rcSheet');
+}
+
+// ----- تقرير PDF -----
+var PDF_LIBS = ['https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'];
+function loadScript(src) {
+  return new Promise(function (ok, bad) {
+    if (document.querySelector('script[src="' + src + '"]')) return ok();
+    var sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = function () { bad(new Error('محتاج نت أول مرة عشان أعمل التقرير')); };
+    document.head.appendChild(sc);
+  });
+}
+function pdfPages(ym) {
+  var mk = monthKey(ym.y, ym.m), st = statsRange(ym, 0), label = MONTHS[ym.m - 1] + ' ' + ym.y, rows = [];
+  S.tx.forEach(function (t) { if (t.date.slice(0, 7) === mk) rows.push({ d: t.date, id: t.id, n: t.item, w: t.wallet, note: t.note || '', a: (t.type === 'دخل' ? '+' : '−') + (t.usd ? fmtU(t.usd) + '$' : fmt(t.amount)), c: t.type === 'دخل' ? 'in' : 'out' }); });
+  S.debts.forEach(function (d) { if (!d.cur && d.date.slice(0, 7) === mk) rows.push({ d: d.date, id: d.id, n: d.kind + ' ' + d.person, w: d.wallet || '', note: d.note || '', a: (KSIGN[d.kind] < 0 ? '−' : '+') + fmt(d.amount), c: 'debt' }); });
+  rows.sort(function (a, b) { return a.d < b.d ? -1 : a.d > b.d ? 1 : a.id - b.id; });
+  var names = {}; S.tx.forEach(function (t) { names[key(t.item)] = t.item; });
+  var ks = Object.keys(st.exp).sort(function (a, b) { return st.exp[b] - st.exp[a]; }), top = ks.slice(0, 6), maxV = top.length ? st.exp[top[0]] : 1;
+  var db = debtBalances(''), toMe = 0, onMe = 0; Object.keys(db).forEach(function (k) { if (db[k] > 0) toMe += db[k]; else onMe -= db[k]; });
+  var head = '<div class="ph"><b>حساباتي</b><span>تقرير ' + label + '</span></div>';
+  var first = head + '<div class="boxes"><div><small>الدخل</small><b class="in">' + fmt(st.income) + '</b></div><div><small>الصرف</small><b class="out">' + fmt(st.expense) + '</b></div><div><small>المتبقي</small><b>' + (st.income - st.expense < 0 ? '−' : '') + fmt(Math.abs(st.income - st.expense)) + '</b></div></div>';
+  if (top.length) first += '<h4>أكتر حاجات صرفت عليها</h4><div class="bars">' + top.map(function (k) {
+    return '<div class="r"><span class="n">' + withIcon(names[k]) + '</span><span class="b"><i style="width:' + Math.round(st.exp[k] * 100 / maxV) + '%"></i></span><span class="v">' + fmt(st.exp[k]) + '</span></div>';
+  }).join('') + '</div>';
+  if (toMe || onMe) first += '<h4>السلف</h4><div>ليك عند الناس <b class="in">' + fmt(toMe) + '</b> · عليك للناس <b class="out">' + fmt(onMe) + '</b></div>';
+  var thead = '<table><tr><th>التاريخ</th><th>البند</th><th>المحفظة</th><th>ملاحظة</th><th style="text-align:end">المبلغ</th></tr>';
+  var rowH = function (r) { return '<tr><td>' + dShort(r.d) + '</td><td>' + esc(r.n) + '</td><td>' + esc(r.w) + '</td><td>' + esc(r.note).slice(0, 40) + '</td><td class="a ' + r.c + '">' + r.a + '</td></tr>'; };
+  var pages = [], firstRows = Math.max(6, 26 - top.length * 2 - (toMe || onMe ? 3 : 0)), i = 0;
+  pages.push(first + '<h4>كل العمليات (' + rows.length + ')</h4>' + thead + rows.slice(0, firstRows).map(rowH).join('') + '</table>');
+  i = firstRows;
+  while (i < rows.length) { pages.push(head + '<h4>كل العمليات (تكملة)</h4>' + thead + rows.slice(i, i + 36).map(rowH).join('') + '</table>'); i += 36; }
+  if (!rows.length) pages[0] = first + '<p style="color:#5f7670">مافيش عمليات في الشهر ده.</p>';
+  return pages.map(function (h, n) { return '<div class="pdfpage" dir="' + document.documentElement.dir + '">' + h + '<div class="pf"><span>صفحة ' + (n + 1) + ' من ' + pages.length + ' · اتعمل ' + dShort(todayKey()) + '/' + todayKey().slice(0, 4) + '</span><span>' + CREDIT_AR + '</span></div></div>'; });
+}
+var lastPdf = null;
+function makePdf(ym) {
+  ym = ym || viewYM || curYM();
+  closeSheets();
+  $('pdfTitle').textContent = '📄 تقرير ' + MONTHS[ym.m - 1] + ' ' + ym.y; $('pdfMsg').textContent = 'بيتعمل…';
+  $('pdfSave').disabled = true; $('pdfShare').disabled = true;
+  showSheet('pdfSheet');
+  Promise.all(PDF_LIBS.map(loadScript)).then(function () {
+    var stage = $('pdfStage'); stage.innerHTML = pdfPages(ym).join('');
+    var pdf = new window.jspdf.jsPDF({ unit: 'pt', format: 'a4' }), pages = stage.querySelectorAll('.pdfpage');
+    return Array.prototype.reduce.call(pages, function (p, el, n) {
+      return p.then(function () { return window.html2canvas(el, { scale: 2, backgroundColor: '#ffffff', logging: false }); }).then(function (cv) {
+        if (n) pdf.addPage();
+        pdf.addImage(cv.toDataURL('image/jpeg', 0.86), 'JPEG', 0, 0, 595.28, 841.89);
+      });
+    }, Promise.resolve()).then(function () {
+      stage.innerHTML = '';
+      pdf.setProperties({ title: 'حساباتي - ' + MONTHS[ym.m - 1] + ' ' + ym.y, author: 'Yousef Eraqy', creator: 'Hesabaty by Yousef Eraqy' });
+      lastPdf = { name: 'hesabaty-' + monthKey(ym.y, ym.m) + '.pdf', uri: pdf.output('datauristring') };
+      $('pdfMsg').textContent = 'التقرير جاهز ✓ (' + pages.length + ' ' + (pages.length === 1 ? 'صفحة' : 'صفحات') + ')';
+      $('pdfSave').disabled = false; $('pdfShare').disabled = false;
+    });
+  }).catch(function (e) { $('pdfMsg').textContent = 'ماقدرتش أعمل التقرير: ' + e.message; });
+}
+function pdfB64() { return lastPdf.uri.slice(lastPdf.uri.indexOf('base64,') + 7); }
+$('pdfSave').onclick = function () { if (!lastPdf) return; if (saveDataUrl(lastPdf.name, 'data:application/pdf;base64,' + pdfB64()) && !NATIVE) toast('اتنزل التقرير ✓'); };
+$('pdfShare').onclick = function () {
+  if (!lastPdf) return;
+  if (NATIVE && window.Android.shareFile) return window.Android.shareFile(lastPdf.name, 'application/pdf', pdfB64());
+  try {
+    var bin = atob(pdfB64()), arr = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    var f = new File([arr], lastPdf.name, { type: 'application/pdf' });
+    if (navigator.canShare && navigator.canShare({ files: [f] })) return navigator.share({ files: [f], title: lastPdf.name }).catch(function () {});
+  } catch (e) {}
+  $('pdfSave').onclick();
+};
+var CREDIT_AR = 'تم إعداد وتصميم التطبيق بواسطة Yousef Eraqy';
+
 // ----- فكّرني أسجّل -----
 var nudgeSnooze = 0;
 try { nudgeSnooze = +localStorage.getItem('nudgeSnooze') || 0; } catch (e) {}
@@ -1913,7 +2301,7 @@ function buildSchedule() {
     for (var i = 0; i < 62; i++) {
       var d = addDays(today, i), o = occurrences(r, d);
       if (o.last !== d || (r.lastPaid || '') >= d) continue;
-      ev.push({ id: 'r' + r.id + '_' + d, at: d + 'T10:00', title: '⏰ ' + r.title, body: (r.amount ? fmt(r.amount) + ' ج — ' : '') + remInfo(r).label });
+      ev.push({ id: 'r' + r.id + '_' + d, at: d + 'T10:00', title: (r.auto ? '🔁 ' : '⏰ ') + r.title, body: r.auto ? 'هيتسجل لوحده أول ما تفتح التطبيق' + (r.amount ? ' (' + fmt(r.amount) + ' ج)' : '') : (r.amount ? fmt(r.amount) + ' ج — ' : '') + remInfo(r).label });
     }
   });
   if (S.book && S.book.cfg.remind) S.book.debts.forEach(function (dbt) {
@@ -1984,7 +2372,7 @@ function renderSettings() {
   $('rateAuto').hidden = !S.rate.manual;
   $('reminders').innerHTML = S.reminders.length ? S.reminders.map(function (r) {
     var i = remInfo(r);
-    return '<li><button class="rowbtn" data-id="' + r.id + '"><span class="what"><b>' + esc(r.title) + (i.due ? ' ⏰' : '') + '</b><small>' + esc(i.label) + (i.next ? '، الجاي ' + dShort(i.next) : '') + '</small></span>' +
+    return '<li><button class="rowbtn" data-id="' + r.id + '"><span class="what"><b>' + (r.auto ? '🔁 ' : '') + esc(r.title) + (i.due ? ' ⏰' : '') + '</b><small>' + esc(i.label) + (i.next ? '، الجاي ' + dShort(i.next) : '') + '</small></span>' +
       (r.amount ? '<span class="amt">' + fmt(r.amount) + '</span>' : '') + '</button><label class="sw"><input type="checkbox" data-id="' + r.id + '"' + (r.active ? ' checked' : '') + ' aria-label="تشغيل ' + esc(r.title) + '"><span></span></label></li>';
   }).join('') : '<li class="empty">مافيش تذكيرات لسه.</li>';
   $('reminders').querySelectorAll('.rowbtn').forEach(function (b) { b.onclick = function () { openReminder(+b.dataset.id); }; });
@@ -2086,6 +2474,7 @@ function saveTx(item) {
   storePhoto().then(function (pid) {
     t.photo = pid; S.tx.push(t); S.lastEntryAt = Date.now();
     var note = t.type === 'صرف' ? budgetNote(t.item, t.amount) : '';
+    if (t.type === 'صرف' && t.date === todayKey()) { var db0 = dailyBudget(); if (db0 && S.settings.save.alert && db0.left < 0 && db0.left + t.amount >= 0) note += (note ? '<br>' : '') + '⚠️ عدّيت مصروف النهارده بـ ' + fmt(-db0.left); }
     resetForm(); doneFlash();
     commit('اتسجل ✓ ' + t.type + ' ' + (t.usd ? fmtU(t.usd) + '$ (≈ ' + fmt(t.amount) + ' ج)' : fmt(t.amount)) + '، ' + esc(t.item) + ' — ' + esc(t.wallet) + (note ? '<small>' + note + '</small>' : ''),
       function () { removeTx(t.id); commit('اتمسحت العملية'); });
@@ -2482,7 +2871,7 @@ function lockOnShow() {
 document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') lockOnHide(); else lockOnShow(); });
 /** تطبيق الأندرويد بيبلّغ لما يتقفل أو يتفتح */
 window.onNativeHide = function () { lockOnHide(); if (S) save(); };
-window.onNativeShow = function () { lockOnShow(); if (S) { checkNudge(); renderDues(); } };
+window.onNativeShow = function () { lockOnShow(); if (S) { runAuto(); checkNudge(); renderDues(); renderSaveBar(); } };
 function renderLockSet() {
   var has = !!lockData;
   $('lkNone').hidden = has; $('lkHas').hidden = !has;
@@ -2808,7 +3197,7 @@ function openSheet(id) {
 }
 function closeSheets() {
   if ($('pwSheet').classList.contains('on') && pwDone) { pwDone(true); }
-  noteEditing = null; $('scrim').classList.remove('on'); ['sheet', 'vSheet', 'icSheet', 'rSheet', 'pSheet', 'xSheet', 'nSheet', 'tSheet', 'wSheet', 'dSheet', 'dfSheet', 'paySheet', 'bsSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
+  noteEditing = null; $('scrim').classList.remove('on'); ['sheet', 'vSheet', 'icSheet', 'svSheet', 'rcSheet', 'pdfSheet', 'rSheet', 'pSheet', 'xSheet', 'nSheet', 'tSheet', 'wSheet', 'dSheet', 'dfSheet', 'paySheet', 'bsSheet'].forEach(function (id) { $(id).classList.remove('on'); }); markExtras(); editing = null; remEditing = null; }
 function saveEdit() {
   var t = editing; if (!t) return;
   var a = num($('eAmount'));
@@ -3095,6 +3484,7 @@ function openReminder(id) {
   $('rTitle').textContent = r ? 'تعديل التذكير' : 'تذكير جديد';
   $('rName').value = r ? r.title : ''; $('rAmount').value = r && r.amount ? r.amount : ''; $('rItem').value = r ? r.item : '';
   setRepeat(r ? r.repeat : 'شهري');
+  remType = r && r.type ? r.type : 'صرف'; setSeg('rTypeSeg', remType); $('rAuto').checked = !!(r && r.auto);
   $('rDayM').value = r && r.repeat === 'شهري' ? r.day : 1;
   $('rDayW').value = r && r.repeat === 'أسبوعي' ? r.day : 1;
   $('rDate').value = r && r.repeat === 'مرة' ? r.day : '';
@@ -3108,6 +3498,10 @@ function saveReminder() {
   if (repeat === 'مرة' && !day) { $('rErr').textContent = 'اختار التاريخ'; return; }
   var r = remEditing || { id: nid(), active: true, lastPaid: '', lastNotified: '' };
   r.title = title; r.repeat = repeat; r.day = day; r.amount = num($('rAmount')); r.item = $('rItem').value.trim(); r.wallet = $('rWallet').value;
+  var wasAuto = !!r.auto;
+  r.type = remType; r.auto = $('rAuto').checked;
+  if (r.auto && !wasAuto) { var oc = occurrences(r, todayKey()).last; if (oc && oc < todayKey() && (r.lastPaid || '') < oc) r.lastPaid = oc; }
+  if (r.auto && !r.amount) { $('rErr').textContent = 'عشان تتسجل لوحدها لازم تكتب المبلغ'; return; }
   if (!remEditing) S.reminders.push(r);
   closeSheets(); commit('اتحفظ التذكير ⏰');
 }
@@ -3124,7 +3518,7 @@ function reminderAction(id, m) {
   var msg = '👌 اتعدّى الفترة دي';
   if (m === 'pay' && r.amount) {
     S.lastEntryAt = Date.now();
-    S.tx.push({ id: nid(), date: todayKey(), type: 'صرف', amount: r.amount, item: r.item || r.title, note: 'تذكير: ' + r.title, wallet: wallet(r.wallet) ? r.wallet : S.settings.defaultWallet, photo: '' });
+    S.tx.push({ id: nid(), date: todayKey(), type: r.type || 'صرف', amount: r.amount, item: r.item || r.title, note: 'تذكير: ' + r.title, wallet: wallet(r.wallet) ? r.wallet : S.settings.defaultWallet, photo: '' });
     msg = '✅ اتسجل ' + fmt(r.amount) + ' — ' + esc(r.item || r.title);
   } else if (m === 'pay') msg = '✅ تمام';
   r.lastPaid = i.occ;
@@ -3237,7 +3631,7 @@ document.addEventListener('visibilitychange', function () { if (document.visibil
 // ---------- النسخة الاحتياطية ----------
 function buildBackup() {
   var st = JSON.parse(JSON.stringify(S)); st.backup = { last: S.backup.last };
-  return dbAll('photos').then(function (ph) { return JSON.stringify({ app: 'hesabaty', version: APP_VERSION, at: new Date().toISOString(), state: st, photos: ph }); });
+  return dbAll('photos').then(function (ph) { return JSON.stringify({ app: 'hesabaty', author: 'Yousef Eraqy', version: APP_VERSION, at: new Date().toISOString(), state: st, photos: ph }); });
 }
 function applyBackup(text) {
   var j = JSON.parse(text);
@@ -3491,6 +3885,101 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   navigator.serviceWorker.register('sw.js').catch(function () {});
 }
 
+
+// ---------- اللغات: مصري (الأصل) · فصحى · إنجليزي ----------
+var LANG = 'eg';
+try { LANG = localStorage.getItem('lang') || 'eg'; } catch (e) {}
+var I18N = {"اربط Google Drive مرة واحدة، والتطبيق ياخد نسخة لوحده بعد كل تعديل. ولو غيّرت الموبايل، اربط نفس الإيميل وترجع كل حاجة":["اربط Google Drive مرة واحدة، وسيأخذ التطبيق نسخة تلقائيًا بعد كل تعديل. وإذا غيّرت الهاتف، اربط البريد نفسه لتستعيد كل شيء","Link Google Drive once and the app backs up automatically after every change. If you switch phones, link the same email to get everything back"],"الباسورد ده بيقفل كل المذكرات اللي تختار تقفلها. لو نسيته، المذكرات المقفولة مش هتتفتح تاني، فاكتبه في مكان آمن":["كلمة المرور هذه تقفل كل المذكرات التي تختار قفلها. إذا نسيتها فلن تُفتح المذكرات المقفلة مرة أخرى، فاحفظها في مكان آمن","This password locks every note you choose to lock. If you forget it, locked notes can't be opened again, so keep it somewhere safe"],"العمليات نفسها مش بتتمسح، الصور بس. والصور اللي بتتمسح من هنا مش بترجع، فلو عاوز تحتفظ بيها نزّل نسخة ملف الأول":["العمليات نفسها لا تُحذف، الصور فقط. والصور المحذوفة من هنا لا تعود، فإن أردت الاحتفاظ بها فنزّل نسخة ملف أولًا","The transactions themselves aren't deleted, only the photos. Photos deleted here can't be recovered, so download a backup file first if you want to keep them"],"زرار 🌙 اللي فوق بيقلب بين النهاري والليلي اللي اخترته. ولو مختار «زي الموبايل»، بيستخدم الليلي ده برضو":["زر 🌙 في الأعلى يبدّل بين الوضع النهاري والليلي الذي اخترته. وإذا اخترت «مثل الهاتف» فسيُستخدم هذا الليلي أيضًا","The 🌙 button at the top switches between light and the night style you picked. With “Like my phone”, that night style is used too"],"أقساط وفواتير ومواعيد. لما ييجي ميعادها تظهر فوق، ولو سمحت بالإشعارات بيوصلك إشعار لما تفتح التطبيق":["أقساط وفواتير ومواعيد. عند حلول موعدها تظهر في الأعلى، وإذا سمحت بالإشعارات يصلك إشعار","Installments, bills and dates. When one is due it shows at the top, and you get a notification if you allow them"],"اعمل PIN من 4 أرقام، وبعدها تقدر تقفل بيه التطبيق ودفتر الديون، وتفتح بالبصمة لو موبايلك بيدعمها":["أنشئ رمز PIN من 4 أرقام، وبعدها يمكنك قفل التطبيق ودفتر الديون به، والفتح بالبصمة إن كان هاتفك يدعمها","Create a 4-digit PIN, then use it to lock the app and the debt book, and unlock with your fingerprint if your phone supports it"],"جوجل ماادتش إذن دايم. ادخل myaccount.google.com/permissions وشيل «حساباتي»، وبعدين اربط تاني":["لم تمنح جوجل إذنًا دائمًا. ادخل إلى myaccount.google.com/permissions وأزل «حساباتي» ثم اربط مرة أخرى","Google didn't grant permanent access. Go to myaccount.google.com/permissions, remove “Hesabaty”, then link again"],"محتاج يكون التطبيق مربوط بجوجل عشان ترجّع الـ PIN. لو مش مربوط، مافيش غير مسح بيانات التطبيق":["يجب أن يكون التطبيق مربوطًا بجوجل لاستعادة رمز PIN. إن لم يكن مربوطًا فلا حل سوى مسح بيانات التطبيق","The app must be linked to Google to reset the PIN. If it isn't, the only option is clearing the app's data"],"وإنت فاتح التطبيق بيظهرلك شريط فوق. الإشعار والتطبيق مقفول محتاج تطبيق الأندرويد الجديد":["أثناء فتح التطبيق يظهر لك شريط في الأعلى. أما الإشعار والتطبيق مغلق فيحتاج تطبيق أندرويد الجديد","While the app is open a bar shows at the top. Notifications while it's closed need the new Android app"],"النسخة على Drive مش متظبطة في التطبيق لسه. خد نسخة ملف وابعتها لنفسك من وقت للتاني":["النسخ على Drive غير مُعدّ في التطبيق بعد. خذ نسخة ملف وأرسلها لنفسك من حين لآخر","Drive backup isn't set up in the app yet. Download a backup file and send it to yourself from time to time"],"⚠️ اربط Google Drive من «النسخة الاحتياطية»، عشان لو نسيت الـ PIN تقدر تفتح بحسابك":["⚠️ اربط Google Drive من «النسخة الاحتياطية»، حتى تتمكن من الفتح بحسابك إذا نسيت رمز PIN","⚠️ Link Google Drive under “Backup” so you can unlock with your account if you forget the PIN"],"لو بند اتكتب بأكتر من اسم (زي «نور» و«كهرباء»)، ادمجهم في اسم واحد":["إذا كُتب بند بأكثر من اسم (مثل «نور» و«كهرباء»)، فادمجهما في اسم واحد","If a category was written under more than one name (like “نور” and “كهرباء”), merge them into one"],"عشان نتأكد إنه إنت، وبعدها الـ PIN هيتمسح وتعمل واحد جديد. نكمّل؟":["للتأكد من أنك أنت، وبعدها سيُحذف رمز PIN وتنشئ رمزًا جديدًا. هل نتابع؟","to confirm it's you, then the PIN will be removed and you'll create a new one. Continue?"],"هترجّع النسخة دي بدل كل البيانات اللي على الموبايل دلوقتي. متأكد؟":["ستستعيد هذه النسخة بدلًا من كل البيانات الموجودة على الهاتف الآن. هل أنت متأكد؟","This backup will replace all the data on this phone right now. Are you sure?"],"هتفصل حساب جوجل عن الموبايل ده؟ النسخ اللي على Drive هتفضل موجودة":["هل تفصل حساب جوجل عن هذا الهاتف؟ ستبقى النسخ الموجودة على Drive","Unlink the Google account from this phone? Backups on Drive will stay"],"المذكرات اللي بتمسحها بتفضل هنا 90 يوم، وبعدها بتتمسح لوحدها":["المذكرات التي تحذفها تبقى هنا 90 يومًا، ثم تُحذف تلقائيًا","Notes you delete stay here for 90 days, then they're removed automatically"],"من الموبايل. العمليات نفسها هتفضل، بس الصور مش هترجع. متأكد؟":["من الهاتف. ستبقى العمليات نفسها، لكن الصور لن تعود. هل أنت متأكد؟","from the phone. The transactions stay, but the photos won't come back. Are you sure?"],"القسط المستحق يظهر فوق في الرئيسية، وإشعار قبل ميعاده بيوم":["يظهر القسط المستحق في أعلى الرئيسية، مع إشعار قبل موعده بيوم","Due installments show at the top of the home screen, with a notification a day before"],"تكتب المبلغ وتدوس البند، ويتسجل على طول من غير زرار «سجّل":["تكتب المبلغ وتضغط على البند، فيُسجّل فورًا دون زر «سجّل","Type the amount and tap the category; it's saved right away without the “Save"],"وقفت التسجيل التلقائي للتذكير ده، شغّله تاني من التذكيرات":["أوقفت التسجيل التلقائي لهذا التذكير، شغّله مرة أخرى من التذكيرات","Auto-recording is off for this reminder; turn it back on from Reminders"],"☁️ كنت مستخدم التطبيق قبل كده؟ سجّل دخول ونرجّع بياناتك":["☁️ هل استخدمت التطبيق من قبل؟ سجّل الدخول لنستعيد بياناتك","☁️ Used the app before? Sign in and we'll restore your data"],"بيظهر زرار $ في التسجيل، ورصيد الدولار، وتصريف الدولار":["يظهر زر $ في التسجيل، ورصيد الدولار، وصرف الدولار","Shows the $ button when adding, the dollar balance, and dollar exchange"],"هيطلع من محفظة الجنيه اللي تختارها ويدخل محفظة الدولار":["سيُخصم من محفظة الجنيه التي تختارها ويُضاف إلى محفظة الدولار","Taken from the EGP wallet you choose and added to the dollar wallet"],"هيطلع من محفظة الدولار ويدخل محفظة الجنيه اللي تختارها":["سيُخصم من محفظة الدولار ويُضاف إلى محفظة الجنيه التي تختارها","Taken from the dollar wallet and added to the EGP wallet you choose"],"اسم المحفظة الجديدة؟ (مثلاً: بنك، فودافون كاش، الخزنة":["اسم المحفظة الجديدة؟ (مثلًا: بنك، فودافون كاش، الخزنة","New wallet name? (e.g. Bank, Vodafone Cash, Safe"],"سعر الدولار مش معروف، اكتبه من الإعدادات أو اختار «لا":["سعر الدولار غير معروف، اكتبه من الإعدادات أو اختر «لا","The dollar rate is unknown; set it in Settings or choose “No"],"النسخة الاحتياطية على Drive لسه مش متظبطة في التطبيق":["النسخ الاحتياطي على Drive غير مُعدّ في التطبيق بعد","Drive backup isn't set up in the app yet"],"من غير ما تدوس «اتدفع». لو مقفولة: بيظهرلك تذكير بس":["دون الضغط على «تم الدفع». إذا كانت مغلقة: يظهر لك تذكير فقط","Without tapping “Paid”. If off, you just get a reminder"],"إشعار الساعة 11 بالليل: «سجّلت كل مصاريف النهارده؟":["إشعار الساعة 11 مساءً: «هل سجّلت كل مصروفات اليوم؟","A notification at 11 PM: “Did you log all of today's spending?"],"بياناتك على الموبايل ده بس، ومحدش يقدر يشوفها غيرك":["بياناتك على هذا الهاتف فقط، ولا يستطيع أحد رؤيتها غيرك","Your data stays on this phone only, and no one else can see it"],"سعر الدولار مش معروف لسه. افتح النت أو اكتبه بإيدك":["سعر الدولار غير معروف بعد. افتح الإنترنت أو اكتبه يدويًا","The dollar rate isn't known yet. Go online or type it yourself"],"مافيش محفظة تانية بنفس العملة أنقل عليها عملياتها":["لا توجد محفظة أخرى بالعملة نفسها لنقل عملياتها إليها","There's no other wallet in the same currency to move its transactions to"],"امسح صور العمليات والسلف اللي عدّى عليها أكتر من":["احذف صور العمليات والسلف التي مضى عليها أكثر من","Delete photos of transactions and loans older than"],"المحفظتين بعملتين مختلفتين، استخدم «تصريف دولار":["المحفظتان بعملتين مختلفتين، استخدم «صرف دولار","The wallets use different currencies; use “Dollar exchange"],"مافيش نت دلوقتي، هتتاخد النسخة أول ما النت يرجع":["لا يوجد إنترنت الآن، ستؤخذ النسخة فور عودة الإنترنت","You're offline; the backup will run as soon as you're back online"],"هترجّعها بدل البيانات اللي على الموبايل. متأكد؟":["ستستعيدها بدلًا من البيانات الموجودة على الهاتف. هل أنت متأكد؟","It will replace the data on this phone. Are you sure?"],"لو مقفولة، كل حاجة بتتسجل على المحفظة الأساسية":["إذا كانت مغلقة، يُسجَّل كل شيء على المحفظة الأساسية","If off, everything is recorded on the main wallet"],"مافيش سلف بالجنيه. سجّل سلفة من «تسجيل» ← سلفة":["لا توجد سلف بالجنيه. سجّل سلفة من «تسجيل» ← سلفة","No EGP loans. Add one from “Add” ← Loan"],"الباسورد لازم يبقى 4 حروف أو أرقام على الأقل":["يجب أن تتكون كلمة المرور من 4 حروف أو أرقام على الأقل","The password must be at least 4 characters"],"التطبيق مش قادر يفتح التخزين على الموبايل ده":["لا يستطيع التطبيق فتح التخزين على هذا الهاتف","The app can't open storage on this phone"],"حدد مبلغ تحوّشه، ونقولك تصرف قد إيه في اليوم":["حدّد مبلغًا تدّخره، ونخبرك بكم تنفق في اليوم","Set an amount to save and we'll tell you how much to spend per day"],"☁️ النسخة الاحتياطية متأخرة، اتأكد إن فيه نت":["☁️ النسخة الاحتياطية متأخرة، تأكد من وجود إنترنت","☁️ Backup is overdue, check your internet connection"],"تم إعداد وتصميم التطبيق بواسطة Yousef Eraqy":["تم إعداد التطبيق وتصميمه بواسطة Yousef Eraqy","App built and designed by Yousef Eraqy"],"سلف الدولار دفتر لوحده، مش بيأثر على محافظك":["سلف الدولار دفتر مستقل، ولا تؤثر على محافظك","Dollar loans are a separate book and don't affect your wallets"],"مافيش مذكرات لسه. دوس + عشان تكتب أول واحدة":["لا توجد مذكرات بعد. اضغط + لكتابة أول مذكرة","No notes yet. Tap + to write your first one"],"ولو وفّرت يوم، الفرق بيتوزع على باقي الأيام":["وإذا وفّرت في يوم، يُوزَّع الفرق على باقي الأيام","If you save on a day, the difference is spread over the remaining days"],"اتربط ✓ ومالقيتش نسخة قديمة، هتبدأ من جديد":["تم الربط ✓ ولم أجد نسخة قديمة، ستبدأ من جديد","Linked ✓ No old backup found, starting fresh"],"التوقّع بيبقى أدق بعد كام يوم من أول الشهر":["يصبح التوقع أدق بعد أيام من بداية الشهر","The forecast gets more accurate a few days into the month"],"بتتشفّر، ومحدش يقدر يقراها من غير الباسورد":["تُشفَّر، ولا يمكن لأحد قراءتها دون كلمة المرور","Encrypted; no one can read it without the password"],"بيتغيّر في كل حتة، حتى في العمليات القديمة":["يتغير في كل مكان، حتى في العمليات القديمة","Changes everywhere, even in old transactions"],"لو نسيت الـ PIN، ترجّعه بحساب جوجل المربوط":["إذا نسيت رمز PIN، يمكنك استعادته بحساب جوجل المربوط","If you forget the PIN, reset it with the linked Google account"],"اعمل واحد جديد من الإعدادات ← قفل التطبيق":["أنشئ رمزًا جديدًا من الإعدادات ← قفل التطبيق","Create a new one in Settings ← App lock"],"الموبايل ده مش بيدعم الإشعارات من التطبيق":["هذا الهاتف لا يدعم الإشعارات من التطبيق","This phone doesn't support notifications from the app"],"دوس على أي حد عشان تشوف كل حركاته وصورها":["اضغط على أي شخص لرؤية كل حركاته وصورها","Tap anyone to see all their entries and photos"],"سعر الدولار مش معروف، اكتبه من الإعدادات":["سعر الدولار غير معروف، اكتبه من الإعدادات","The dollar rate is unknown; set it in Settings"],"لو مقفولة، الدفتر منفصل تماماً عن محافظك":["إذا كانت مغلقة، فالدفتر منفصل تمامًا عن محافظك","If off, the book is completely separate from your wallets"],"✍️ صرفت حاجة ومسجلتهاش؟ آخر عملية سجلتها":["✍️ هل أنفقت شيئًا ولم تسجله؟ آخر عملية سجلتها كانت","✍️ Spent something you didn't log? Your last entry was"],"جوجل بيطلب دوسة كل فترة عشان يجدد الإذن":["تطلب جوجل ضغطة كل فترة لتجديد الإذن","Google asks for a tap every so often to renew access"],"مقفول، شغّله لو بتصرف أو بتقبض بالدولار":["مغلق، شغّله إذا كنت تنفق أو تقبض بالدولار","Off. Turn it on if you spend or earn in dollars"],"اتنزل الملف ✓ افتحه بإكسيل أو جوجل شيت":["تم تنزيل الملف ✓ افتحه بإكسل أو جوجل شيت","File downloaded ✓ Open it with Excel or Google Sheets"],"الدفعات اللي اتسجلت في محافظك زي ما هي":["الدفعات المسجلة في محافظك باقية كما هي","Payments recorded in your wallets stay as they are"],"الإشعارات بتوصلك حتى والتطبيق مقفول ✓":["تصلك الإشعارات حتى والتطبيق مغلق ✓","Notifications arrive even when the app is closed ✓"],"لو عدّى الوقت ده من غير ما تسجّل حاجة":["إذا مر هذا الوقت دون أن تسجل شيئًا","If this much time passes without logging anything"],"صورة العملية، دوس عليها عشان تكبّرها":["صورة العملية، اضغط عليها لتكبيرها","Transaction photo, tap to enlarge"],"⚠️ بالفلوس اللي فاضلة مش هتقدر توفّر":["⚠️ بالمال المتبقي لن تتمكن من توفير","⚠️ With the money left you can't save"],"اكتب الـ PIN عشان تلغي قفل التطبيق":["اكتب رمز PIN لإلغاء قفل التطبيق","Enter the PIN to turn off app lock"],"المشاركة مش متاحة هنا، استخدم «حفظ":["المشاركة غير متاحة هنا، استخدم «حفظ","Sharing isn't available here, use “Save"],"عشان تتسجل لوحدها لازم تكتب المبلغ":["لتُسجَّل تلقائيًا يجب كتابة المبلغ","To record automatically you need to enter the amount"],"محتاج نت أول مرة عشان أعمل التقرير":["أحتاج إلى الإنترنت أول مرة لإنشاء التقرير","Internet is needed the first time to make the report"],"مذكرة نهائي ومش هترجع تاني. متأكد؟":["مذكرة نهائيًا ولن تعود. هل أنت متأكد؟","note permanently and it won't come back. Are you sure?"],"اسألني أسجّل الدفعة صرف من محفظتي":["اسألني لتسجيل الدفعة مصروفًا من محفظتي","Ask me to record the payment as an expense from my wallet"],"اكتب الـ PIN عشان تشيل قفل الدفتر":["اكتب رمز PIN لإزالة قفل الدفتر","Enter the PIN to unlock the book permanently"],"عشان تشيل ميزانية، حط المبلغ صفر":["لإزالة ميزانية، اجعل المبلغ صفرًا","To remove a budget, set the amount to zero"],"مالقيتش نسخة على Drive للحساب ده":["لم أجد نسخة على Drive لهذا الحساب","No backup found on Drive for this account"],"هيتسجل لوحده أول ما تفتح التطبيق":["سيُسجَّل تلقائيًا عند فتح التطبيق","It'll be recorded automatically when you open the app"],"المبلغ أقل من اللي اتسدّد فعلاً":["المبلغ أقل مما سُدِّد فعلًا","The amount is less than what's already been paid"],"تحب تسجّلها دخل في محفظتك كمان؟":["هل تريد تسجيلها دخلًا في محفظتك أيضًا؟","Also record it as income in your wallet?"],"تحب تسجّلها صرف من محفظتك كمان؟":["هل تريد تسجيلها مصروفًا من محفظتك أيضًا؟","Also record it as an expense from your wallet?"],"لازم تفضل محفظة واحدة على الأقل":["يجب أن تبقى محفظة واحدة على الأقل","At least one wallet must remain"],"مافيش ميزانيات. حط واحدة من تحت":["لا توجد ميزانيات. أضف واحدة من الأسفل","No budgets. Add one below"],"ماقدرتش أوصل للتحديث، جرّب تاني":["تعذّر الوصول إلى التحديث، حاول مرة أخرى","Couldn't reach the update, try again"],"⚠️ عشان متدخلش في عجز، خليك تحت":["⚠️ حتى لا تقع في عجز، ابقَ تحت","⚠️ To avoid a deficit, stay under"],"🔎 دوّر على بند أو شخص أو ملاحظة":["🔎 ابحث عن بند أو شخص أو ملاحظة","🔎 Search a category, person or note"],"🗑️ الصورة اتمسحت لتفريغ المساحة":["🗑️ حُذفت الصورة لتوفير المساحة","🗑️ The photo was deleted to free up space"],"اللي اتسدّد أكبر من المبلغ كله":["المبلغ المسدَّد أكبر من المبلغ الكلي","The paid amount is bigger than the total"],"فعّل النسخ التلقائي (مرة واحدة":[0,"Turn on auto backup (one time"],"مافيش نت أو جوجل مش راضية تفتح":["لا يوجد إنترنت أو تعذّر فتح جوجل","No internet, or Google won't open"],"اكتب الـ PIN عشان تفتح الدفتر":["اكتب رمز PIN لفتح الدفتر","Enter the PIN to open the book"],"ديون كبيرة بعيد عن حساب الشهر":["ديون كبيرة بعيدًا عن حساب الشهر","Big debts, kept apart from your monthly budget"],"مافيش دخل ولا صرف في الشهر ده":["لا يوجد دخل ولا مصروف في هذا الشهر","No income or spending this month"],"🔐 التطبيق هيتقفل لما تخرج منه":["🔐 سيُقفل التطبيق عند الخروج منه","🔐 The app will lock when you leave it"],"🔔 نبّهني لو عدّيت مصروف اليوم":["🔔 نبّهني إذا تجاوزت مصروف اليوم","🔔 Alert me if I go over today's budget"],"أي تعديل بيتاخدله نسخة لوحده":["يُنسخ أي تعديل تلقائيًا","Every change is backed up automatically"],"افتكر اختياري ومتسألنيش تاني":["تذكّر اختياري ولا تسألني مرة أخرى","Remember my choice and don't ask again"],"اكتب المبلغ اللي عاوز توفّره":["اكتب المبلغ الذي تريد توفيره","Enter the amount you want to save"],"اكتب المبلغ بالدولار والجنيه":[0,"Enter the amount in dollars and pounds"],"النسخ بتتاخد لوحدها دلوقتي ✓":["النسخ يتم تلقائيًا الآن ✓","Backups now run automatically ✓"],"مثلاً قرض البنك، جمعية، خالد":["مثلًا قرض البنك، جمعية، خالد","e.g. Bank loan, savings circle, Khaled"],"الملف ده مش نسخة من حساباتي":["هذا الملف ليس نسخة من حساباتي","This file isn't a Hesabaty backup"],"مفيش مصروف متاح لباقي الشهر":["لا يوجد مصروف متاح لبقية الشهر","there's no spending money left for the rest of the month"],"نبّهني لو عدّيت مصروف اليوم":["نبّهني إذا تجاوزت مصروف اليوم","Alert me if I go over today's budget"],"🔒 الدفتر بقى مقفول بالـ PIN":["🔒 أصبح الدفتر مقفلًا برمز PIN","🔒 The book is now locked with the PIN"],"اتمسح الـ PIN واتلغى القفل":["حُذف رمز PIN وأُلغي القفل","PIN removed and lock turned off"],"افصل الحساب عن الموبايل ده":["افصل الحساب عن هذا الهاتف","Unlink the account from this phone"],"الشهر خلص، ده اللي حصل فيه":["انتهى الشهر، وهذا ما حدث فيه","The month is over, here's what happened"],"دوس «+ دين جديد» تضيف واحد":["اضغط «+ دين جديد» لإضافة واحد","Tap “+ New debt” to add one"],"شغّال، والسعر مش معروف لسه":["يعمل، والسعر غير معروف بعد","On, but the rate isn't known yet"],"قرّب بصباعين، أو دوس مرتين":["كبّر بإصبعين، أو اضغط مرتين","Pinch to zoom, or double tap"],"⚠️ عدّيت مصروف النهارده بـ":["⚠️ تجاوزت مصروف اليوم بـ","⚠️ You went over today's budget by"],"📒 قسط مستحق في دفتر الديون":[0,"📒 An installment is due in the debt book"],"🔁 سجّلها لوحدها في ميعادها":["🔁 سجّلها تلقائيًا في موعدها","🔁 Record it automatically when due"],"اسألني على المحفظة كل مرة":["اسألني عن المحفظة في كل مرة","Ask me which wallet every time"],"اقفل التطبيق لما أخرج منه":["أقفل التطبيق عند الخروج منه","Lock the app when I leave it"],"سجّلت كل مصاريف النهارده؟":["هل سجّلت كل مصروفات اليوم؟","Did you log all of today's spending?"],"ماقدرتش أجيب السعر دلوقتي":["تعذّر جلب السعر الآن","Couldn't get the rate right now"],"📒 قسط بكرة في دفتر الديون":["📒 قسط غدًا في دفتر الديون","📒 An installment is due tomorrow in the debt book"],"أرجّعها على الموبايل ده؟":["هل أستعيدها على هذا الهاتف؟","Restore it on this phone?"],"الدفتر منفصل عن محافظك ✓":[0,"The book is separate from your wallets ✓"],"المبلغ أكبر من اللي فاضل":["المبلغ أكبر من المتبقي","The amount is more than what's left"],"ده مش نفس الحساب المربوط":["هذا ليس الحساب المربوط نفسه","That's not the linked account"],"سجّلها لوحدها في ميعادها":["سجّلها تلقائيًا في موعدها","Record it automatically when due"],"عاوز يفضل معاك آخر الشهر":["المبلغ الذي تريد أن يبقى معك آخر الشهر","Amount to have left at month end"],"غلط كتير، استنى 30 ثانية":["محاولات خاطئة كثيرة، انتظر 30 ثانية","Too many wrong tries, wait 30 seconds"],"مافيش عمليات في الشهر ده":["لا توجد عمليات في هذا الشهر","No transactions this month"],"يتفتح بالـ PIN أو البصمة":["يُفتح برمز PIN أو البصمة","Opens with the PIN or fingerprint"],"اتاخدت نسخة على Drive ✓":["تم النسخ على Drive ✓","Backed up to Drive ✓"],"اتنقلت لسلة المهملات 🗑️":["نُقلت إلى سلة المهملات 🗑️","Moved to trash 🗑️"],"اسألني أسجّل الدفعة صرف":["اسألني لتسجيل الدفعة مصروفًا","Ask to record the payment as an expense"],"اكتب الـ PIN عشان تمسحه":["اكتب رمز PIN لحذفه","Enter the PIN to remove it"],"دوس على الإيموجي تغيّره":["اضغط على الرمز لتغييره","Tap the emoji to change it"],"سجّل أول ما أختار البند":["سجّل فور اختيار البند","Save as soon as I pick the category"],"لقيت نسختك على Drive من":["وجدت نسختك على Drive بتاريخ","Found your Drive backup from"],"مافيش صور متخزنة دلوقتي":["لا توجد صور مخزنة الآن","No photos stored right now"],"ماقدرتش أتأكد من الحساب":["تعذّر التأكد من الحساب","Couldn't verify the account"],"☁️ آخر نسخة احتياطية من":["☁️ آخر نسخة احتياطية منذ","☁️ Last backup was"],"✍️ صرفت حاجة ومسجلتهاش؟":["✍️ هل أنفقت شيئًا ولم تسجله؟","✍️ Spent something you didn't log?"],"🎯 ماشي كويس. عشان توفّر":["🎯 أداء جيد. لتوفير","🎯 On track. To save"],"افتح الدفتر عشان تشوفه":["افتح الدفتر لرؤيته","Open the book to see it"],"التذكير بالتسجيل اتقفل":["تم إيقاف التذكير بالتسجيل","Logging reminder turned off"],"بالمعدل ده هتصرف حوالي":["بهذا المعدل ستنفق حوالي","At this rate you'll spend about"],"بقت المحفظة الأساسية ⭐":["أصبحت المحفظة الأساسية ⭐","is now the main wallet ⭐"],"تمام، هتوصلك إشعارات ✓":["حسنًا، ستصلك الإشعارات ✓","Great, you'll get notifications ✓"],"سعر الدولار اتثبّت على":["تم تثبيت سعر الدولار على","Dollar rate fixed at"],"سعر الدولار رجع تلقائي":["عاد سعر الدولار تلقائيًا","Dollar rate back to automatic"],"مافيش ديون عليك متسجلة":["لا توجد ديون مسجلة عليك","No debts you owe yet"],"محتاج تربط الحساب تاني":["يجب ربط الحساب مرة أخرى","You need to link the account again"],"من غير إيموجي (أول حرف":["بدون رمز (أول حرف","No emoji (first letter"],"وكل عملياتها هتتنقل لـ":["وستُنقل كل عملياتها إلى","and all its transactions will move to"],"يطلب الـ PIN أو البصمة":["يطلب رمز PIN أو البصمة","Asks for the PIN or fingerprint"],"🌙 ملخص آخر اليوم اشتغل":["🌙 تم تشغيل ملخص نهاية اليوم","🌙 End-of-day summary on"],"🔒 غيّر باسورد المذكرات":["🔒 غيّر كلمة مرور المذكرات","🔒 Change notes password"],"أكتر حاجات صرفت عليها":["أكثر ما أنفقت عليه","Where most of your money went"],"اختار محفظتين مختلفين":["اختر محفظتين مختلفتين","Pick two different wallets"],"مافيش دخل في الشهر ده":["لا يوجد دخل في هذا الشهر","No income this month"],"مافيش ديون ليك عند حد":["لا توجد ديون لك عند أحد","No one owes you anything"],"مافيش سلف في الشهر ده":["لا توجد سلف في هذا الشهر","No loans this month"],"مافيش صرف في الشهر ده":["لا يوجد مصروف في هذا الشهر","No spending this month"],"مافيش صور أقدم من كده":["لا توجد صور أقدم من ذلك","No photos older than that"],"مافيش عمليات ليها صور":["لا توجد عمليات بصور","No transactions with photos"],"واتشالت كمان من محفظة":["وأُزيلت أيضًا من محفظة","and removed from wallet"],"اختار PIN من 4 أرقام":["اختر رمز PIN من 4 أرقام","Choose a 4-digit PIN"],"اعمل باسورد للمذكرات":["أنشئ كلمة مرور للمذكرات","Create a notes password"],"اكتب باسورد المذكرات":["اكتب كلمة مرور المذكرات","Enter the notes password"],"الباسوردين مش زي بعض":["كلمتا المرور غير متطابقتين","The passwords don't match"],"لو فاضي باسم التذكير":["إن تُرك فارغًا فباسم التذكير","If empty, uses the reminder's name"],"ماقدرتش أعمل التقرير":["تعذّر إنشاء التقرير","Couldn't make the report"],"ماقدرتش أفتح المذكرة":["تعذّر فتح المذكرة","Couldn't open the note"],"ماقدرتش أقفل المذكرة":["تعذّر قفل المذكرة","Couldn't lock the note"],"مش زي بعض، ابدأ تاني":["غير متطابقين، ابدأ من جديد","They don't match, start again"],"معاينة، لسه ماتحفظتش":["معاينة، لم تُحفظ بعد","Preview, not saved yet"],"ملخص آخر اليوم اتقفل":["تم إيقاف ملخص نهاية اليوم","End-of-day summary off"],"يتقفل بعد ما أخرج بـ":["يُقفل بعد خروجي بـ","Lock after I leave for"],"🎯 تقدر تصرف النهارده":["🎯 يمكنك أن تنفق اليوم","🎯 You can spend today"],"🚨 عدّيت الميزانية بـ":["🚨 تجاوزت الميزانية بـ","🚨 You went over the budget by"],"إعدادات دفتر الديون":[0,"Debt book settings"],"اكتب الـ PIN الجديد":["اكتب رمز PIN الجديد","Enter the new PIN"],"اكتب الـ PIN القديم":["اكتب رمز PIN القديم","Enter the old PIN"],"حدّث التطبيق دلوقتي":["حدّث التطبيق الآن","Update the app now"],"فيه محفظة بالاسم ده":["توجد محفظة بهذا الاسم","A wallet with this name exists"],"قرّبت تخلّص ميزانية":["اقتربت من نهاية ميزانية","Almost at the budget for"],"لسه مافيش ديون خلصت":["لا توجد ديون منتهية بعد","No paid-off debts yet"],"ماقدرتش أكمّل الربط":["تعذّر إكمال الربط","Couldn't finish linking"],"مالقيتش عمليات باسم":["لم أجد عمليات باسم","No transactions named"],"متسجلهاش في المحافظ":["لا تسجلها في المحافظ","Don't record it in wallets"],"مش هتتسجل في محافظك":["لن تُسجَّل في محافظك","Won't be recorded in your wallets"],"⚠️ الإشعارات مقفولة":["⚠️ الإشعارات مغلقة","⚠️ Notifications are off"],"اتحصّل منه قبل كده":["حُصِّل منه من قبل","Already collected"],"اتسدّد منه قبل كده":["سُدِّد منه من قبل","Already paid"],"اكتب البند والمبلغ":[0,"Enter the category and amount"],"اكتبه تاني للتأكيد":["اكتبه مرة أخرى للتأكيد","Type it again to confirm"],"الحقيقي دلوقتي كام":["الفعلي الآن؟","actual balance now?"],"دوس وسجّل في ثانية":["اضغط وسجّل في ثانية","Tap and log it in a second"],"سعر الدولار اليدوي":[0,"Manual dollar rate"],"كل العمليات (تكملة":["كل العمليات (تابع","All transactions (continued"],"لسه مااتاخدتش نسخة":["لم تُؤخذ نسخة بعد","No backup yet"],"من غير أقساط ثابتة":["بدون أقساط ثابتة","with no fixed installments"],"هسألك مع كل دفعة ✓":["سأسألك مع كل دفعة ✓","I'll ask with every payment ✓"],"⚠️ وصلت 80%، فاضلك":["⚠️ وصلت إلى 80%، يتبقى لك","⚠️ Reached 80%, you have left"],"👌 اتعدّى الفترة دي":["👌 تم تخطي هذه الفترة","👌 Skipped this time"],"🔎 دوّر في المذكرات":["🔎 ابحث في المذكرات","🔎 Search notes"],"اتغيّر الباسورد ✓":["تم تغيير كلمة المرور ✓","Password changed ✓"],"اكتب مبلغ التحويل":[0,"Enter the transfer amount"],"الدولار دلوقتي بـ":["الدولار الآن بـ","The dollar is now"],"المحفظة دي موجودة":["هذه المحفظة موجودة","That wallet already exists"],"النسخة الاحتياطية":[0,"Backup"],"بتتعامل بالدولار؟":["هل تتعامل بالدولار؟","Do you use dollars?"],"بيدوّر على تحديث…":["يبحث عن تحديث…","Checking for updates…"],"تشغيل هدف التوفير":[0,"Turn on savings goal"],"قفل التطبيق اتلغى":["أُلغي قفل التطبيق","App lock turned off"],"ماتغيّرش الباسورد":["لم تتغير كلمة المرور","Password not changed"],"مافيش تذكيرات لسه":["لا توجد تذكيرات بعد","No reminders yet"],"مثلاً قسط العربية":["مثلًا قسط السيارة","e.g. Car installment"],"مربوط، محتاج دوسة":["مربوط، يحتاج ضغطة","Linked, needs a tap"],"من مساحة الموبايل":["من مساحة الهاتف","of phone storage"],"هدف التوفير اتقفل":["أُوقف هدف التوفير","Savings goal off"],"⭐ خلّيها الأساسية":["⭐ اجعلها الأساسية","⭐ Make it the main one"],"👌 القسط ده اتعدّى":["👌 تم تخطي هذا القسط","👌 Installment skipped"],"📈 توقّع آخر الشهر":["📈 توقع نهاية الشهر","📈 Month-end forecast"],"🙏 استلفت الشهر ده":["🙏 اقترضت هذا الشهر","🙏 Borrowed this month"],"آخر يوم في الشهر":[0,"Last day of the month"],"أو استخدم البصمة":[0,"or use your fingerprint"],"اتحفظت المذكرة ✓":["حُفظت المذكرة ✓","Note saved ✓"],"اتغيّر الـ PIN ✓":["تم تغيير رمز PIN ✓","PIN changed ✓"],"اتقفلت شاشة جوجل":["أُغلقت شاشة جوجل","The Google screen was closed"],"اكتب اسم التذكير":[0,"Enter the reminder's name"],"اكتب اسم المحفظة":[0,"Enter the wallet name"],"الإشعارات مقفولة":["الإشعارات مغلقة","Notifications are off"],"الدفتر بقى مفتوح":["أصبح الدفتر مفتوحًا","The book is now unlocked"],"الصورة مش موجودة":["الصورة غير موجودة","Photo not found"],"المحفظة الأساسية":[0,"Main wallet"],"النسخة اللي عندك":["النسخة التي لديك","Your version"],"بتتعامل بالدولار":["هل تتعامل بالدولار","Do you use dollars"],"حوّل بين المحافظ":[0,"Transfer between wallets"],"سعر ثابت من عندك":[0,"Your own fixed rate"],"عليّا (أنا مديون":["عليّ (أنا مدين","I owe (I'm in debt"],"في الأوقات دي بس":["في هذه الأوقات فقط","Only during these hours"],"ليّا (حد مديونلي":["لي (شخص مدين لي","Owed to me (someone owes me"],"ماتفعّلتش البصمة":["لم تُفعَّل البصمة","Fingerprint not enabled"],"ماتمّتش الموافقة":["لم تتم الموافقة","Not approved"],"مافيش سلف مفتوحة":["لا توجد سلف مفتوحة","No open loans"],"هتتمسح نهائي بعد":["ستُحذف نهائيًا بعد","Deleted for good in"],"هتدخل بحساب جوجل":["ستدخل بحساب جوجل","You'll sign in with Google"],"يوم كام في الشهر":["أي يوم في الشهر","Which day of the month"],"🌙 ملخص آخر اليوم":["🌙 ملخص نهاية اليوم","🌙 End-of-day summary"],"👆 البصمة اتفعّلت":["👆 تم تفعيل البصمة","👆 Fingerprint enabled"],"🔒 اقفلها بباسورد":["🔒 اقفلها بكلمة مرور","🔒 Lock with a password"],"🤝 سلّفت الشهر ده":["🤝 أقرضت هذا الشهر","🤝 Lent this month"],"اتحفظ التذكير ⏰":["حُفظ التذكير ⏰","Reminder saved ⏰"],"اتغيّر الاسم لـ":["تغيّر الاسم إلى","Renamed to"],"اتنزل التقرير ✓":["تم تنزيل التقرير ✓","Report downloaded ✓"],"اتنزلت النسخة ✓":["تم تنزيل النسخة ✓","Backup downloaded ✓"],"اختيارك المحفوظ":[0,"Your saved choice"],"اسمح بالإشعارات":[0,"Allow notifications"],"اكتب المبلغ كله":["اكتب المبلغ كاملًا","Enter the full amount"],"الاسم الجديد لـ":[0,"New name for"],"الصورة المختارة":[0,"Selected photo"],"الفلوس بالتفصيل":["المال بالتفصيل","Money in detail"],"القسط الجاي بعد":["القسط القادم بعد","Next installment in"],"المبلغ بالدولار":[0,"Amount in dollars"],"المبلغ في الشهر":[0,"Amount per month"],"باسورد المذكرات":["كلمة مرور المذكرات","Notes password"],"صرفت لحد امبارح":["أنفقت حتى أمس","Spent up to yesterday"],"عندك آخر نسخة ✓":["لديك أحدث نسخة ✓","You have the latest version ✓"],"فكّرني بالأقساط":["ذكّرني بالأقساط","Remind me of installments"],"كل فلوسك دلوقتي":["كل أموالك الآن","All your money now"],"لسه مافيش دفعات":["لا توجد دفعات بعد","No payments yet"],"مافيش صور تتمسح":["لا توجد صور للحذف","No photos to delete"],"مافيش نت دلوقتي":["لا يوجد إنترنت الآن","You're offline"],"متأكد؟ دوس تاني":["متأكد؟ اضغط مرة أخرى","Sure? Tap again"],"يعني الدولار بـ":["أي أن الدولار بـ","so the dollar is"],"✓ اتسجلت الدفعة":["✓ سُجِّلت الدفعة","✓ Payment recorded"],"✓ اتمسح الـ PIN":["✓ حُذف رمز PIN","✓ PIN removed"],"🌙 ملخص النهارده":["🌙 ملخص اليوم","🌙 Today's summary"],"💵 الدولار اشتغل":["💵 تم تشغيل الدولار","💵 Dollars on"],"🗑️ امسح المحفظة":["🗑️ احذف المحفظة","🗑️ Delete wallet"],"🗑️ سلة المهملات":[0,"🗑️ Trash"],"إعدادات الدفتر":[0,"Book settings"],"اتشالت ميزانية":["أُزيلت ميزانية","Budget removed for"],"اتمسحت العملية":["حُذفت العملية","Transaction deleted"],"اتمسحت المحفظة":["حُذفت المحفظة","Wallet deleted"],"اختار جاي منين":["اختر مصدر الدخل","Pick where it came from"],"اقفلها بباسورد":["اقفلها بكلمة مرور","Lock with a password"],"اكتب اسم البند":[0,"Type the category name"],"اكتب اسم الدين":[0,"Enter the debt's name"],"التقرير جاهز ✓":[0,"Report ready ✓"],"الشهر اللي فات":["الشهر الماضي","Previous month"],"القسط النهارده":["القسط اليوم","Installment due today"],"القسط متأخر من":["القسط متأخر منذ","Installment overdue since"],"المبلغ (لو فيه":["المبلغ (إن وجد","Amount (if any"],"بيحسب المساحة…":["يحسب المساحة…","Calculating space…"],"خد نسخة دلوقتي":["خذ نسخة الآن","Back up now"],"رجعت المذكرة ✓":["استُعيدت المذكرة ✓","Note restored ✓"],"فاضل تصرفه على":["المتبقي للإنفاق على","Left to spend over"],"فاضلك الشهر ده":["المتبقي لك هذا الشهر","Left this month"],"في دفتر الديون":[0,"in the debt book"],"ماينفعش من هنا":["غير ممكن من هنا","Not possible from here"],"ملخص آخر اليوم":["ملخص نهاية اليوم","End-of-day summary"],"من أنهي محفظة؟":["من أي محفظة؟","From which wallet?"],"✏️ ظبّط الرصيد":["✏️ اضبط الرصيد","✏️ Adjust balance"],"🔐 اقفل التطبيق":["🔐 أقفل التطبيق","🔐 Lock the app"],"🔔 فكّرني أسجّل":["🔔 ذكّرني بالتسجيل","🔔 Remind me to log"],"اتغيّر إيموجي":["تغيّر رمز","Emoji changed for"],"اتلغى التسجيل":["أُلغي التسجيل","Recording cancelled"],"اتمسح التذكير":["حُذف التذكير","Reminder deleted"],"اتمسحت الحركة":["حُذفت الحركة","Entry deleted"],"اتمسحت الدفعة":["حُذفت الدفعة","Payment deleted"],"اتمسحت السلفة":["حُذفت السلفة","Loan deleted"],"اختار التاريخ":["اختر التاريخ","Pick the date"],"افتكر اختياري":["تذكّر اختياري","Remember my choice"],"التذكير اتوقف":["توقف التذكير","Reminder paused"],"التذكير اشتغل":["تم تشغيل التذكير","Reminder on"],"التطبيق مفتوح":[0,"App unlocked"],"التطبيق مقفول":["التطبيق مقفل","App locked"],"الدولار اتقفل":["أُوقف الدولار","Dollars off"],"الصورة اتمسحت":["حُذفت الصورة","photo deleted"],"القسط (لو فيه":["القسط (إن وجد","Installment (if any"],"الوضع النهاري":[0,"Light mode"],"امسح الصور دي":["احذف هذه الصور","Delete these photos"],"تعديل التذكير":[0,"Edit reminder"],"تعديل العملية":[0,"Edit transaction"],"تعديل المذكرة":[0,"Edit note"],"دخلك الشهر ده":["دخلك هذا الشهر","Your income this month"],"رجعت النسخة ✓":["استُعيدت النسخة ✓","Backup restored ✓"],"رجّع من Drive":["استعد من Drive","Restore from Drive"],"شوفهم بالبنود":["اعرضها بالبنود","see them by category"],"عدّيت ميزانية":["تجاوزت ميزانية","Over the budget for"],"عنوان المذكرة":[0,"Note title"],"غيّر الإيموجي":["غيّر الرمز","Change emoji"],"فيه قسط مستحق":["يوجد قسط مستحق","There's an installment due"],"ليك عند الناس":["لك عند الناس","Others owe you"],"ماتمّش الدخول":["لم يتم الدخول","Sign-in failed"],"ميعاده كل شهر":["موعده كل شهر","Monthly due day"],"نزّل نسخة ملف":[0,"Download backup file"],"نسيت الـ PIN؟":["نسيت رمز PIN؟","Forgot the PIN?"],"وهتوفّر حوالي":["وستوفّر حوالي","and you'll save about"],"يتسجل تحت بند":["يُسجَّل تحت بند","Recorded under category"],"يعني في اليوم":["أي في اليوم","That's per day"],"⚠️ عشان توفّر":["⚠️ لتوفير","⚠️ To save"],"🎯 هدف التوفير":[0,"🎯 Savings goal"],"🏷️ غيّر الاسم":[0,"🏷️ Rename"],"📒 دفتر الديون":[0,"📒 Debt book"],"🔁 اتسجل لوحده":["🔁 سُجِّل تلقائيًا","🔁 Recorded automatically"],"أقساط مستحقة":[0,"installments due"],"إنت عليك ليه":["أنت مدين له","You owe them"],"اتحصّل القسط":["حُصِّل القسط","Installment collected"],"اتدفع، سجّله":["دُفع، سجّله","Paid, record it"],"اتصرف في إيه":["أُنفق على ماذا","Spent on"],"اتضافت محفظة":["أُضيفت محفظة","Wallet added"],"اتفصل الحساب":["فُصل الحساب","Account unlinked"],"اتلغت الدفعة":["أُلغيت الدفعة","Payment cancelled"],"اتمسحت نهائي":["حُذفت نهائيًا","Deleted for good"],"احفظ التذكير":[0,"Save reminder"],"احفظ التعديل":[0,"Save changes"],"اشتريت دولار":["اشتريت دولارًا","Bought dollars"],"افتح بالبصمة":[0,"Unlock with fingerprint"],"افتح حساباتي":[0,"Unlock Hesabaty"],"اكتب الاسمين":[0,"Enter both names"],"اكتب الـ PIN":["اكتب رمز PIN","Enter the PIN"],"الباسورد غلط":["كلمة المرور خاطئة","Wrong password"],"الدفتر مقفول":["الدفتر مقفل","Book locked"],"الدين ده خلص":["انتهى هذا الدين","This debt is paid off"],"المبلغ (جنيه":[0,"Amount (EGP"],"النهارده يوم":["اليوم هو","Today is day"],"الوضع الليلي":[0,"Night mode"],"امسح الـ PIN":["احذف رمز PIN","Remove PIN"],"بتصرف دلوقتي":["تنفق حاليًا","you're spending"],"بندين تانيين":["بندان آخران","2 more categories"],"تفاصيل زيادة":["تفاصيل إضافية","More details"],"حط الميزانية":["ضع الميزانية","Set budget"],"دخل الشهر ده":["دخل هذا الشهر","This month's income"],"دفعات الديون":[0,"Debt payments"],"رجّعه تلقائي":["أعده تلقائيًا","Back to automatic"],"سجّل التصريف":["سجّل الصرف","Record exchange"],"سلة المهملات":[0,"Trash"],"صرف النهارده":["مصروف اليوم","Spent today"],"غيّر الـ PIN":["غيّر رمز PIN","Change PIN"],"فكّرني أسجّل":["ذكّرني بالتسجيل","Remind me to log"],"لحد النهارده":["حتى اليوم","So far"],"لقيت نسخة من":["وجدت نسخة من","Found a backup from"],"ماتمّش الربط":["لم يتم الربط","Linking failed"],"مالقيتش حاجة":["لم أجد شيئًا","Nothing found"],"مبلغ التحويل":[0,"Transfer amount"],"مبلغ التوفير":[0,"Savings amount"],"محفظة الجنيه":[0,"EGP wallet"],"مذكرة مقفولة":["مذكرة مقفلة","Locked note"],"من الاستوديو":["من المعرض","From gallery"],"من غير عنوان":["بدون عنوان","Untitled"],"من غير ميعاد":["بدون موعد","No due date"],"نسخ احتياطية":[0,"Backups"],"🎯 هدفك توفّر":["🎯 هدفك توفير","🎯 Your goal is to save"],"📅 ملخص الشهر":[0,"📅 Month summary"],"📌 ثبّتها فوق":["📌 ثبّتها في الأعلى","📌 Pin to top"],"اتحصّل مبلغ":["حُصِّل مبلغ","Collected an amount"],"اختار البند":["اختر البند","Pick a category"],"اختار الشخص":["اختر الشخص","Pick the person"],"اسألني تاني":["اسألني مرة أخرى","Ask me again"],"افتح الدفتر":[0,"Open the book"],"اقفل الدفتر":["أقفل الدفتر","Lock the book"],"اكتب المبلغ":[0,"Enter the amount"],"الاسم الغلط":["الاسم الخاطئ","Wrong name"],"السلة اتفضت":["أُفرغت السلة","Trash emptied"],"السلة فاضية":["السلة فارغة","Trash is empty"],"الشهر الجاي":["الشهر القادم","Next month"],"الصور واخدة":["الصور تشغل","Photos take up"],"الـ PIN غلط":["رمز PIN خاطئ","Wrong PIN"],"امسح الدفعة":["احذف الدفعة","Delete payment"],"تصريف دولار":["صرف دولار","Dollar exchange"],"تعديل الدين":[0,"Edit debt"],"تفريغ مساحة":["توفير مساحة","Free up space"],"جرّب دلوقتي":["جرّب الآن","Try now"],"حاجات تانية":["أشياء أخرى","Other"],"دفتر الديون":[0,"Debt book"],"رجّع من ملف":["استعد من ملف","Restore from file"],"زي الموبايل":["مثل الهاتف","Like my phone"],"سجّل الدفعة":[0,"Record payment"],"سدّدت القسط":[0,"Paid the installment"],"سعر الدولار":[0,"Dollar rate"],"طريقة العرض":[0,"View"],"قبل التسجيل":[0,"before tracking"],"قفل التطبيق":[0,"App lock"],"كل العمليات":[0,"All transactions"],"لا، ده جديد":["لا، هذا جديد","No, it's new"],"متوسط الشهر":[0,"Monthly average"],"محفظة جديدة":[0,"New wallet"],"مذكرة جديدة":[0,"New note"],"مصروف اليوم":[0,"Today's budget"],"ملاحظة/صورة":[0,"Note/photo"],"نوع التصريف":["نوع الصرف","Exchange type"],"نوع العملية":[0,"Transaction type"],"هتمسح محفظة":["ستحذف محفظة","You'll delete wallet"],"هدف التوفير":[0,"Savings goal"],"👏 أحسن حاجة":["👏 أفضل ما حققت","👏 Best result"],"📄 تقرير PDF":[0,"📄 PDF report"],"🔔 هفكّرك كل":["🔔 سأذكّرك كل","🔔 I'll remind you every"],"ادمج بندين":[0,"Merge two categories"],"اكتب الاسم":[0,"Enter the name"],"اكتب البند":[0,"Type the category"],"اكتبه تاني":["اكتبه مرة أخرى","Type it again"],"الاسم الصح":["الاسم الصحيح","Right name"],"الدولار بـ":[0,"Dollar at"],"المبلغ كله":["المبلغ كاملًا","Total amount"],"امسح نهائي":["احذف نهائيًا","Delete for good"],"بتفضل هناك":["تبقى هناك","It stays there for"],"بنود تانية":["بنود أخرى","more categories"],"تحصيل ديون":[0,"Debt collection"],"تذكير جديد":[0,"New reminder"],"تسجيل سريع":[0,"Quick save"],"ثبّت السعر":[0,"Fix rate"],"ثبّتها فوق":["ثبّتها في الأعلى","Pin to top"],"حدّث السعر":[0,"Refresh rate"],"سجّل عملية":[0,"Add a transaction"],"سدّدت مبلغ":["سدّدت مبلغًا","Paid an amount"],"صورة واحدة":[0,"1 photo"],"عدد المرات":[0,"Times"],"عليك للناس":[0,"You owe others"],"فاضل حوالي":["المتبقي حوالي","about"],"فضّي السلة":["أفرغ السلة","Empty trash"],"كل شهر يوم":[0,"Monthly on day"],"كل قد إيه؟":["كل كم؟","How often?"],"محتاج دوسة":["يحتاج ضغطة","Needs a tap"],"نزّل إكسيل":["نزّل إكسل","Export Excel"],"نوع السلفة":[0,"Loan type"],"وصل، سجّله":[0,"Received, record it"],"✓ مربوط بـ":[0,"✓ Linked to"],"🎨 الإيموجي":["🎨 الرمز","🎨 Emoji"],"📄 نزّل PDF":[0,"📄 Download PDF"],"🗂️ بالبنود":[0,"🗂️ By category"],"12 بالليل":["12 منتصف الليل","12 AM"],"آخر تعديل":[0,"Last edited"],"اتحصّل من":["حُصِّل من","Collected from"],"اسم الدين":[0,"Debt name"],"اكتب هنا…":[0,"Write here…"],"الإعدادات":[0,"Settings"],"الميزانية":[0,"Budget"],"بعت دولار":["بعت دولارًا","Sold dollars"],"تقدر تصرف":["يمكنك أن تنفق","you can spend"],"سجّل دخول":["سجّل الدخول","Sign in"],"سجّل سلفة":[0,"Add a loan"],"سداد ديون":[0,"Debt payment"],"صغّر الخط":[0,"Smaller text"],"فاضل عليك":["المتبقي عليك","You still owe"],"فكّرني كل":["ذكّرني كل","remind me every"],"كبّر الخط":[0,"Bigger text"],"كل عمليات":[0,"All transactions of"],"لو مسجلتش":["إذا لم تسجل","if I haven't logged"],"ليلي أخضر":[0,"Green night"],"ليلي أسود":[0,"Black night"],"مبلغ تاني":["مبلغ آخر","Other amount"],"مرة واحدة":[0,"Once"],"مش دلوقتي":["ليس الآن","Not now"],"مقارنة بـ":[0,"Compared with"],"نوع الدين":[0,"Debt type"],"وإجماليها":["وإجمالياتها","and totals"],"والتلقائي":[0,"and automatic"],"وانتبه لـ":["وانتبه إلى","Watch out for"],"يوم القسط":[0,"Installment day"],"🎯 ميزانية":[0,"🎯 Budget"],"📄 التقرير":[0,"📄 Report"],"📅 بالأيام":[0,"📅 By day"],"12 الضهر":["12 ظهرًا","12 PM"],"آخر نسخة":[0,"Last backup"],"أنهي يوم":["أي يوم","Which day"],"اتسدّدلي":["سُدِّد لي","Repaid to me"],"اتضافت ✓":["أُضيفت ✓","Added ✓"],"اتعدلت ✓":["عُدِّلت ✓","Updated ✓"],"اتعدّل ✓":["عُدِّل ✓","Updated ✓"],"اكتب رقم":["اكتب رقمًا","Enter a number"],"الأساسية":[0,"Main"],"الإجمالي":[0,"Total"],"الإيموجي":["الرمز","Emoji"],"الباسورد":["كلمة المرور","Password"],"الشهر ده":["هذا الشهر","this month"],"العمليات":[0,"History"],"الملاحظة":[0,"Note"],"النهارده":["اليوم","Today"],"بالدولار":[0,"In dollars"],"بنحسب من":["نحسب من","Calculate from"],"بند تاني":["بند آخر","Other"],"جاي منين":["من أين جاء","Came from"],"خالصين ✓":["متعادلان ✓","All settled ✓"],"خلص خالص":["انتهى تمامًا","is fully paid off"],"خليك تحت":["ابقَ تحت","stay under"],"دين جديد":[0,"New debt"],"ربع ساعة":[0,"15 minutes"],"سجّل صرف":["سجّل مصروفًا","Save expense"],"سدّدت من":[0,"Paid toward"],"سلّفت حد":["أقرضت شخصًا","Lent someone"],"عدّيت بـ":["تجاوزت بـ","over by"],"عليه ليك":["مدين لك","owes you"],"عملية في":[0,"transactions in"],"عملية من":["عملية منذ","transactions since"],"فاضل ليك":["المتبقي لك","Still owed to you"],"في اليوم":[0,"per day"],"كان عليك":[0,"You owed"],"كل أسبوع":[0,"Weekly"],"كل فلوسك":["كل أموالك","All money"],"مافيش نت":["لا يوجد إنترنت","Offline"],"مش مربوط":["غير مربوط","Not linked"],"مش مفعّل":["غير مفعّل","Off"],"من الأول":["من البداية","Since the start"],"من محفظة":[0,"From wallet"],"✏️ تعديل":[0,"✏️ Edit"],"5 دقايق":["5 دقائق","5 minutes"],"أقدم من":[0,"older than"],"اتحفظ ✓":["حُفظ ✓","Saved ✓"],"اتسجل ✓":["سُجِّل ✓","Saved ✓"],"اختياري":[0,"Optional"],"الأقسام":[0,"Sections"],"الاتنين":["الاثنين","Monday"],"التاريخ":[0,"Date"],"التحديث":[0,"Update"],"التسجيل":[0,"Adding"],"التكرار":[0,"Repeat"],"الدفعات":[0,"Payments"],"الدولار":[0,"Dollar"],"العنوان":[0,"Title"],"المتبقي":[0,"Left"],"المحفظة":[0,"Wallet"],"المذكرة":[0,"Note"],"بالجنيه":[0,"In EGP"],"بيتعمل…":["جارٍ الإنشاء…","Making it…"],"بيحدّث…":["يحدّث…","Updating…"],"تذكيرات":[0,"Reminders"],"حد تاني":["شخص آخر","Someone else"],"حساباتي":[0,"Hesabaty"],"خد نسخة":["خذ نسخة","Back up"],"رجّعتله":["رددت له","I repaid"],"على طول":["فورًا","Immediately"],"كان ليك":["كان لك","Was owed to you"],"من شوية":["منذ قليل","a moment ago"],"ميزانية":[0,"Budget"],"واتسجلت":["وسُجِّلت","and recorded"],"✅ اتسجل":["✅ سُجِّل","✅ Recorded"],"✓ اتربط":["✓ تم الربط","✓ Linked"],"✓ اتسجل":["✓ سُجِّل","✓ Saved"],"✓ مربوط":[0,"✓ Linked"],"⬇ احفظه":[0,"⬇ Save it"],"📄 تقرير":[0,"📄 Report"],"📒 اتضاف":["📒 أُضيف","📒 Added"],"📤 ابعته":["📤 أرسله","📤 Share"],"🔁 اتحول":["🔁 حُوِّل","🔁 Transferred"],"🗑️ امسح":["🗑️ احذف","🗑️ Delete"],"🤝 اتسجل":["🤝 سُجِّل","🤝 Recorded"],"أسابيع":[0,"weeks"],"أسبوعي":[0,"Weekly"],"أكتوبر":[0,"October"],"إيموجي":["رمز","Emoji"],"اتحدّث":["حُدِّث","updated"],"اتحصّل":["حُصِّل","Collected"],"اتسدّد":["سُدِّد","Paid"],"اتمسحت":["حُذفت","deleted"],"استلفت":["اقترضت","Borrowed"],"اشتريت":[0,"Bought"],"الأربع":["الأربعاء","Wednesday"],"البصمة":[0,"Fingerprint"],"التلات":["الثلاثاء","Tuesday"],"الجمعة":[0,"Friday"],"الحركة":[0,"Entry"],"الخميس":[0,"Thursday"],"الديون":[0,"Debts"],"الرصيد":[0,"Balance"],"الساعة":[0,"at"],"الشهور":[0,"Months"],"الصورة":[0,"Photo"],"العملة":[0,"Currency"],"الفلوس":["المال","Money"],"الليلي":[0,"night"],"المبلغ":[0,"Amount"],"الوحدة":[0,"Unit"],"امبارح":["أمس","Yesterday"],"بالليل":["مساءً","PM"],"بدأ من":[0,"Started on"],"بيتكرر":["يتكرر","Repeats"],"تانيين":["آخران","others"],"تلقائي":[0,"automatic"],"خلصت ✓":["انتهت ✓","Paid off ✓"],"دخل في":[0,"income into"],"ديسمبر":[0,"December"],"رجعت ✓":["عادت ✓","Restored ✓"],"رجّعلي":["ردّ لي","Repaid me"],"ساعتين":["ساعتان","2 hours"],"سبتمبر":[0,"September"],"سدّدته":[0,"Paid it"],"شغّلها":[0,"Turn on"],"صرف من":["مصروف من","spent from"],"صورتين":["صورتان","2 photos"],"فبراير":[0,"February"],"كل شهر":[0,"Monthly"],"متأكد؟":[0,"Sure?"],"مذكرات":[0,"Notes"],"مشاركة":[0,"Share"],"ملاحظة":[0,"Note"],"نوفمبر":[0,"November"],"هتتسجل":["ستُسجَّل","will be recorded"],"هيتمسح":["سيُحذف","will be deleted"],"✅ تمام":["✅ حسنًا","✅ Done"],"✕ اقفل":["✕ أغلق","✕ Close"],"أبريل":[0,"April"],"أسبوع":[0,"week"],"أغسطس":[0,"August"],"إلغاء":[0,"Cancel"],"اتدمج":["دُمج","merged"],"اتعمل":["أُنشئ","Made on"],"اتمسح":["حُذف","deleted"],"استنى":["انتظر","wait"],"الأصل":[0,"Original"],"البند":[0,"Category"],"الجاي":["القادم","next"],"الدخل":[0,"Income"],"الدين":[0,"Debt"],"السبت":[0,"Saturday"],"السلف":[0,"Loans"],"الشخص":[0,"Person"],"الشكل":[0,"Look"],"الصبح":["صباحًا","AM"],"الصرف":["المصروف","Spending"],"العدد":[0,"Number"],"العصر":["عصرًا","PM"],"القسط":[0,"Installment"],"القسم":[0,"Section"],"المدة":[0,"Period"],"النوع":[0,"Type"],"اليوم":[0,"Day"],"تذكير":[0,"Reminder"],"تراجع":[0,"Undo"],"تسجيل":[0,"Add"],"تصريف":["صرف","Exchange"],"تقرير":[0,"Report"],"ثانية":[0,"seconds"],"حركات":[0,"entries"],"حسابك":[0,"your account"],"حوّشت":["ادّخرت","Saved"],"دقيقة":[0,"1 minute"],"دولار":[0,"Dollar"],"رجع ✓":["عاد ✓","Restored ✓"],"رجعلك":["رُدَّ لك","repaid to you"],"رجّعت":["رددت","you repaid"],"ساعات":[0,"hours"],"سدّدت":[0,"Paid"],"سلّفت":["أقرضت","Lent"],"صرّفت":["صرفت","Exchanged"],"صفحات":[0,"pages"],"عليّا":["عليّ","I owe"],"متقدم":[0,"Advanced"],"محافظ":[0,"Wallets"],"مرتين":["مرتان","twice"],"مستحق":[0,"due"],"نهاري":[0,"Light"],"هتمسح":["ستحذف","You'll delete"],"يناير":[0,"January"],"يوليو":[0,"July"],"يومين":["يومان","2 days"],"يونيو":[0,"June"],"👁 عرض":[0,"👁 View"],"📒 قسط":[0,"📒 Installment"],"أخضر":[0,"green"],"أسود":[0,"black"],"أيام":[0,"days"],"أيوه":["نعم","Yes"],"احفظ":[0,"Save"],"ادمج":[0,"Merge"],"اسمه":[0,"Name"],"اقفل":["أغلق","Close"],"الحد":["الأحد","Sunday"],"الكل":[0,"All"],"امسح":["احذف","Delete"],"بسعر":[0,"at rate"],"بكرة":["غدًا","tomorrow"],"تمام":["حسنًا","Done"],"جالك":["وصلك","Received"],"جديد":[0,"new"],"جنيه":[0,"EGP"],"حركة":[0,"entry"],"حوّل":[0,"Transfer"],"خلصت":["انتهت","Paid off"],"رجوع":[0,"Back"],"رصيد":[0,"Balance of"],"زمان":["زمن بعيد","long ago"],"ساعة":[0,"hour"],"سجّل":[0,"Save"],"سلفة":[0,"Loan"],"شهري":[0,"Monthly"],"شهور":[0,"months"],"صرفت":["أنفقت","Spent"],"صفحة":[0,"Page"],"صورة":[0,"photos"],"صوّر":[0,"Camera"],"عليك":[0,"You owe"],"غيّر":[0,"Change"],"فاضل":["المتبقي","left"],"فيزا":[0,"Visa"],"قصدك":["هل تقصد","Did you mean"],"كيلو":["كيلوبايت","KB"],"ليّا":["لي","Owed to me"],"مارس":[0,"March"],"مايو":[0,"May"],"مرات":[0,"times"],"ملخص":[0,"Summary of"],"ميجا":["ميجابايت","MB"],"نسخة":[0,"Version"],"هدفك":[0,"Your goal"],"يدوي":[0,"manual"],"بحث":[0,"Search"],"ج.م":[0,"EGP"],"حفظ":[0,"Save"],"خلص":["انتهى","paid off"],"دخل":[0,"Income"],"زاد":[0,"went up"],"زيه":["مثله","same"],"سلف":[0,"Loans"],"صرف":["مصروف","Expense"],"عجز":[0,"Deficit"],"قسط":[0,"Installment"],"قلّ":[0,"went down"],"مرة":[0,"time"],"يوم":[0,"day"],"اربط Google Drive":[0,"Link Google Drive"],"وهيفضلك":["وسيتبقى لك","leaving you"],"مش الفترة دي":["ليس هذه الفترة","Not this time"],"مش الشهر ده":["ليس هذا الشهر","Not this month"],"بالصور":[0,"With photos"],"رجّعها":["استعدها","Restore"],"خيارات":[0,"Options"],"من غير":["بدون","Without"],"ليك":["لك","Owed to you"],"لحد":["حتى","until"],"إلى":[0,"to"],"من":[0,"from"],"في":[0,"in"],"كل":[0,"every"],"شهر":[0,"month"],"أول":[0,"first"],"بقت":["أصبحت","became"],"بقى":["أصبح","became"],"فيه":["يوجد","there are"],"صور":[0,"photos"],"لون":[0,"Color"],"بدأ":[0,"Started"],"شيل":["أزل","Remove"],"تم إعداد وتصميم التطبيق بواسطة":["تم إعداد التطبيق وتصميمه بواسطة","App built and designed by"],"تصميم":[0,"Design by"],"الشكل واللغة":[0,"Look & language"],"اللغة":[0,"Language"],"عن التطبيق":[0,"About the app"]};
+var TR = null, trUser = null, trOn = false;
+function escRe(x) { return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+function trBuild() {
+  TR = null; if (LANG === 'eg') return;
+  var idx = LANG === 'fus' ? 0 : 1, map = {}, keys = [];
+  Object.keys(I18N).forEach(function (k) { var v = I18N[k][idx]; if (v && v !== k) { map[k] = v; keys.push(k); } });
+  keys.sort(function (a, b) { return b.length - a.length; });
+  var L = '\\u0621-\\u064A\\u0671-\\u06D3';
+  TR = { map: map, re: new RegExp('(?<![' + L + '])(' + keys.map(escRe).join('|') + ')(?![' + L + '])', 'g') };
+}
+function trText(x) {
+  if (!TR || !x || !/[؀-ۿ]/.test(x)) return x;
+  var r = String(x).replace(TR.re, function (m) { return TR.map[m]; });
+  if (LANG !== 'en') return r;
+  return r.replace(/،\s?/g, ', ').replace(/؟/g, '?').replace(/(^|[^\u0600-\u06FF])ا([−+])/g, '$1A$2')
+    .replace(/(\d[\d,.]*\$?) from (\d)/g, '$1 of $2').replace(/(\d) ج(?![\u0600-\u06FF.])/g, '$1 EGP').replace(/\bleft (\d+) (days?|hours?|weeks?|months?)\b/g, '$1 $2 left')
+    .replace(/\b(\d+) (day|hour|week|month|time|installment|transaction|entry)\b/g, function (m, n, w) { return n === '1' ? m : n + ' ' + (w === 'entry' ? 'entries' : w + 's'); });
+}
+function trUserSet() {
+  if (trUser) return trUser;
+  var u = {}; if (!S) return u;
+  var add = function (v) { if (v) u[String(v).trim()] = 1; };
+  S.tx.forEach(function (t) { add(t.item); add(t.note); });
+  S.wallets.forEach(function (w) { add(w.name); });
+  S.debts.forEach(function (d) { add(d.person); add(d.note); });
+  S.reminders.forEach(function (r) { add(r.title); add(r.item); });
+  (S.notes || []).forEach(function (n) { add(n.title); });
+  if (S.book) S.book.debts.forEach(function (d) { add(d.title); add(d.note); });
+  return (trUser = u);
+}
+function trSkipEl(el) { return !el || !!el.closest('.ud, [data-notr], script, style, textarea, #notesList .notecard, .rbody'); }
+function trNode(n) {
+  if (trSkipEl(n.parentElement)) return;
+  var cur = n.nodeValue;
+  if (n.__t === undefined || cur !== n.__t) n.__a = cur;
+  var a = n.__a;
+  if (!a || !/[؀-ۿ]/.test(a)) return;
+  var t = (TR && !trUserSet()[a.trim()]) ? trText(a) : a;
+  if (t !== cur) { n.__t = t; n.nodeValue = t; } else n.__t = t;
+}
+var TR_ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
+function trAttrs(el) {
+  if (trSkipEl(el) && el.tagName !== 'TEXTAREA') return;
+  TR_ATTRS.forEach(function (at) {
+    if (!el.hasAttribute(at)) return;
+    el.__aa = el.__aa || {}; el.__at = el.__at || {};
+    var cur = el.getAttribute(at);
+    if (el.__at[at] === undefined || cur !== el.__at[at]) el.__aa[at] = cur;
+    var t = TR ? trText(el.__aa[at]) : el.__aa[at];
+    el.__at[at] = t; if (t !== cur) el.setAttribute(at, t);
+  });
+}
+function trTree(root) {
+  if (!root) return;
+  if (root.nodeType === 3) return trNode(root);
+  if (root.nodeType !== 1) return;
+  var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), n;
+  while ((n = w.nextNode())) trNode(n);
+  if (root.matches && root.matches('[placeholder],[aria-label],[title],[alt]')) trAttrs(root);
+  root.querySelectorAll('[placeholder],[aria-label],[title],[alt]').forEach(trAttrs);
+}
+var trObs = new MutationObserver(function (ms) {
+  ms.forEach(function (m) {
+    if (m.type === 'characterData') trNode(m.target);
+    else if (m.type === 'attributes') trAttrs(m.target);
+    else m.addedNodes.forEach(trTree);
+  });
+});
+['confirm', 'prompt', 'alert'].forEach(function (fn) {
+  var o = window[fn] && window[fn].bind(window);
+  if (o) window[fn] = function (m, dv) { return o(trText(String(m == null ? '' : m)), dv); };
+});
+function applyLang() {
+  trBuild(); trUser = null;
+  var en = LANG === 'en';
+  document.documentElement.lang = en ? 'en' : 'ar';
+  document.documentElement.dir = en ? 'ltr' : 'rtl';
+  document.title = en ? 'Hesabaty' : 'حساباتي';
+  if (!trOn) { trOn = true; trObs.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: TR_ATTRS }); }
+  trTree(document.body);
+  if ($('langSeg')) setSeg('langSeg', LANG);
+}
+function setLang(l) {
+  LANG = l; try { localStorage.setItem('lang', l); } catch (e) {}
+  applyLang(); if (S) render(); applyTheme();
+  toast({ eg: 'اللغة بقت مصري ✓', fus: 'اللغة: العربية الفصحى ✓', en: 'Language: English ✓' }[l]);
+}
+bindSeg('langSeg', setLang);
+applyLang();
+
 // ---------- البداية ----------
 /** ترقية البيانات القديمة لشكل النسخة الحالية */
 function migrate() {
@@ -3508,6 +3997,7 @@ function migrate() {
   Object.keys(fresh).forEach(function (k) { if (S[k] === undefined) S[k] = fresh[k]; });
   var cfg = bookCfg(); Object.keys(cfg).forEach(function (k) { if (S.book.cfg[k] === undefined) S.book.cfg[k] = cfg[k]; });
   if (!S.settings.nudge) S.settings.nudge = nudgeCfg();
+  if (!S.settings.save) S.settings.save = saveGoalCfg();
   if (!S.lastEntryAt) S.lastEntryAt = Date.now();
   if (S.settings.useUsd === undefined) S.settings.useUsd = S.wallets.some(function (w) { return w.cur === '$'; }) || S.tx.some(function (t) { return t.usd; });
   if (!wallet(S.settings.defaultWallet)) S.settings.defaultWallet = S.wallets[0].name;
@@ -3525,7 +4015,8 @@ dbOpen().then(loadLock).then(function () {
   return save();
 }).then(function () {
   bioCheck();
-  render(); notifyDues(); checkPendingNativeLink(); nativeSchedule();
+  render(); runAuto(); notifyDues(); checkPendingNativeLink(); nativeSchedule();
+  setTimeout(checkRecap, 900);
   setInterval(checkNudge, 60000);
   if (!S.rate.autoAt || S.rate.autoAt !== todayKey()) fetchRate(false);
 }).catch(function (e) {
